@@ -1,0 +1,13 @@
+--cpu Cortex-M0+
+".\objects\startup_cw32l012.o"
+".\objects\system_cw32l012.o"
+".\objects\main.o"
+".\objects\cw32l012_gpio.o"
+".\objects\cw32l012_spi.o"
+".\objects\cw32l012_sysctrl.o"
+".\objects\cw32l012_systick.o"
+".\objects\cw32l012_startkit.o"
+--library_type=microlib --strict --scatter ".\Objects\project.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\project.map" -o .\Objects\project.axf

@@ -1,0 +1,13 @@
+--cpu Cortex-M0+
+".\output\exe\startup_cw32l012.o"
+".\output\exe\system_cw32l012.o"
+".\output\exe\main.o"
+".\output\exe\interrupts_cw32l012.o"
+".\output\exe\cw32l012_lpi2c.o"
+".\output\exe\cw32l012_sysctrl.o"
+".\output\exe\cw32l012_gpio.o"
+".\output\exe\cw32l012_flash.o"
+--library_type=microlib --strict --scatter ".\output\exe\I2C_mcu_master_poll.sct"
+--keep=*Handler --summary_stderr --info summarysizes --map --load_addr_map_info --symbols
+--info sizes --info totals
+--list ".\output\list\I2C_mcu_master_poll.map" -o .\output\exe\I2C_mcu_master_poll.axf

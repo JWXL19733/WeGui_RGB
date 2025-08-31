@@ -1,0 +1,95 @@
+Dependencies for Project 'project', Target 'project': (DO NOT MODIFY !)
+CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARMCC
+F (..\..\..\..\IdeSupport\MDK\startup_cw32l012.s)(0x688B0770)(--cpu Cortex-M0+ -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include--pd "__UVISION_VERSION SETA 542" --pd "_RTE_ SETA 1"-o .\output\exe\startup_cw32l012.o --depend .\output\exe\startup_cw32l012.d)
+F (..\..\..\..\Libraries\src\system_cw32l012.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\system_cw32l012.o --omf_browse .\output\exe\system_cw32l012.crf --depend .\output\exe\system_cw32l012.d)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\USER\src\main.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\main.o --omf_browse .\output\exe\main.crf --depend .\output\exe\main.d)
+I (..\USER\src\..\inc\main.h)(0x688B0770)
+I (..\USER\src\..\inc\interrupts_cw32l012.h)(0x688B0770)
+I (..\..\..\..\StartKit_Board\cw32l012_startkit.h)(0x688B0770)
+I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
+I (..\..\..\..\Libraries\inc\cw32l012_gpio.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\USER\src\interrupts_cw32l012.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\interrupts_cw32l012.o --omf_browse .\output\exe\interrupts_cw32l012.crf --depend .\output\exe\interrupts_cw32l012.d)
+I (..\USER\src\..\inc\main.h)(0x688B0770)
+I (..\USER\src\..\inc\interrupts_cw32l012.h)(0x688B0770)
+I (..\..\..\..\StartKit_Board\cw32l012_startkit.h)(0x688B0770)
+I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
+I (..\..\..\..\Libraries\inc\cw32l012_gpio.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_adc.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_adc.o --omf_browse .\output\exe\cw32l012_adc.crf --depend .\output\exe\cw32l012_adc.d)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_sysctrl.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_sysctrl.o --omf_browse .\output\exe\cw32l012_sysctrl.crf --depend .\output\exe\cw32l012_sysctrl.d)
+I (..\..\..\..\Libraries\inc\cw32l012_sysctrl.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_systick.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_systick.o --omf_browse .\output\exe\cw32l012_systick.crf --depend .\output\exe\cw32l012_systick.d)
+I (..\..\..\..\Libraries\inc\cw32l012_systick.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\base_types.h)(0x688B0770)
+I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARMCC\include\string.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARMCC\include\stddef.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARMCC\include\assert.h)(0x5E8E3CC2)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_gpio.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_gpio.o --omf_browse .\output\exe\cw32l012_gpio.crf --depend .\output\exe\cw32l012_gpio.d)
+I (..\..\..\..\Libraries\inc\cw32l012_gpio.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_gtim.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_gtim.o --omf_browse .\output\exe\cw32l012_gtim.crf --depend .\output\exe\cw32l012_gtim.d)
+I (..\..\..\..\Libraries\inc\cw32l012_gtim.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\..\..\..\Libraries\src\cw32l012_uart.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_uart.o --omf_browse .\output\exe\cw32l012_uart.crf --depend .\output\exe\cw32l012_uart.d)
+I (..\..\..\..\Libraries\inc\cw32l012_uart.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
+F (..\readme.txt)(0x688B0770)()
+F (..\..\..\..\StartKit_Board\cw32l012_startkit.c)(0x688B0770)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\..\..\..\IDEsupport\MDK -I ..\..\..\..\Libraries\inc -I ..\..\..\..\StartKit_Board -I ..\USER\inc-I.\RTE\_project-ID:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include-IDevice\Include-D__UVISION_VERSION="542" -D_RTE_-o .\output\exe\cw32l012_startkit.o --omf_browse .\output\exe\cw32l012_startkit.crf --depend .\output\exe\cw32l012_startkit.d)
+I (..\..\..\..\StartKit_Board\cw32l012_startkit.h)(0x688B0770)
+I (D:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x5E8E3CC2)
+I (..\..\..\..\Libraries\inc\cw32l012_gpio.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\system_cw32l012.h)(0x688B0770)
+I (..\..\..\..\Libraries\inc\cw32l012.h)(0x688B0770)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h)(0x6860C7FC)
+I (D:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x5E8E3CC2)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h)(0x6860C7FC)
+I (D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h)(0x6860C7FC)
