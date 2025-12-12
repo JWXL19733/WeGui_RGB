@@ -75,7 +75,7 @@ limitations under the License.
 #define _DMA_4SPI   (3)//DMA四线SPI驱动   对应文件stm32f103_lcd_dma_4spi_port.c
 #define _SOFT_IIC   (4)//软件IIC驱动(推荐) 对应文件stm32f103_lcd_soft_iic_port.c 
 //#define _HARD_IIC   (5)//硬件IIC驱动(不推荐) 对应文件stm32f103_lcd_hard_iic_port.c (有硬件bug不建议使用)
-#define LCD_PORT    _HARD_4SPI                                                                                                                             //选择一个接口
+#define LCD_PORT    _HARD_4SPI //选择一个接口
 
 //----------------------------2.1.设定屏幕分辨率--------------------------------
 #define SCREEN_WIDTH 240  //建议取8的倍数
