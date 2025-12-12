@@ -1,13 +1,22 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 #include "lcd_driver_config.h"
 
 #if (LCD_IC == _SSD1327)
 #include "ssd1327.h"
-
-
 
 /*--------------------------------------------------------------
   * 名称: SSD1327_Set_Address_x(unsigned char x)
@@ -48,8 +57,6 @@ void SSD1327_Set_Addr(unsigned char x0,unsigned char y0,unsigned char x1,unsigne
 	LCD_Send_nCmd(i,6);
 }
 
-
-
 /*--------------------------------------------------------------
   * 名称: SSD1327_Clear()
   * 传入: 无
@@ -67,8 +74,13 @@ void SSD1327_Clear()
 	}
 }
 
-
-
+/*--------------------------------------------------------------
+  * 名称: SSD1327_Init()
+  * 传入: 无
+  * 返回: 无
+  * 功能: 初始化屏幕
+  * 说明: 推荐更改为屏幕资料中的初始化指令
+----------------------------------------------------------------*/
 void SSD1327_Init(void)
 {
 	LCD_Send_1Cmd(0xae);//Set display off
@@ -117,67 +129,4 @@ void SSD1327_Init(void)
 	LCD_Send_1Cmd(0xaf);//Display on
 }
 
-
-
-	
-	
-
-//void SSD1327_Init(void)
-//{
-//	SSD1327_Display_OFF();//AEh 屏幕关,休眠(默认)
-//	
-//	//---------------根据屏幕设置--------------
-//	SSD1327_Set_Remap(0x66);//A0h 设置屏幕映射位置 默认0x00
-//	//SSD1327_Set_Remap(0x55);//A0h 设置屏幕映射位置 默认0x00
-//	//---------------根据屏幕设置--------------
-//	
-//	SSD1327_Set_Display_Start_Line(0);//A1h [0:127]默认0
-//	SSD1327_Set_Display_Offset(0);//A2h [0:127]默认0
-//	
-//	SSD1327_Set_Display_Mode_A4();//A4h Normal display (默认)
-//	//SSD1327_Set_Display_Mode_A5();//A5h All ON (All pixels have gray scale of 15, GS15)
-//	//SSD1327_Set_Display_Mode_A6();//A6h All OFF (All pixels have gray scale of 0, GS0)
-//	//SSD1327_Set_Display_Mode_A7();//A7h Inverse Display (GS0 -> GS15, GS1 -> GS14, GS2 -> GS13, ...)
-//	
-//	SSD1327_Set_MUX_Ratio(127);//A8h [15:127] 15=16MUX;127=128MUX(默认)
-//	
-//		//SSD1327_Func_A_Select_external_VDD();//ABh 0x00
-//	SSD1327_Func_A_Select_internal_VDD();//ABh 0x01 默认
-//	
-//	SSD1327_Set_Contrast_Control(0x77);//81h 设置对比度[0:255]默认127
-//	
-//	SSD1327_Set_Phase_Length(3,1);//B1h 充放电周期(周期1[0:15],周期2[0:15]), 默认(7,8)
-//	
-//	Set_Front_Clock_Frequency(0xb1);//B3h [0x00:0xFF] 默认0x00 b7~b4设置晶振 b3~b0设置分频
-//	
-//	//GPIO_Hiz_input_dis()  ;//B5h 0x00
-//	//GPIO_Hiz_input_en()   ;//B5h 0x01 
-//	//GPIO_Hiz_output_Low() ;//B5h 0x02 默认
-//	GPIO_Hiz_output_High();//B5h 0x03
-//	
-//	SSD1327_Set_VCOMH(0x07);//BEh [0x00,0x0F] 默认0x05
-//	
-//	//#define dis_2_precharge  0 //默认
-//	//#define en_2_precharge   1
-//	//#define Internal_VSL   0 //默认
-//	//#define external_VSL   1
-//	SSD1327_Func_Selection_B(en_2_precharge,Internal_VSL);//D5h 默认(0x0,0x0)
-//	
-//	SSD1327_Set_Pre_charge_voltage(0x07);//BCh [0x00,0x0F] 默认0x05
-//	
-//	
-//	
-//	//------非必要-----
-//	//Set_Gray_Scale_Table(y0,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15);//B8h 灰度设置
-//	//SSD1327_Set_Command_Lock()  ;//FDh 0x16
-//	//SSD1327_Set_Command_unLock();//FDh 0x12 (默认)
-//	//------非必要-----
-
-
-
-//	SSD1327_Clear();
-//	SSD1327_Display_ON();//AFh 屏幕开
-//	
-
-//}
 #endif

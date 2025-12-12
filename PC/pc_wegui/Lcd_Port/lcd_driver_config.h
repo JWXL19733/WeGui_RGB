@@ -31,10 +31,10 @@
 
 //----------------------------3.设定屏幕分辨率--------------------------------
 #define SCREEN_WIDTH 320  //建议取8的倍数
-#define SCREEN_HIGH  172  //建议取8的倍数
+#define SCREEN_HIGH  240  //建议取8的倍数
 
 //----------------------------4.窗口放大--------------------------------
-#define WIN_ZOOM (2)
+#define WIN_ZOOM (1)
 
 //-----------------------5.设定屏幕区域显示偏移设置--------------------------
 #define SCREEN_X_OFFSET     (0) //x左右方向偏移像素
@@ -48,12 +48,25 @@
 
 #define LCD_MODE    _FULL_BUFF_FULL_UPDATE //选择一个刷屏模式
 
+//---------------------------4.设置开机字体--------------------------------
+//extern const fonts_t fonts_ascii_songti_6X12;
+//extern const fonts_t fonts_ascii_songti_8X16;
+//extern const fonts_t fonts_ascii_songti_12X24;
+#define STARTUP_FONTS_ASCII (fonts_ascii_songti_8X16)//开机ascii字体 建议两者高度一致
+
+//extern const fonts_t fonts_utf8_songti_12X12;
+//extern const fonts_t fonts_utf8_songti_16X16;
+//extern const fonts_t fonts_utf8_songti_24X24;
+#define STARTUP_FONTS_UTF8  (fonts_utf8_songti_16X16)//开机utf8字体 建议两者高度一致
 
 
+//-------------------------6.1.选择一个外挂FLASH接口--------------------------------
+#define _F_NO_PORT      (0)//没有外挂FLASH接口
+#define FLASH_PORT      _F_NO_PORT//选择一个外挂FLASH接口
 
-
-
-
+//-------------------------6.2.选择一个外挂FLASH型号--------------------------------
+#define _FLASH_NONE    (0)//没有FLASH
+#define FLASH_MODEL     _FLASH_NONE//选择一个外挂FLASH型号
 
 
 
@@ -67,6 +80,11 @@
 #if (LCD_PORT == _PC)    //PC仿真
 	#include "pc_lcd_port.h"
 #endif
+
+//没有flash
+#define flash_port_init()                do{}while(0)
+#define flash_ic_init()                  do{}while(0)
+#define flash_read_addr_ndat(addr,p,len) do{}while(0)
 
 //全屏缓存,固定大小
 #if ((LCD_MODE == _FULL_BUFF_FULL_UPDATE) || (LCD_MODE == _FULL_BUFF_DYNA_UPDATE))

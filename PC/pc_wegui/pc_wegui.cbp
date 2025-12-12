@@ -36,6 +36,7 @@
 			<Add directory="../../Lcd_WeGui" />
 			<Add directory="../pc_wegui" />
 			<Add directory="../SDL2/x86_64-w64-mingw32/bin" />
+			<Add directory="../../Lcd_Demo" />
 		</Compiler>
 		<Linker>
 			<Add library="mingw32" />
@@ -49,7 +50,18 @@
 		<ExtraCommands>
 			<Add after="XCOPY ..\SDL2\x86_64-w64-mingw32\bin\*.dll $(TARGET_OUTPUT_DIR) /D /Y" />
 		</ExtraCommands>
+		<Unit filename="../../Lcd_Demo/driver_demo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../Lcd_Demo/driver_demo.h" />
+		<Unit filename="../../Lcd_Demo/wegui_menu_demo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../Lcd_Demo/wegui_menu_demo.h" />
 		<Unit filename="../../Lcd_Driver/TFT_Color.h" />
+		<Unit filename="../../Lcd_Driver/flash_driver.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="../../Lcd_Driver/lcd_driver.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -74,10 +86,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="../../Lcd_WeGui/lcd_wegui_tip.h" />
-		<Unit filename="../../Lcd_WeGui/user_wegui_menu.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="../../Lcd_WeGui/user_wegui_menu.h" />
 		<Unit filename="Lcd_Port/lcd_driver_config.h" />
 		<Unit filename="Lcd_Port/lcd_wegui_config.h" />
 		<Unit filename="Lcd_Port/pc_interface.c">

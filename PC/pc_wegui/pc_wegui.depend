@@ -1,81 +1,80 @@
 # depslib dependency file v1.0
-1755731301 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.c
-	<stdint.h>
+1765460671 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.c
 	"lcd_driver.h"
 
-1755622269 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.h
+1765373721 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.h
 	"stdint.h"
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"lcd_res.h"
 
-1755423763 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.h
+1765381324 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.h
 	"stdint.h"
+	"lcd_driver_config.h"
+	"lcd_wegui_config.h"
 
-1755731368 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.c
+1765453004 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.c
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"lcd_wegui_driver.h"
-	"user_wegui_menu.h"
-	"lcd_wegui_menu_mlist.h"
-	"lcd_wegui_tip.h"
 
-1755701307 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.h
+1765223166 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.h
+	"lcd_wegui_config.h"
 	"lcd_driver.h"
 	"lcd_res.h"
-	"lcd_wegui_config.h"
+	"lcd_wegui_menu_mlist.h"
+	"lcd_wegui_tip.h"
+	"wegui_menu_demo.h"
 
 1755516230 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\user_wegui_menu.h
 	"lcd_wegui_driver.h"
 
-1753785526 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.h
+1761371436 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.h
+	"lcd_wegui_driver.h"
+	"lcd_wegui_config.h"
+
+1761371494 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.h
 	"lcd_wegui_driver.h"
 
-1755591686 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.h
-	"lcd_wegui_driver.h"
-
-1755732439 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_app.c
+1761323434 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_app.c
 	"lcd_wegui_menu_app.h"
-	"lcd_wegui_driver.h"
-	"user_wegui_menu.h"
 
-1755516230 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_app.h
-	"stdint.h"
+1761323434 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_app.h
 
-1755730686 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.c
+1765453174 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.c
 	"lcd_wegui_menu_mlist.h"
 
-1755624327 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.c
+1765451880 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.c
 	"lcd_wegui_tip.h"
 
 1755730538 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\user_wegui_menu.c
 	"user_wegui_menu.h"
 
-1755731519 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_interface.c
+1765258369 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_interface.c
 	"SDL.h"
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"pc_interface.h"
 	"pc_lcd_port.h"
-	"user_wegui_menu.h"
+	"wegui_menu_demo.h"
 	"lcd_wegui_menu_mlist.h"
 	"lcd_wegui_tip.h"
 
-1755732501 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_driver_config.h
+1765460868 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_driver_config.h
 	"pc_lcd_port.h"
 	"SDL.h"
 	"TFT_Color.h"
 
-1755628273 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_lcd_port.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_lcd_port.h
 	"stdint.h"
 
-1755732306 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_wegui_config.h
+1765388911 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_wegui_config.h
 	"lcd_driver_config.h"
 	"lcd_wegui_menu_app.h"
 
-1755600889 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_interface.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_interface.h
 
-1755630067 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_lcd_port.c
+1756653427 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\pc_lcd_port.c
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"stdint.h"
@@ -85,21 +84,21 @@
 	"lcd_driver.h"
 	"SDL.h"
 
-1755732465 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\main.c
+1765286810 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\main.c
 	"main.h"
-	"user_wegui_menu.h"
+	"wegui_menu_demo.h"
 	"lcd_wegui_tip.h"
 	"pc_lcd_port.h"
 
-1755732363 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\main.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\main.h
 
 1755535700 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\poker.h
 	"stdint.h"
 
-1755732118 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.c
+1765381243 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.c
 	"lcd_res.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_assert.h"
@@ -137,12 +136,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1755623610 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_main.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_stdinc.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -174,7 +173,7 @@
 	<stdio.h>
 	"close_code.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config.h
 	"SDL_platform.h"
 	"SDL_config_windows.h"
 	"SDL_config_winrt.h"
@@ -188,7 +187,7 @@
 	"SDL_config_ngage.h"
 	"SDL_config_minimal.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_platform.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_platform.h
 	<AvailabilityMacros.h>
 	<TargetConditionals.h>
 	<TargetConditionals.h>
@@ -196,55 +195,55 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\begin_code.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\begin_code.h
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\close_code.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\close_code.h
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_windows.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_windows.h
 	"SDL_platform.h"
 	<winsdkver.h>
 	<sdkddkver.h>
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_winrt.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_winrt.h
 	"SDL_platform.h"
 	<sdkddkver.h>
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_wingdk.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_wingdk.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_xbox.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_xbox.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_macosx.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_macosx.h
 	"SDL_platform.h"
 	<AvailabilityMacros.h>
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_iphoneos.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_iphoneos.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_android.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_android.h
 	"SDL_platform.h"
 	<stdarg.h>
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_os2.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_os2.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_emscripten.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_emscripten.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_ngage.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_ngage.h
 	"SDL_platform.h"
 
-1735717672 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_minimal.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_config_minimal.h
 	"SDL_platform.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_assert.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_assert.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	<signal.h>
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_atomic.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_atomic.h
 	"SDL_stdinc.h"
 	"SDL_platform.h"
 	"begin_code.h"
@@ -252,7 +251,7 @@
 	<mbarrier.h>
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_audio.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -262,12 +261,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_error.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_endian.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_endian.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<endian.h>
@@ -277,13 +276,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_mutex.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_thread.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_atomic.h"
@@ -294,18 +293,18 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_rwops.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_clipboard.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_clipboard.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_cpuinfo.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<intrin.h>
@@ -327,7 +326,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_events.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -341,7 +340,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_video.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -349,13 +348,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_pixels.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_pixels.h
 	"SDL_stdinc.h"
 	"SDL_endian.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_rect.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_rect.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_pixels.h"
@@ -363,7 +362,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_surface.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_surface.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -372,11 +371,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_blendmode.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_blendmode.h
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_keyboard.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keycode.h"
@@ -384,21 +383,21 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_keycode.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_keycode.h
 	"SDL_stdinc.h"
 	"SDL_scancode.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_scancode.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_scancode.h
 	"SDL_stdinc.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_mouse.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_joystick.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_guid.h"
@@ -406,13 +405,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_guid.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_guid.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_gamecontroller.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_gamecontroller.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
@@ -421,17 +420,17 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_sensor.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_sensor.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_quit.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_gesture.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_gesture.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -439,70 +438,70 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_touch.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_touch.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_filesystem.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_filesystem.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_haptic.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_haptic.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_joystick.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_hidapi.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_hidapi.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_hints.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_hints.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_loadso.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_log.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_log.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_messagebox.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_messagebox.h
 	"SDL_stdinc.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_metal.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_metal.h
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_power.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_power.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_render.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_render.h
 	"SDL_stdinc.h"
 	"SDL_rect.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_shape.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_shape.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -511,7 +510,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_system.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_system.h
 	"SDL_stdinc.h"
 	"SDL_keyboard.h"
 	"SDL_render.h"
@@ -519,24 +518,24 @@
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_timer.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_timer.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_version.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_locale.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_locale.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1748877606 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_misc.h
+1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl_misc.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
@@ -1083,4 +1082,29 @@
 	"pc_lcd_port.h"
 
 1755732363 e:\onedrive\mcu_program\library\wegui\wegui_rgb\wegui_rgb\pc\pc_wegui\main.h
+
+1765386818 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\wegui_menu_demo.h
+	"stdint.h"
+	"lcd_wegui_driver.h"
+
+1765381460 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\driver_demo.c
+	"driver_demo.h"
+
+1761370346 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\driver_demo.h
+	"stdint.h"
+	"lcd_driver.h"
+	"lcd_wegui_driver.h"
+
+1765453095 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\wegui_menu_demo.c
+	"wegui_menu_demo.h"
+	"lcd_wegui_tip.h"
+	"flash_img_demo.h"
+
+1765385583 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\flash_img_demo.h
+
+1765448924 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.c
+	"flash_driver.h"
+
+1765374548 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.h
+	"lcd_driver.h"
 

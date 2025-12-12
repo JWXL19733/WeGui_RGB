@@ -1,12 +1,23 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 #ifndef __SSD1327_H__
 #define __SSD1327_H__
 
-	
+#include "stdint.h"
+
 #define SSD1327_Set_Column_Address(start,end) do{LCD_Send_1Cmd(0x15);LCD_Send_1Cmd(start);LCD_Send_1Cmd(end);}while(0)//15h start[0:127]默认0,end[0:127]默认127
 
 #define SSD1327_Set_Row_Address(start,end) do{LCD_Send_1Cmd(0x75);LCD_Send_1Cmd(start);LCD_Send_1Cmd(end);}while(0)//75h start[0:7F]默认0,end[0:7F]默认7F
@@ -18,7 +29,6 @@
 #define SSD1327_Set_Display_Start_Line(x) do{LCD_Send_1Cmd(0xA1);LCD_Send_1Cmd(x);}while(0)			//A1h [0:127]默认0
 
 #define SSD1327_Set_Display_Offset(x) do{LCD_Send_1Cmd(0xA2);LCD_Send_1Cmd(x);}while(0)			//A2h [0:127]默认0
-
 
 #define SSD1327_Set_Display_Mode_A4() do{LCD_Send_1Cmd(0xA4);}while(0)			//A4h Normal display (RESET)
 #define SSD1327_Set_Display_Mode_A5() do{LCD_Send_1Cmd(0xA5);}while(0)			//A5h All ON (All pixels have gray scale of 15, GS15)
@@ -55,7 +65,6 @@
 	
 #define SSD1327_Set_VCOMH(x) do{LCD_Send_1Cmd(0xBE);LCD_Send_1Cmd(x);}while(0)		//BEh [0x00,0x0F] 默认0x05
 
-
 #define dis_2_precharge  0 //默认
 #define en_2_precharge   1
 #define Internal_VSL   0 //默认
@@ -64,9 +73,6 @@
 
 #define SSD1327_Set_Command_Lock()   do{LCD_Send_1Cmd(0xFD);LCD_Send_1Cmd(0x12);}while(0)		//FDh 0x16
 #define SSD1327_Set_Command_unLock() do{LCD_Send_1Cmd(0xFD);LCD_Send_1Cmd(0x12);}while(0)		//FDh 0x12 (默认)
-
-
-
 
 
 void SSD1327_Set_Addr_x(unsigned char x0,unsigned char x1);

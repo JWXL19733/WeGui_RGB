@@ -1,26 +1,31 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 #include "lcd_driver_config.h"
 
 #if (LCD_IC == _ST7789V3)
 #include "st7789v3.h"
 
-
-
-
-
 void ST7789V3_Set_Addr(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
 {
-	volatile uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
-	volatile uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
+	uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
+	uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
 	const uint8_t k[]={0x2c};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
 	LCD_Send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
-	
-
 }
 
 void ST7789V3_Clear()//清除IC显示缓存
@@ -35,21 +40,27 @@ void ST7789V3_Clear()//清除IC显示缓存
 	}
 }
 
-
+/*--------------------------------------------------------------
+  * 名称: ST7789V3_Init()
+  * 传入: 无
+  * 返回: 无
+  * 功能: 初始化屏幕
+  * 说明: 推荐更改为屏幕资料中的初始化指令
+----------------------------------------------------------------*/
 void ST7789V3_Init()
 {
 
-	LCD_RES_Clr();
-	LCD_delay_ms(100);
-	LCD_RES_Set();
-	LCD_delay_ms(100);
+//	LCD_RES_Clr();
+//	LCD_delay_ms(100);
+//	LCD_RES_Set();
+//	LCD_delay_ms(100);
 
 	LCD_Send_1Cmd(0x11); 
 //	delay_1ms(120); 
 	LCD_Send_1Cmd(0x36); 
-	//LCD_Send_1Dat(0x00);//方向1
+	LCD_Send_1Dat(0x00);//方向1
 	//LCD_Send_1Dat(0xC0);//方向2
-	LCD_Send_1Dat(0x70);//方向3
+	//LCD_Send_1Dat(0x70);//方向3
 	//LCD_Send_1Dat(0xA0);//方向4
 
 	LCD_Send_1Cmd(0x3A);

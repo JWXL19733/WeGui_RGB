@@ -1,29 +1,31 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
-
-#ifndef _LCD_DRIVER_H_
-#define _LCD_DRIVER_H_
-
-
-
+#ifndef LCD_DRIVER_H
+#define LCD_DRIVER_H
 
 #include "stdint.h"
 #include "lcd_driver_config.h"
 #include "lcd_wegui_config.h"
 #include "lcd_res.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 //--RAM加速宏--
-//该宏功能请到lcd_driver_config.h配置, 请勿再此声明
-//具体用法如下
-//1.修改编译的sct文件,在RAM处增加*.o(RAMCODE)
-//2.打开下方的宏定义(建议统一放到lcd_driver_config.h打开)
-//#define RAM_SPEEDUP_FUNC_1 __attribute__ ((section ("RAMCODE"))) //1位色默认RAM加速(建议使用)
-//#define RAM_SPEEDUP_FUNC_2 __attribute__ ((section ("RAMCODE"))) //2位色RAM加速
-//#define RAM_SPEEDUP_FUNC_3 __attribute__ ((section ("RAMCODE"))) //3位色RAM加速
-
 #ifndef RAM_SPEEDUP_FUNC_1
 #	define RAM_SPEEDUP_FUNC_1
 #endif
@@ -32,11 +34,6 @@
 #endif
 #ifndef RAM_SPEEDUP_FUNC_3
 #	define RAM_SPEEDUP_FUNC_3
-#endif
-
-
-#ifdef __cplusplus
-extern "C"{
 #endif
 
 typedef union unicode_par
@@ -118,8 +115,8 @@ typedef struct//高级驱动参数
 	uint16_t x_max;   //限制矩形x最大值
 	uint16_t ypage_min;//限制矩形ypage最小值
 	uint16_t ypage_max;//限制矩形ypage最大值
-	uint16_t ypage_min_temp;//最小ypage允许写入的像素点映射(储存计算结果,用于快速运行)
-	uint16_t ypage_max_temp;//最大ypage允许写入的像素点映射(储存计算结果,用于快速运行)
+	uint8_t ypage_min_temp;//最小ypage允许写入的像素点映射(储存计算结果,用于快速运行)
+	uint8_t ypage_max_temp;//最大ypage允许写入的像素点映射(储存计算结果,用于快速运行)
 }LcdBoxDriver_t;
 
 typedef struct lcd_driver
@@ -135,7 +132,7 @@ typedef struct lcd_driver
 	void (*Write_GRAM)(uint16_t x,uint16_t ypage,uint8_t u8_value);//普通写,显示驱动函数
 	void (*Clear_GRAM)(uint16_t x,uint16_t ypage,uint8_t u8_value);//普通清,显示驱动函数
 	LcdBoxDriver_t Box;//高级驱动辅助,限制写入区域
-	#ifdef LCD_USE_RGB565
+	#if (LCD_TYPE == LCD_RGB565)
 		#if (LCD_COLOUR_BIT == 1)
 		uint16_t colour[2];//绘图颜色(RGB565多色阶专用)
 		#elif (LCD_COLOUR_BIT == 2)
@@ -146,163 +143,176 @@ typedef struct lcd_driver
 		#error("not support LCD_COLOUR_BIT!")
 		#endif
 	#endif
-
 	//----------字体----------
 	const fonts_t *fonts_ASCII;   //ASCII字体
 	const fonts_t *fonts_UTF8_cut;//UTF8裁剪字体
-	uint8_t newline_high;//换行距离
+	uint8_t newline_high;//\n换行距离
 }lcd_driver_t;
 
 
-#if (defined LCD_USE_RGB565)
+#if (LCD_TYPE == LCD_RGB565)
+typedef enum //flash图片格式代码
+{
+  IMG_RGB565=0x00,//无压缩 RGB565
+  IMG_RGB888=0x01,//无压缩 RGB888
+  IMG_RGB555=0x02,//无压缩 RGB555
+  IMG_RGB444=0x03,//无压缩 RGB444
+  IMG_RGB332=0x04,//无压缩 RGB332
+  IMG_RGB565_ZIP_ORLE2=0x20,//原始RLE_2字节对齐压缩 RGB565
+  IMG_RGB888_ZIP_ORLE3=0x31,//原始RLE_3字节对齐压缩 RGB888
+  IMG_RGB555_ZIP_ORLE2=0x22,//原始RLE_2字节对齐压缩 RGB555
+  IMG_RGB444_ZIP_ORLE2=0x23,//原始RLE_2字节对齐压缩 RGB555
+  IMG_RGB332_ZIP_ORLE1=0x14,//原始RLE_1字节对齐压缩 RGB332
+}imgarry_type_t;
+
 /*--------------------------------------------------------------
-  * 名称: RGB_Set_Driver_Colour(uint8_t num,uint16_t colour)
-	* 传入: num 颜色序号 对应设置writer_num的笔刷颜色
-	* 传入: colour 颜色
-	* 功能: 设置驱动笔刷颜色(RGB屏幕专用)
+  * 名称: rgb_set_driver_colour(uint8_t num,uint16_t colour)
+  * 传入: num 颜色序号 对应设置writer_num的笔刷颜色
+  * 传入: colour 颜色
+  * 功能: 设置驱动笔刷颜色(RGB屏幕专用)
   * 说明:
 ----------------------------------------------------------------*/
-void RGB_Set_Driver_Colour(uint8_t num,uint16_t colour);
+void rgb_set_driver_colour(uint8_t num,uint16_t colour);
 #endif
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Set_Driver_Mode(lcd_driver_mode_t mode)
+  * 名称: lcd_set_driver_mode(lcd_driver_mode_t mode)
   * 传入: mode 驱动模式
   * 功能: 设置驱动方式
 ----------------------------------------------------------------*/
-void Lcd_Set_Driver_Mode(lcd_driver_mode_t mode);
+void lcd_set_driver_mode(lcd_driver_mode_t mode);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Set_Driver_Box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t y_max)
+  * 名称: lcd_set_driver_box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t y_max)
   * 传入: (x_min,y_min)起始点 (x_max,y_max)终点
   * 功能: 设置高级驱动的限制区域(Box)
 ----------------------------------------------------------------*/
-void Lcd_Set_Driver_Box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t y_max);
+void lcd_set_driver_box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t y_max);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_Pixl(int16_t x,uint16_t y)
+  * 名称: lcd_draw_pixl(int16_t x,uint16_t y)
   * 传入: x,y 坐标点
   * 功能: 绘制一个像素点
   * 说明: 坐标点支持负数
 ----------------------------------------------------------------*/
-void Lcd_Draw_Pixl(int16_t x,int16_t y);
+void lcd_draw_pixl(int16_t x,int16_t y);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_Line(int16_t x1,int16_t y1,int16_t x2,int16_t y2)
+  * 名称: lcd_draw_line(int16_t x1,int16_t y1,int16_t x2,int16_t y2)
   * 传入: (x1,y1)起点 (x0,y0)终点
   * 功能: 两点绘制一条直线
   * 说明: 布雷森汉姆直线算法
 ----------------------------------------------------------------*/
-void Lcd_Draw_Line(int16_t x1,int16_t y1,int16_t x2,int16_t y2);
+void lcd_draw_line(int16_t x1,int16_t y1,int16_t x2,int16_t y2);
 
 /*--------------------------------------------------------------
-  * Lcd_Draw_Circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart)
+  * lcd_draw_circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart)
   * 传入: (x0,y0):起点  r:半径 cPart:圆的部分
   * 功能: 绘制圆形部分
 ----------------------------------------------------------------*/
-void Lcd_Draw_Circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart);
+void lcd_draw_circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart);
 
 /*--------------------------------------------------------------
-  * Lcd_Fill_Circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart)
+  * lcd_fill_circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart)
   * 传入: (x0,y0):起点  r:半径 cPart:圆的部分
   * 功能: 填充圆形部分
 ----------------------------------------------------------------*/
-void Lcd_Fill_Circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart);
+void lcd_fill_circel_part(int16_t x0,int16_t y0,uint16_t r,circle_part_t cPart);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_Box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
+  * 名称: lcd_draw_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
   * 传入: (x_min,y_min)起点 (x_max,y_max)终点
   * 功能: 绘制矩形
 ----------------------------------------------------------------*/
-void Lcd_Draw_Box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max);
+void lcd_draw_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Fill_Box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
+  * 名称: lcd_fill_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
   * 传入: 4点坐标
   * 功能: 填充矩形
   * 说明: 坐标点支持负数
 ----------------------------------------------------------------*/
-void Lcd_Fill_Box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max);
+void lcd_fill_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_Bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[])
+  * 名称: lcd_fill_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, int8_t r)
+  * 传入: (x_min,y_min)起点 (x_max,y_max)终点 r:半径
+  * 功能: 填充倒圆角矩形
+----------------------------------------------------------------*/
+void lcd_fill_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, int8_t r);
+
+/*--------------------------------------------------------------
+  * 名称: lcd_draw_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, uint16_t r);
+  * 传入: (x_min,y_min)起点 (x_max,y_max)终点
+  * 功能: 绘制镂空倒圆角矩形
+----------------------------------------------------------------*/
+void lcd_draw_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, uint16_t r);
+
+/*--------------------------------------------------------------
+  * 名称: lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[])
   * 传入1: x0 坐标左上角横坐标点
-	* 传入2: y0 坐标左上角纵坐标点
+  * 传入2: y0 坐标左上角纵坐标点
   * 传入3: sizex 点阵图形x宽度
   * 传入4: sizey 点阵图形y高度
   * 传入5: BMP[] 点阵图形数组地址
   * 功能: 将点阵图形摆放到任意坐标点上
   * 说明: 坐标点支持负数
 ----------------------------------------------------------------*/
-void Lcd_Draw_Bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[]);
+void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[]);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Fill_RBox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, int8_t r)
-  * 传入: (x_min,y_min)起点 (x_max,y_max)终点 r:半径
-  * 功能: 填充倒圆角矩形
-----------------------------------------------------------------*/
-void Lcd_Fill_RBox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, int8_t r);
-
-/*--------------------------------------------------------------
-  * 名称: Lcd_Draw_RBox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, uint16_t r);
-  * 传入: (x_min,y_min)起点 (x_max,y_max)终点
-  * 功能: 绘制镂空倒圆角矩形
-----------------------------------------------------------------*/
-void Lcd_Draw_RBox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, uint16_t r);
-
-/*--------------------------------------------------------------
-  * 名称: Lcd_Draw_Ascii(int16_t x,int16_t y,char chr)
+  * 名称: lcd_draw_ascii(int16_t x,int16_t y,char chr)
   * 传入: (x,y)左上角坐标 char:字符
   * 功能: 绘制一个Ascii字符
 ----------------------------------------------------------------*/
-void Lcd_Draw_Ascii(int16_t x,int16_t y,char chr);
+void lcd_draw_ascii(int16_t x,int16_t y,char chr);
 
 /*--------------------------------------------------------------
-  * 名称: void Lcd_Draw_Unicode(int16_t x,int16_t y,unicode_t unicode_id)
+  * 名称: void lcd_draw_unicode(int16_t x,int16_t y,unicode_t unicode_id)
   * 传入: (x,y)左上角坐标 unicode_id
   * 功能: 根据输入的unicode_id寻找对应的"裁剪字库"绘制到屏幕坐标上
 ----------------------------------------------------------------*/
-void Lcd_Draw_Unicode(int16_t x,int16_t y,unicode_t unicode_id);
+void lcd_draw_unicode(int16_t x,int16_t y,unicode_t unicode_id);
 
 /*--------------------------------------------------------------
-  * 名称: void Lcd_Draw_int32(int16_t x,int16_t y,int16_t num)//写数字,自动长度,32位带符号
+  * 名称: void lcd_draw_int32(int16_t x,int16_t y,int32_t num)//写数字,自动长度,32位带符号
   * 传入: (x,y)左上角坐标 num带符号16位数字
   * 功能: 根据输入的num数字用对应的"ASCII字库"绘制到屏幕对应坐标上
 ----------------------------------------------------------------*/
-void Lcd_Draw_int32(int16_t x,int16_t y,int16_t num);
+void lcd_draw_int32(int16_t x,int16_t y,int32_t num);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_UTF8_String(int16_t x,int16_t y,char *p)
+  * 名称: lcd_draw_utf8_string(int16_t x,int16_t y,char *p)
   * 传入: (x,y)左上角坐标 *p字符串指针
   * 功能: 在指定坐标上按照系统设定字体格式绘制字符串
 ----------------------------------------------------------------*/
-void Lcd_Draw_UTF8_String(int16_t x,int16_t y,char *p);
+void lcd_draw_utf8_string(int16_t x,int16_t y,char *p);
 
 /*--------------------------------------------------------------
-  * 名称: uint16_t Lcd_Get_UTF8_XLen(char *p)
+  * 名称: uint16_t lcd_get_utf8_string_xlen(char *p)
   * 传入: *p字符串指针
   * 功能: 返回字符串在系统字体上x方向的总像素长度
 ----------------------------------------------------------------*/
-uint16_t Lcd_Get_UTF8_XLen(char *p);
+uint16_t lcd_get_utf8_string_xlen(char *p);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Get_UTF8_YLine(int16_t x,int16_t y,char *p)
+  * 名称: lcd_get_utf8_yline(int16_t x,int16_t y,char *p)
   * 传入: *p字符串指针
   * 功能: 返回UTF8字符串换行的次数
 ----------------------------------------------------------------*/
-uint16_t Lcd_Get_UTF8_YLine(char *p);
+uint16_t lcd_get_utf8_yline(char *p);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Clear_GRAM(void)
-	* 功能: 清显存,全部清为0x00
+  * 名称: lcd_clear_gram(void)
+  * 功能: 清显存,全部清为0x00
 ----------------------------------------------------------------*/
-void Lcd_Clear_GRAM(void);
+void lcd_clear_gram(void);
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Fill_GRAM(uint8_t n)
-	* 功能: 显存全部刷成"笔刷n"(lcd_driver.colour[n])的颜色
+  * 名称: lcd_fill_gram(uint8_t n)
+  * 功能: 显存全部刷成"笔刷n"(lcd_driver.colour[n])的颜色
 ----------------------------------------------------------------*/
-void Lcd_Fill_GRAM(uint8_t n);
+void lcd_fill_gram(uint8_t n);
 
 /*--------------------------------------------------------------
   * 名称: lcd_driver_Init()
@@ -310,12 +320,20 @@ void Lcd_Fill_GRAM(uint8_t n);
 ----------------------------------------------------------------*/
 void lcd_driver_Init(void);
 
-
+#if (FLASH_PORT != _F_NO_PORT)
+/*--------------------------------------------------------------
+  * 名称: flash_draw_img(uint16_t x, uint16_t y, uint32_t flash_addr) 
+  * 传入1: x输出坐标
+  * 传入2: y输出坐标
+  * 传入3: flash_addr带头文件的图片flash地址
+  * 功能: 从FLASH读取"带文件头"的任意格式图片投放到屏幕坐标(x,y)上
+  * 说明: 该函数默认使用weak类型 方便修改成更高执行效率的函数 
+----------------------------------------------------------------*/
+void flash_draw_img(uint16_t x, uint16_t y, uint32_t flash_addr);
+#endif
 
 //---------驱动结构体---------
 extern lcd_driver_t lcd_driver;
-
-
 
 #ifdef __cplusplus
 }

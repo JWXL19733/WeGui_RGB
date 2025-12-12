@@ -5,14 +5,12 @@
 
 
 #include "main.h"
-#include "user_wegui_menu.h"
+#include "wegui_menu_demo.h"
 #include "lcd_wegui_tip.h"
 #include "pc_lcd_port.h"
 
 uint32_t sys1ms_stick;
-extern uint8_t adc_en;
-extern uint32_t apptimer_ms;
-extern uint16_t ResADC;
+
 
 Uint32 sdl_1ms_stick(Uint32 interval, void *param);
 
@@ -28,7 +26,7 @@ void startup_init()
 //1ms中断函数
 Uint32 sdl_1ms_stick(Uint32 interval, void *param)
 {
-    Wegui_1ms_stick();
+    wegui_1ms_stick();
     if(sys1ms_stick < 65535)
     {
         sys1ms_stick++;
@@ -60,23 +58,21 @@ int main( int argc, char * argv[])
 	while (1)
 	{
 		//------------1.多级菜单DEMO-------------
-		Wegui_loop_func();//Wegui循环驱动
+		wegui_loop_func();//Wegui循环驱动
 
 		//--------------主循环-----------------
 		if(sys1ms_stick)//1ms动作
 		{
-			//可做其他功能,例如计时
-			apptimer_ms+=sys1ms_stick;
-			//模拟ADC
-			if(adc_en)
+		    if(demo_bool)
             {
-                ResADC++;
-                m_wDemo_wMessage_ADC_func();//菜单实时更新ADC值
+                demo_value++;
+                if(demo_value > 4095)
+                {
+                    demo_value=0;
+                }
             }
-			sys1ms_stick=0;;
+			sys1ms_stick=0;
 		}
-
-
 		//------------仿真退出窗口用---------------
 		if(sdl_quit!=0){break;}
 	}

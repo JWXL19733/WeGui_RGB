@@ -1,13 +1,22 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 #include "lcd_driver_config.h"
 
 #if (LCD_IC == _SSD1315)
 #include "ssd1315.h"
-
-
 
 /*--------------------------------------------------------------
   * 名称: SSD1315_Set_Address_x(unsigned char x)
@@ -51,7 +60,6 @@ void SSD1315_Set_Address_x_ypage(unsigned char x,unsigned char page)
 	LCD_Send_nCmd(i,3);
 }
 
-
 /*--------------------------------------------------------------
   * 名称: SSD1315_Clear()
   * 传入: 无
@@ -74,42 +82,45 @@ void SSD1315_Clear()
 	}
 }
 
-
-/*
-void SSD1315_Init(void)
-{
-	LCD_Send_1Cmd(0xAE);//--turn off oled panel
-	LCD_Send_1Cmd(0x00);//---set low column address
-	LCD_Send_1Cmd(0x10);//---set high column address
-	LCD_Send_1Cmd(0x40);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
-	LCD_Send_1Cmd(0x81);//--set contrast control register
-	LCD_Send_1Cmd(0xCF);// Set SEG Output Current Brightness
-	LCD_Send_1Cmd(0xA1);//--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
-	LCD_Send_1Cmd(0xC8);//Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
-	LCD_Send_1Cmd(0xA6);//--set normal display
-	LCD_Send_1Cmd(0xA8);//--set multiplex ratio(1 to 64)
-	LCD_Send_1Cmd(0x3f);//--1/64 duty
-	LCD_Send_1Cmd(0xD3);//-set display offset	Shift Mapping RAM Counter (0x00~0x3F)
-	LCD_Send_1Cmd(0x00);//-not offset
-	LCD_Send_1Cmd(0xd5);//--set display clock divide ratio/oscillator frequency
-	LCD_Send_1Cmd(0x80);//--set divide ratio, Set Clock as 100 Frames/Sec
-	LCD_Send_1Cmd(0xD9);//--set pre-charge period
-	LCD_Send_1Cmd(0xF1);//Set Pre-Charge as 15 Clocks & Discharge as 1 Clock
-	LCD_Send_1Cmd(0xDA);//--set com pins hardware configuration
-	LCD_Send_1Cmd(0x12);
-	LCD_Send_1Cmd(0xDB);//--set vcomh
-	LCD_Send_1Cmd(0x40);//Set VCOM Deselect Level
-	LCD_Send_1Cmd(0x20);//-Set Page Addressing Mode (0x00/0x01/0x02)
-	LCD_Send_1Cmd(0x02);//
-	LCD_Send_1Cmd(0x8D);//--set Charge Pump enable/disable
-	LCD_Send_1Cmd(0x14);//--set(0x10) disable
-	LCD_Send_1Cmd(0xA4);// Disable Entire Display On (0xa4/0xa5)
-	LCD_Send_1Cmd(0xA6);// Disable Inverse Display On (0xa6/a7) 
-	SSD1315_Clear();
-	LCD_Send_1Cmd(0xAF);
-}
-*/
-
+/*--------------------------------------------------------------
+  * 名称: SSD1315_Init()
+  * 传入: 无
+  * 返回: 无
+  * 功能: 初始化屏幕
+  * 说明: 推荐更改为屏幕资料中的初始化指令
+----------------------------------------------------------------*/
+//void SSD1315_Init(void)
+//{
+//	LCD_Send_1Cmd(0xAE);//--turn off oled panel
+//	LCD_Send_1Cmd(0x00);//---set low column address
+//	LCD_Send_1Cmd(0x10);//---set high column address
+//	LCD_Send_1Cmd(0x40);//--set start line address  Set Mapping RAM Display Start Line (0x00~0x3F)
+//	LCD_Send_1Cmd(0x81);//--set contrast control register
+//	LCD_Send_1Cmd(0xCF);// Set SEG Output Current Brightness
+//	LCD_Send_1Cmd(0xA1);//--Set SEG/Column Mapping     0xa0左右反置 0xa1正常
+//	LCD_Send_1Cmd(0xC8);//Set COM/Row Scan Direction   0xc0上下反置 0xc8正常
+//	LCD_Send_1Cmd(0xA6);//--set normal display
+//	LCD_Send_1Cmd(0xA8);//--set multiplex ratio(1 to 64)
+//	LCD_Send_1Cmd(0x3f);//--1/64 duty
+//	LCD_Send_1Cmd(0xD3);//-set display offset	Shift Mapping RAM Counter (0x00~0x3F)
+//	LCD_Send_1Cmd(0x00);//-not offset
+//	LCD_Send_1Cmd(0xd5);//--set display clock divide ratio/oscillator frequency
+//	LCD_Send_1Cmd(0x80);//--set divide ratio, Set Clock as 100 Frames/Sec
+//	LCD_Send_1Cmd(0xD9);//--set pre-charge period
+//	LCD_Send_1Cmd(0xF1);//Set Pre-Charge as 15 Clocks & Discharge as 1 Clock
+//	LCD_Send_1Cmd(0xDA);//--set com pins hardware configuration
+//	LCD_Send_1Cmd(0x12);
+//	LCD_Send_1Cmd(0xDB);//--set vcomh
+//	LCD_Send_1Cmd(0x40);//Set VCOM Deselect Level
+//	LCD_Send_1Cmd(0x20);//-Set Page Addressing Mode (0x00/0x01/0x02)
+//	LCD_Send_1Cmd(0x02);//
+//	LCD_Send_1Cmd(0x8D);//--set Charge Pump enable/disable
+//	LCD_Send_1Cmd(0x14);//--set(0x10) disable
+//	LCD_Send_1Cmd(0xA4);// Disable Entire Display On (0xa4/0xa5)
+//	LCD_Send_1Cmd(0xA6);// Disable Inverse Display On (0xa6/a7) 
+//	SSD1315_Clear();
+//	LCD_Send_1Cmd(0xAF);
+//}
 
 void SSD1315_Init(void)
 {

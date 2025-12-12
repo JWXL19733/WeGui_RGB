@@ -16,16 +16,16 @@
 #define STR_MCU_CLASS            "Intel"
 #define STR_MCU_MODEL            "Core(TM) i9-11900KB"
 #define STR_WEGUI_VERSION_CLASS  "V0.5"
-#define STR_WEGUI_VERSION        "WeGui RGB\n V0.5.3"
+#define STR_WEGUI_VERSION        "WeGui RGB\n V0.5.6"
 
 
-//--------------------------1.选择一个菜单--------------------
-
-#define _MENU_DEMO    (0) //选择演示菜单
-#define _MENU_PROJECT (1) //项目自定义菜单
-#define WEGUI_MENU_SELECT _MENU_PROJECT
-
-#define MENU_DEEP 3//设置菜单的最大层数(用于分配变量,储存光标历史位置,取小了返回菜单时可能不会回到上一次的位置)
+//--------------------------1.菜单设置--------------------
+#define MENU_CONST_DIS              (1) //菜单结构是否允许修改 0不可修改(省RAM) 1可修改
+#define MENU_DEEP                   (3) //设置菜单的最大层数(用于分配变量,储存光标历史位置,取小了返回菜单时可能不会回到上一次的位置)
+#define MLIST_MENU_CURSOR_UP_LOOP   (0) //mlist菜单光标往上循环 0关闭循环 1使能循环
+#define MLIST_MENU_CURSOR_DOWN_LOOP (0) //mlist菜单光标往下循环 0关闭循环 1使能循环
+#define MLIST_MENU_YSCAPE           (mList_par.list_font_high/2) //自定义mlist菜单上下间隙 (0)紧靠 (mList_par.list_font_high/2)//根据utf8字体大小自动间隙
+#define STARTUP_DEBUG_WINDOWS_EN    (1) //开机右下角是否有调试窗口 0关闭 1打开
 
 //--------------------------2.选择一个GUI菜单交互方式-----------------------------
 #define _DEMO_NONE_PORT     (0) //无交互按键
@@ -259,16 +259,15 @@
 
 
 
-
-
-
 #if (WEGUI_INTERFACE_PORT ==_DEMO_4KEY_PORT)    //4键交互模式
-	#define Wegui_Interface_port_Init() do{}while(0)
-	#define Wegui_Interface_stick(x) do{pc_4key_interface();}while(0)
+	#define wegui_itface_port_init()    do{}while(0)
+	#define wegui_itface_port_ms_irq()  do{}while(0)
+	#define wegui_itface_port_task(x)   do{pc_4key_interface();}while(0)
 #else
 	#warning("no interface.c")
-	#define Wegui_Interface_port_Init() do{}while(0)
-	#define Wegui_Interface_stick(x) do{pc_none_interface();}while(0)
+	#define wegui_itface_port_init() do{}while(0)
+    #define wegui_itface_port_ms_irq()    do{}while(0)
+	#define wegui_itface_port_task(x) do{pc_none_interface();}while(0)
 #endif
 
 

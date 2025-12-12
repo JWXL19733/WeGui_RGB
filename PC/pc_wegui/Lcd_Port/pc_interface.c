@@ -7,7 +7,7 @@
 #include "lcd_wegui_config.h"
 #include "pc_interface.h"
 #include "pc_lcd_port.h"
-#include "user_wegui_menu.h"
+#include "wegui_menu_demo.h"
 #include "lcd_wegui_menu_mlist.h"
 #include "lcd_wegui_tip.h"
 
@@ -30,29 +30,29 @@ void pc_4key_interface()//按键鼠标
                 //-----------------------------------------上----------------------------------------
                 if ((state[SDL_SCANCODE_UP])||(state[SDL_SCANCODE_W]))
                 {
-                    switch (Wegui.tip.state)
+                    switch (wegui.tip.state)
                     {
                         case FREE:break;//弹窗已退出
                         case EXITING:break;//弹窗已退出
                         case ENTERING:
                         case DISPLAYING:
                         {
-                            switch (Wegui.tip.type)
+                            switch (wegui.tip.type)
                             {
-                                case message:Wegui_Tip_Quit();break;
-                                case slider:Wegui_Tip_Save_andQuit();break;
+                                case message:wegui_tip_quit();break;
+                                case slider:wegui_tip_save_and_quit();break;
                                 default:break;
                             }
                             return;//优先处理弹窗,不处理菜单
                         }
                     }
-                    switch(Wegui.menu->menuType)
+                    switch(wegui.menu->menuType)
                     {
-                        case mList:Wegui_mlist_cursor_Prev();break;
+                        case mList:wegui_mlist_cursor_Prev();break;
                         case mPorgram:  //自定义功能APP
-                            //if((Wegui.menu == &m_App_UartScreen) || (Wegui.menu == &m_App_ThemeClock))
+                            //if((wegui.menu == &m_App_UartScreen) || (wegui.menu == &m_App_ThemeClock))
                             {
-                                Wegui_mlist_Back_menu();;
+                                wegui_mlist_Back_menu();;
                             }break;
                         default:break;
                     }
@@ -60,28 +60,28 @@ void pc_4key_interface()//按键鼠标
                 //-----------------------------------------下----------------------------------------
                 if ((state[SDL_SCANCODE_DOWN])||(state[SDL_SCANCODE_S]))
                 {
-                    switch (Wegui.tip.state)
+                    switch (wegui.tip.state)
                     {
                         case FREE:break;//弹窗已退出
                         case EXITING:break;//弹窗已退出
                         case ENTERING:
                         case DISPLAYING:
                         {
-                            switch (Wegui.tip.type)
+                            switch (wegui.tip.type)
                             {
-                                case message:Wegui_Tip_Quit();break;
+                                case message:wegui_tip_quit();break;
                                 default:break;
                             }
                             return;//优先处理弹窗,不处理菜单
                         }
                     }
-                    switch(Wegui.menu->menuType)
+                    switch(wegui.menu->menuType)
                     {
-                        case mList:Wegui_mlist_cursor_Next();break;
+                        case mList:wegui_mlist_cursor_Next();break;
                         case mPorgram:  //自定义功能APP
-                            //if((Wegui.menu == &m_App_UartScreen) || (Wegui.menu == &m_App_ThemeClock))
+                            //if((wegui.menu == &m_App_UartScreen) || (wegui.menu == &m_App_ThemeClock))
                             {
-                                Wegui_mlist_Back_menu();;
+                                wegui_mlist_Back_menu();;
                             }break;
                         default:break;
                     }
@@ -89,29 +89,29 @@ void pc_4key_interface()//按键鼠标
                 //-----------------------------------------左----------------------------------------
                 if ((state[SDL_SCANCODE_LEFT])||(state[SDL_SCANCODE_A]))
                 {
-                    switch (Wegui.tip.state)
+                    switch (wegui.tip.state)
                     {
                         case FREE:break;//弹窗已退出
                         case EXITING:break;//弹窗已退出
                         case ENTERING:
                         case DISPLAYING:
                         {
-                            switch (Wegui.tip.type)
+                            switch (wegui.tip.type)
                             {
-                                case message:Wegui_Tip_Quit();break;
-                                case slider:Wegui_Tip_Value_Dec();break;
+                                case message:wegui_tip_quit();break;
+                                case slider:wegui_tip_value_dec();break;
                                 default:break;
                             }
                             return;//优先处理弹窗,不处理菜单
                         }
                     }
-                    switch(Wegui.menu->menuType)
+                    switch(wegui.menu->menuType)
                     {
-                        case mList:Wegui_mlist_Back_menu();break;
+                        case mList:wegui_mlist_Back_menu();break;
                         case mPorgram:  //自定义功能APP
 
                             {
-                                Wegui_mlist_Back_menu();
+                                wegui_mlist_Back_menu();
                             }break;
                         default:break;
                     }
@@ -119,29 +119,29 @@ void pc_4key_interface()//按键鼠标
                 //-----------------------------------------右----------------------------------------
                 if ((state[SDL_SCANCODE_RIGHT])||(state[SDL_SCANCODE_D]))
                 {
-                    switch (Wegui.tip.state)
+                    switch (wegui.tip.state)
                     {
                         case FREE:break;//弹窗已退出
                         case EXITING:break;//弹窗已退出
                         case ENTERING:
                         case DISPLAYING:
                         {
-                            switch (Wegui.tip.type)
+                            switch (wegui.tip.type)
                             {
-                                case message:Wegui_Tip_Quit();break;
-                                case slider:Wegui_Tip_Value_Add();break;
+                                case message:wegui_tip_quit();break;
+                                case slider:wegui_tip_value_add();break;
                                 default:break;
                             }
                             return;//优先处理弹窗,不处理菜单
                         }
                     }
-                    switch(Wegui.menu->menuType)
+                    switch(wegui.menu->menuType)
                     {
-                        case mList:Wegui_mlist_Enter_cursor();break;
+                        case mList:wegui_mlist_Enter_cursor();break;
                         case mPorgram:  //自定义功能APP
 
                             {
-                                Wegui_mlist_Back_menu();
+                                wegui_mlist_Back_menu();
                             }break;
                         default:break;
                     }

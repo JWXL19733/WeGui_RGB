@@ -1,29 +1,32 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 #include "lcd_driver_config.h"
 
 #if (LCD_IC == _ST7796S)
 #include "st7796s.h"
 
-
-
 void ST7796S_Set_Addr(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
 {
-
-	//发送数据
 	uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 	uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
-	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
 	const uint8_t k[]={0x2c};
+	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
 	LCD_Send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
-
-	
 }
-
-
 
 void ST7796S_Soft_Reset()
 {
@@ -112,27 +115,22 @@ void ST7796S_Set_RGB888_Mode()
 void ST7796S_Clear()//清除IC显示缓存
 {
 	uint32_t i;
-	
-//	ST7796S_Set_Addr(0,0,320-1,480-1);
-//	i=0;
-//	while(i++<320*480)
-//	{
-//		//LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
-//		LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
-//	}
-	
 	ST7796S_Set_Addr(0,0,480-1,480-1);
 	i=0;
 	while(i++<480*480)
 	{
-		//LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
-		LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
+		LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
+		//LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
 	}
 	
 }
-
-
-
+/*--------------------------------------------------------------
+  * 名称: ST7796S_Init()
+  * 传入: 无
+  * 返回: 无
+  * 功能: 初始化屏幕
+  * 说明: 推荐更改为屏幕资料中的初始化指令
+----------------------------------------------------------------*/
 //自定义初始化示例
 //void ST7796S_Init()
 //{
@@ -259,14 +257,12 @@ void ST7796S_Clear()//清除IC显示缓存
 //	LCD_Send_1Cmd(0x29);//Display on	 
 //}
 
-
-
 void ST7796S_Init()    
 {
-	LCD_RES_Clr();
-	LCD_delay_ms(100);
-	LCD_RES_Set();
-	LCD_delay_ms(100);
+//	LCD_RES_Clr();
+//	LCD_delay_ms(100);
+//	LCD_RES_Set();
+//	LCD_delay_ms(100);
 	
 	//ST7796S_Soft_Reset();
 	ST7796S_Sleep_Out();
@@ -288,7 +284,7 @@ void ST7796S_Init()
 	{
 		//MADCTL (36h): Memory Data Access Control
 		//设置显示方向
-		#define MADCTL_MY 0//[0:1]Row Address Order
+		#define MADCTL_MY 1//[0:1]Row Address Order
 		#define MADCTL_MX 1//[0:1]Column Address Order
 		#define MADCTL_MV 0//[0:1]Row/Column Exchange
 		#define MADCTL_ML 0//[0:1]Vertical Refresh Order 0="LCD vertical refresh Top to Bottom" 1="LCD vertical refresh Bottom to Top"

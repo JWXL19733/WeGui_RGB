@@ -1,11 +1,22 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 #ifndef __SH1106_H__
 #define __SH1106_H__
 
+#include "stdint.h"
 
 #define SH1106_Set_Column_Address(x) do{LCD_Send_1Cmd(x&0x0f);LCD_Send_1Cmd(0x10|(x>>4));}while(0) //0x00~0x07 0x20~0x27 起始位置[0:255]默认0
 

@@ -1,7 +1,0 @@
-.\output\exe\system_cw32l012.o: ..\..\..\..\Libraries\src\system_cw32l012.c
-.\output\exe\system_cw32l012.o: ..\..\..\..\Libraries\inc\system_cw32l012.h
-.\output\exe\system_cw32l012.o: ..\..\..\..\Libraries\inc\cw32l012.h
-.\output\exe\system_cw32l012.o: D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\core_cm0plus.h
-.\output\exe\system_cw32l012.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-.\output\exe\system_cw32l012.o: D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_version.h
-.\output\exe\system_cw32l012.o: D:\Users\Administrator\AppData\Local\Arm\Packs\ARM\CMSIS\6.2.0\CMSIS\Core\Include\cmsis_compiler.h

@@ -39,7 +39,7 @@
 /** @addtogroup STM32F10x_System_Includes
   * @{
   */
-
+#include "stdint.h"
 /**
   * @}
   */

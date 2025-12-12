@@ -22,7 +22,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-#include "lcd_Wegui_driver.h"
+#include "lcd_wegui_driver.h"
 
 uint8_t sys1ms_stick;
 volatile uint32_t sys1ms_delay;
@@ -145,7 +145,7 @@ void SysTick_Handler(void)
 	{
 		sys1ms_delay--;
 	}
-	Wegui_1ms_stick();
+	wegui_1ms_stick();
 }
 
 /******************************************************************************/

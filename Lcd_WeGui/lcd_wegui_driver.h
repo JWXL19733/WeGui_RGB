@@ -1,18 +1,28 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 #ifndef _LCD_WEGUI_DRIVER_H_
 #define _LCD_WEGUI_DRIVER_H_
 
-#include "lcd_driver.h"
-#include "lcd_res.h"
 #include "lcd_wegui_config.h"
 
+#ifndef MENU_DEEP
+	#define MENU_DEEP (5)//设置菜单的最大层数(用于分配变量,储存光标历史位置,取小了返回菜单时可能不会回到上一次的位置)
+#endif
 
 #define fps_2_ms(x) ((uint16_t)1000/x) //输入FPS返回毫秒,不能是0
-
 
 //-----非线性动画1-----
 /*--------------------------------------------------------------
@@ -48,9 +58,6 @@ do                                                   \
 }while(0)
 
 
-
-
-
 //--------------------语言--------------------
 //-------语言类型--------
 typedef enum language
@@ -58,14 +65,14 @@ typedef enum language
 	en_US=0,//英语
 	zh_CN,//简体中文
 	zh_TC,//繁体中文
-
 }langage_t;
+
 //-----多语言字符串------
 typedef struct language_string_t
 {
-	/*const*/ char * str_en_US;
-	/*const*/ char * str_zh_CN;
-	/*const*/ char * str_zh_TC;
+	/*const*/ char * str_en_US;//ENGLISH
+	/*const*/ char * str_zh_CN;//简体
+	/*const*/ char * str_zh_TC;//繁体
 }Wegui_string_t;
 //--------------------设置--------------------
 typedef struct Wegui_t_setting
@@ -75,9 +82,7 @@ typedef struct Wegui_t_setting
 	int16_t ui_fps_ms;    //ui绘制时间(建议与刷屏同步)
 	int16_t screen_fps_ms;//屏幕刷新时间(建议与UI同步)
 	uint8_t debug_windows_en;//调试窗口使能
-
-	//const fonts_t *fonts_ASCII;   //ASCII字体
-	//const fonts_t *fonts_UTF8_cut;//UTF8裁剪字体
+	int16_t voice_volume;//音量
 
 }setting_t;
 //-----------------系统信息------------------
@@ -115,7 +120,7 @@ typedef struct mPorgram_Propertys
 	void (*begin_fun)();//菜单进入 执行一次
 	void (*loop_fun)(); //菜单功能 持续执行
 	void (*quit_fun)(); //菜单退出 执行一次
-	void (*refresh_fun)(uint8_t ui_farmes,uint16_t time_count); //刷新屏幕时执行,放绘图函数
+	uint8_t (*refresh_fun)(uint8_t ui_farmes,uint16_t time_count); //刷新屏幕时执行,放绘图函数 //返回0不刷屏 返回其他值正常刷屏
 	//1.ui_farmes计时帧,动画用
 	//假设设定了屏幕刷新率为60帧(16ms),
 	//等于1时表示走了16ms,等于2时表示走了32ms,可用于动画切帧,
@@ -136,7 +141,8 @@ typedef struct wSliderTip_Propertys
 	void (*Push_tip_func)();    //控件进入 执行一次
 	void (*Change_Value_func)();//值被修改 执行一次
 	void (*End_tip_func)();     //控件退出 执行一次
-	int16_t *pstr;              //滑条控制的数据指针
+	int16_t *pvalue;              //滑条控制的数据指针
+	Wegui_string_t tip_string;    //提示框字符串
 	int16_t min;  //整数最小值
 	int16_t max;  //整数最大值
 
@@ -145,7 +151,7 @@ typedef struct wSliderTip_Propertys
 typedef struct wMessage_Propertys
 {
 	void (*Press_func)();              //按下执行一次
-	char* Value_string;             //末尾显示的值 0x00不显示
+	char* Value_string;                //末尾显示的值 0x00不显示
 	Wegui_string_t Tip_string;         //提示框字符串
 }wMessage_Par_t;
 
@@ -161,17 +167,31 @@ typedef union menuType_Propertys
 
 
 //-------菜单结构体-------
-typedef const struct menu_t
-{
-	const struct menu_t * fatherMenu;//父菜单
-	const struct menu_t * subMenu;//(首个)子菜单
-	const struct menu_t * nextMenu;//同级下一个菜单
-	const Wegui_string_t titel;//多语言标题
-	const Wegui_string_t discribe;//多语言描述
-	const menuType_t menuType;//菜单类型
-	const menuType_Par_t menuPar;//菜单属性
-	//menu_history_t* parHistory;//减少占用, 已移至单独的功能函数
-}menu_t;
+#if (MENU_CONST_DIS)
+	typedef struct menu_t
+	{
+	
+			struct menu_t * fatherMenu;//父菜单
+			struct menu_t * subMenu;//(首个)子菜单
+			struct menu_t * nextMenu;//同级下一个菜单
+			Wegui_string_t titel;//多语言标题
+			Wegui_string_t discribe;//多语言描述
+			menuType_t menuType;//菜单类型
+			menuType_Par_t menuPar;//菜单属性
+	}menu_t;
+#else
+	typedef const struct menu_t
+	{
+		
+			const struct menu_t * fatherMenu;//父菜单
+			const struct menu_t * subMenu;//(首个)子菜单
+			const struct menu_t * nextMenu;//同级下一个菜单
+			const Wegui_string_t titel;//多语言标题
+			const Wegui_string_t discribe;//多语言描述
+			const menuType_t menuType;//菜单类型
+			const menuType_Par_t menuPar;//菜单属性
+	}menu_t;
+#endif
 
 //------------------弹窗结构体------------------
 
@@ -216,18 +236,6 @@ typedef struct Wegui_tip
 	void (*Finish_Value)();
 
 }Wegui_tip_t;
-
-
-//------------------主结构体------------------
-typedef struct Wegui_t
-{
-	menu_t *menu;//菜单
-	Wegui_tip_t tip;//弹窗
-	setting_t setting;
-	sysInfo_t sysInfo;
-}Wegui_t;
-
-
 //#include "user_wegui_menu.h"
 //-------菜单历史记录结构体-------
 typedef struct menu_history
@@ -245,6 +253,27 @@ typedef struct
 extern HistoryRing_t HistoryRing;
 
 
+//------------------主结构体------------------
+typedef struct wegui_t
+{
+	menu_t *menu;//菜单
+	HistoryRing_t menuHistoryRing;//菜单历史记录环形缓冲区 记录光标位置和菜单位置
+	Wegui_tip_t tip;//弹窗
+	
+	setting_t setting;
+	sysInfo_t sysInfo;
+	
+	uint16_t ms_stick;//运行时间基准
+	#if (LCD_TYPE == LCD_RGB565)
+	uint8_t bl_pwmd;//模拟PWM背光占空比计数值
+	#endif
+}wegui_t;
+
+#include "lcd_driver.h"
+#include "lcd_res.h"
+#include "lcd_wegui_menu_mlist.h"
+#include "lcd_wegui_tip.h"
+#include "wegui_menu_demo.h"
 
 /*--------------------------------------------------------------
   * 名称: *my_itoa(int16_t num,uint8_t *str,uint8_t radix)
@@ -264,12 +293,12 @@ char *my_itoa(int16_t num,char *str,uint8_t radix);
 uint8_t Get_submenu_sum(menu_t* m);//获取菜单中子菜单的总数
 
 /*--------------------------------------------------------------
-  * 名称: uint8_t* Wegui_get_string(Wegui_string_t object,langage_t language)
+  * 名称: uint8_t* wegui_get_string(Wegui_string_t object,langage_t language)
   * 传入1: object 语言包
   * 传入2: language 语言
   * 功能: 返回"语言包"里对应的"language语言"字符串指针,
 ----------------------------------------------------------------*/
-char* Wegui_get_string(Wegui_string_t object,langage_t language);
+char* wegui_get_string(Wegui_string_t object,langage_t language);
 
 /*--------------------------------------------------------------
   * 名称: menu_history_t* Pop_menu_historyPar(void)
@@ -289,17 +318,17 @@ menu_history_t* Pop_menu_historyPar(void);
 ----------------------------------------------------------------*/
 void Push_menu_historyPar(menu_history_t i);
 
+/*--------------------------------------------------------------
+  * 名称: wegui_enter_menu(menu_t* p)
+  * 传入: p:菜单结构体
+  * 功能: 进入p菜单
+----------------------------------------------------------------*/
+void wegui_enter_menu(menu_t* p);//进入指定菜单或打开指定控件
 
+void wegui_loop_func(void);//放到主循环
+void wegui_1ms_stick(void);//放到1ms中断
+void lcd_wegui_init(void);//主循环前执行一次
 
-void Wegui_enter_menu(menu_t* p);
-void Wegui_key_interface_stick(uint16_t ms);
-
-void Wegui_loop_func(void);//放到主循环
-void Wegui_1ms_stick(void);//放到1ms中断
-void lcd_wegui_init(void);
-
-
-extern Wegui_t Wegui;
-extern uint16_t Wegui_stick;
+extern wegui_t wegui;
 
 #endif

@@ -1,40 +1,40 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 #include "lcd_driver_config.h"
 #include "lcd_wegui_config.h"
 
 #include "lcd_wegui_driver.h"
-#include "user_wegui_menu.h"
-#include "lcd_wegui_menu_mlist.h"
-#include "lcd_wegui_tip.h"
 
 
-
-HistoryRing_t HistoryRing;//菜单历史记录环形缓冲区 记录光标位置和菜单位置
-uint16_t Wegui_stick=0;
-Wegui_t Wegui=
+wegui_t wegui=
 {
-	#if (defined LCD_USE_RGB565)
+	#if (LCD_TYPE == LCD_RGB565)
 		.setting.brightness=BL_PWM_MAX,//默认彩屏亮度
+		.bl_pwmd = BL_PWM_MAX,
 	#else
 		.setting.brightness=127,//默认点阵屏彩屏亮度
 	#endif
 };
-
-#if (defined LCD_USE_RGB565)
-uint8_t bl_pwmd=BL_PWM_MAX;//模拟PWM背光占空比计数值
-#endif
-
 
 
 /*--------------------------------------------------------------
   * 名称: *my_itoa(int16_t num,uint8_t *str,uint8_t radix)
   * 传入1: num 数字
   * 传入2: *str (空)字符串指针
-	* 传入3: radix 进制数
+  * 传入3: radix 进制数
   * 功能: 数字转字符串,保存到*str里
   * 说明:iota = integer to alphanumeric 把整型数转换成字符串
 ----------------------------------------------------------------*/
@@ -43,7 +43,8 @@ char *my_itoa(int16_t num,char *str,uint8_t radix)
     const char index[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";//索引表
     uint32_t unum;//存放要转换的整数的绝对值,转换的整数可能是负数
     uint32_t i=0,j,k;//i用来指示设置字符串相应位，转换之后i其实就是字符串的长度；转换后顺序是逆序的，有正负的情况，k用来指示调整顺序的开始位置;j用来指示调整顺序时的交换。
-
+		uint8_t temp;//临时变量，交换两个值时用到
+	
     //获取要转换的整数的绝对值
     if(radix==10&&num<0)//要转换成十进制数并且是负数
     {
@@ -65,7 +66,7 @@ char *my_itoa(int16_t num,char *str,uint8_t radix)
     if(str[0]=='-') k=1;//如果是负数，符号不用调整，从符号后面开始调整
     else k=0;//不是负数，全部都要调整
 
-    uint8_t temp;//临时变量，交换两个值时用到
+    
     for(j=k;j<=(i-1)/2;j++)//头尾一一对称交换，i其实就是字符串的长度，索引最大值比长度少1
     {
         temp=str[j];//头部赋值给临时变量
@@ -75,16 +76,15 @@ char *my_itoa(int16_t num,char *str,uint8_t radix)
     return str;//返回转换后的字符串
 }
 
-
 /*--------------------------------------------------------------
-  * 名称: char* Wegui_get_string(Wegui_string_t object,langage_t language)
+  * 名称: char* wegui_get_string(Wegui_string_t object,langage_t language)
   * 传入1: object 语言包
   * 传入2: language 语言
   * 功能: 返回"语言包"里对应的"language语言"字符串指针,
 ----------------------------------------------------------------*/
-char* Wegui_get_string(Wegui_string_t object,langage_t language)
+char* wegui_get_string(Wegui_string_t object,langage_t language)
 {
-	char* i;
+	char* i=0;
 	switch(language)
 	{
 		case zh_CN:i=(char*)object.str_zh_CN;break;
@@ -126,8 +126,6 @@ uint8_t Get_submenu_sum(menu_t* m)//获取菜单中子菜单的总数
 	return num;
 }
 
-
-
 /*--------------------------------------------------------------
   * 名称: void Push_menu_historyPar(menu_history_t i)
   * 传入: menu_history_t i需要储存的数据体
@@ -137,38 +135,39 @@ uint8_t Get_submenu_sum(menu_t* m)//获取菜单中子菜单的总数
 ----------------------------------------------------------------*/
 void Push_menu_historyPar(menu_history_t i)
 {
-	HistoryRing.Tail = (HistoryRing.Tail+1)%MENU_DEEP;//数组下标+1,满了就回到0
-	if(HistoryRing.Lenght < MENU_DEEP)
+	wegui.menuHistoryRing.Tail = (wegui.menuHistoryRing.Tail+1)%MENU_DEEP;//数组下标+1,满了就回到0
+	if(wegui.menuHistoryRing.Lenght < MENU_DEEP)
   {
-    HistoryRing.Lenght++;//储存深度没有满+1
+    wegui.menuHistoryRing.Lenght++;//储存深度没有满+1
   }
 
-  HistoryRing.Buff[HistoryRing.Tail].cursor_id = i.cursor_id;
-	HistoryRing.Buff[HistoryRing.Tail].posi      = i.posi;
+  wegui.menuHistoryRing.Buff[wegui.menuHistoryRing.Tail].cursor_id = i.cursor_id;
+	wegui.menuHistoryRing.Buff[wegui.menuHistoryRing.Tail].posi      = i.posi;
 }
+
 /*--------------------------------------------------------------
   * 名称: menu_history_t* Pop_menu_historyPar(void)
   * 传入: 无
   * 返回: "出栈"读取最新的一个数据
-  * 功能: 往HistoryRing的Buff里顺序回读一个数据的指针
+  * 功能: 往wegui.menuHistoryRing的Buff里顺序回读一个数据的指针
   * 说明: 当Buff空时,返回0x00
 ----------------------------------------------------------------*/
 menu_history_t* Pop_menu_historyPar(void)
 {
 	static menu_history_t i;
-	if(HistoryRing.Lenght > 0)//储存有数据
+	if(wegui.menuHistoryRing.Lenght > 0)//储存有数据
 	{
-		HistoryRing.Lenght--;
-		i.cursor_id = HistoryRing.Buff[HistoryRing.Tail].cursor_id;
-		i.posi      = HistoryRing.Buff[HistoryRing.Tail].posi;
+		wegui.menuHistoryRing.Lenght--;
+		i.cursor_id = wegui.menuHistoryRing.Buff[wegui.menuHistoryRing.Tail].cursor_id;
+		i.posi      = wegui.menuHistoryRing.Buff[wegui.menuHistoryRing.Tail].posi;
 
-		if(HistoryRing.Tail > 0)
+		if(wegui.menuHistoryRing.Tail > 0)
 		{
-			HistoryRing.Tail--;
+			wegui.menuHistoryRing.Tail--;
 		}
 		else
 		{
-			HistoryRing.Tail = MENU_DEEP-1;
+			wegui.menuHistoryRing.Tail = MENU_DEEP-1;
 		}
 		return &i;
 	}
@@ -179,24 +178,24 @@ menu_history_t* Pop_menu_historyPar(void)
 }
 
 /*--------------------------------------------------------------
-  * 名称: Wegui_enter_menu(menu_t* p)
-  * 传入1: p:菜单结构体
+  * 名称: wegui_enter_menu(menu_t* p)
+  * 传入: p:菜单结构体
   * 功能: 进入p菜单
 ----------------------------------------------------------------*/
-void Wegui_enter_menu(menu_t* p)
+void wegui_enter_menu(menu_t* p)
 {
 		switch(p->menuType)
 		{
 			case wSlider:
 			{
-				Wegui_Push_Slider_tip		(8, //Y位置
-																Wegui_get_string(p->titel,Wegui.setting.language), //标题
-																p->menuPar.wSliderTip_Par.pstr, //参数指针
-																p->menuPar.wSliderTip_Par.min ,//最小值
-																p->menuPar.wSliderTip_Par.max,//最大值
-																VALUE_CHANGE_AND_UPDATE,//实时更新值
-																p->menuPar.wSliderTip_Par.Change_Value_func,//改变数值执行的函数的指针
-																p->menuPar.wSliderTip_Par.End_tip_func);//确定数值执行的函数的指针
+				wegui_push_slider_tip		(8, //Y位置
+				                         wegui_get_string(p->menuPar.wSliderTip_Par.tip_string,wegui.setting.language), //提示文字
+				                         p->menuPar.wSliderTip_Par.pvalue, //参数指针
+				                         p->menuPar.wSliderTip_Par.min ,//最小值
+				                         p->menuPar.wSliderTip_Par.max,//最大值
+				                         VALUE_CHANGE_AND_UPDATE,//实时更新值
+				                         p->menuPar.wSliderTip_Par.Change_Value_func,//改变数值执行的函数的指针
+				                         p->menuPar.wSliderTip_Par.End_tip_func);//确定数值执行的函数的指针
 			}break;
 			case mList:
 			{
@@ -204,7 +203,7 @@ void Wegui_enter_menu(menu_t* p)
 
 
 				//保存当前菜单位置
-				switch(Wegui.menu->menuType)
+				switch(wegui.menu->menuType)
 				{
 					case mList:
 					{
@@ -218,20 +217,20 @@ void Wegui_enter_menu(menu_t* p)
 					default:break;
 				}
 
-				if(Wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
-					Wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
+				if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
+					wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
 
-				Wegui.menu = p;//切进新的菜单
-				Wegui_mList_Init();
+				wegui.menu = p;//切进新的菜单
+				wegui_mList_Init();
 
-				if(Wegui.menu->menuPar.mList_Par.begin_fun!=0x00)
-					Wegui.menu->menuPar.mList_Par.begin_fun();//执行函数
+				if(wegui.menu->menuPar.mList_Par.begin_fun!=0x00)
+					wegui.menu->menuPar.mList_Par.begin_fun();//执行函数
 
 			}break;
 			case mPorgram:
 			{
 				//保存当前菜单位置
-				switch(Wegui.menu->menuType)
+				switch(wegui.menu->menuType)
 				{
 					case mList:
 					{
@@ -240,54 +239,58 @@ void Wegui_enter_menu(menu_t* p)
 //						i.cursor_id = mList_par.cursor_id;
 //						i.posi      = mList_par.list_y_offset_target;
 //						Push_menu_historyPar(i);
-						//Wegui.menu->parHistory->cursor_id = mList_par.cursor_id ;//光标历史记录
-						//Wegui.menu->parHistory->posi = mList_par.list_y_offset_target;//位置历史记录
+						//wegui.menu->parHistory->cursor_id = mList_par.cursor_id ;//光标历史记录
+						//wegui.menu->parHistory->posi = mList_par.list_y_offset_target;//位置历史记录
 					}break;
 					default:break;
 				}
-				if(Wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
-				{
-					Wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
-				}
-				Wegui.menu = p;//切进新的菜单
+				if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
+					wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
 
-				if(Wegui.menu->menuPar.mList_Par.begin_fun!=0x00)
-					Wegui.menu->menuPar.mList_Par.begin_fun();//执行函数
+				wegui.menu = p;//切进新的菜单
+
+				if(wegui.menu->menuPar.mList_Par.begin_fun!=0x00)
+					wegui.menu->menuPar.mList_Par.begin_fun();//执行函数
+
+				if(wegui.menu->menuPar.mPorgram_Par.refresh_fun == 0x00)
+				{
+					//--清屏--
+					lcd_clear_gram();
+					while(LCD_Refresh()!=0);
+				}
 			}break;
 			case wMessage:
 			{
+				char* str;
 				if(p->menuPar.wMessage_Par.Press_func != 0x00)
 				{
 					p->menuPar.wMessage_Par.Press_func();
 				}
-				char* str = Wegui_get_string(p->menuPar.wMessage_Par.Tip_string,Wegui.setting.language);
+				str = wegui_get_string(p->menuPar.wMessage_Par.Tip_string,wegui.setting.language);
 				if(str != 0x00)
-				{
-					Wegui_Push_Message_tip(8, str, 3000);//推送提示信息, (推送y位置, 提示内容字符串, 展示时间ms)
-				}
+					wegui_push_message_tip(8, str, 3000);//推送提示信息, (推送y位置, 提示内容字符串, 展示时间ms)
+
 			}break;
 			default:break;
 		}
 }
 
-
 //刷新屏幕帧率
-static void Reflash_fps(uint16_t stick)
+static void reflash_fps(uint16_t stick)
 {
 	static uint16_t display_count = 0;//更新数据计时
 	static uint8_t  sum_count=0;//次数
 	static uint16_t sum=1;//总数
 	display_count += stick;
-	sum += Wegui.sysInfo.fps_time;
+	sum += wegui.sysInfo.fps_time;
 	sum_count++;
 
 	if(display_count > 100)//更新时间ms
 	{
 		//帧率 = 1000/(总时间/次数)
-		Wegui.sysInfo.info_fps = (uint32_t)1000 * sum_count / sum;
-		//Wegui.sysInfo.info_fps = 1000 / (sum / sum_count);
-
-		//if(Wegui.sysInfo.info_fps > 99){Wegui.sysInfo.info_fps = 99;}
+		wegui.sysInfo.info_fps = (uint32_t)1000 * sum_count / sum;
+		//wegui.sysInfo.info_fps = 1000 / (sum / sum_count);
+		//if(wegui.sysInfo.info_fps > 99){wegui.sysInfo.info_fps = 99;}
 		display_count = 0;
 		sum_count = 0;
 		sum = 1;
@@ -296,27 +299,27 @@ static void Reflash_fps(uint16_t stick)
 
 
 //刷新CPU负载百分比
-static void Reflash_CpuLoad(uint16_t stick)
+static void reflash_cpuLoad(uint16_t stick)
 {
 	static uint16_t display_count = 0;
 	static uint8_t  sum_count=0;//次数
 	static uint16_t sum=0;//总数
 	display_count += stick;
-	sum += Wegui.sysInfo.cpu_time;
+	sum += wegui.sysInfo.cpu_time;
 
 	sum_count++;
 	if(display_count > 151)//更新时间ms
 	{
 		//占用cpu_load = 100% / (刷屏占用时间/设置帧率时间)
-		if(Wegui.setting.screen_fps_ms != 0)
+		if(wegui.setting.screen_fps_ms != 0)
 		{
-			Wegui.sysInfo.cpu_load = ((uint16_t)100*sum / sum_count)/Wegui.setting.screen_fps_ms;
+			wegui.sysInfo.cpu_load = ((uint16_t)100*sum / sum_count)/wegui.setting.screen_fps_ms;
 		}
 		else
 		{
-			Wegui.sysInfo.cpu_load=100;
+			wegui.sysInfo.cpu_load=100;
 		}
-		if(Wegui.sysInfo.cpu_load>100){Wegui.sysInfo.cpu_load = 100;}
+		if(wegui.sysInfo.cpu_load>100){wegui.sysInfo.cpu_load = 100;}
 
 		display_count = 0;
 		sum_count = 0;
@@ -326,48 +329,47 @@ static void Reflash_CpuLoad(uint16_t stick)
 
 
 //更新显示系统信息,调试信息,帧率,cpu
-static void Wegui_update_info()
+static void wegui_update_info()
 {
 	//右上角实时显示帧数
 		char str[10];
 		uint8_t y=0;
 
 	//--调整体字---
-	//const fonts_t *i  = lcd_driver.fonts_ASCII;
-	//lcd_driver.fonts_ASCII = &ascii_SongTi_6X12;
+	const fonts_t *i  = lcd_driver.fonts_ASCII;
+	lcd_driver.fonts_ASCII = &fonts_ascii_songti_6X12;
 
 	//---1.边框---
-	Lcd_Set_Driver_Mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BORDER);
-	Lcd_Draw_Box( SCREEN_WIDTH - 1 - ((lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape)* 7-lcd_driver.fonts_ASCII->scape )-1,
+	lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BORDER);
+	lcd_draw_box( SCREEN_WIDTH - 1 - ((lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape)* 7-lcd_driver.fonts_ASCII->scape )-1,
 	                SCREEN_HIGH - 1 - lcd_driver.fonts_ASCII->high * 2-1,
 	                SCREEN_WIDTH - 1,
 	                SCREEN_HIGH - 1);
 
 	//---2.底色---
 	#if (COLOUR_DEBUG_BAR_BORDER != COLOUR_DEBUG_BAR_BG)//判断有无需要调整笔刷
-		Lcd_Set_Driver_Mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BG);
+		lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BG);
 	#endif
-	Lcd_Fill_Box( SCREEN_WIDTH - 1 - ((lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape)* 7-lcd_driver.fonts_ASCII->scape),
+	lcd_fill_box( SCREEN_WIDTH - 1 - ((lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape)* 7-lcd_driver.fonts_ASCII->scape),
 	                SCREEN_HIGH - 1 - lcd_driver.fonts_ASCII->high * 2,
 	                SCREEN_WIDTH - 1,
 	                SCREEN_HIGH - 1);
 
 	//---3.文字---
 	#if (COLOUR_DEBUG_BAR_BORDER != COLOUR_DEBUG_BAR_BG)//判断有无需要调整笔刷
-		Lcd_Set_Driver_Mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BG);
+		lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BG);
 	#endif
-	Lcd_Set_Driver_Mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_TEXT);
+	lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_TEXT);
 	//--------显示主频---------
 
 //		str[0]='F';str[1]='R';str[2]=':';itoa(SystemCoreClock/1000000,&str[3],10);str[6]='M';str[7]='\0';
-//		Lcd_Draw_UTF8_String	( SCREEN_WIDTH - 1 - Lcd_Get_UTF8_XLen(str),//x
+//		lcd_draw_utf8_string	( SCREEN_WIDTH - 1 - lcd_get_utf8_string_xlen(str),//x
 //														y++*lcd_driver.fonts_ASCII->high,//y
 //														str);
 		//--------显示CPU---------
 		str[0]='C';str[1]='P';str[2]='U';str[3]=':';
-		my_itoa(Wegui.sysInfo.cpu_load,&str[4],10);
-		//itoa(Wegui.sysInfo.cpu_time,&str[4],10);
-		Lcd_Draw_UTF8_String(  SCREEN_WIDTH - 1 - Lcd_Get_UTF8_XLen(str),//x
+		my_itoa(wegui.sysInfo.cpu_load,&str[4],10);
+		lcd_draw_utf8_string(  SCREEN_WIDTH - 1 - lcd_get_utf8_string_xlen(str),//x
 														SCREEN_HIGH - 1 - lcd_driver.fonts_ASCII->high - y++*lcd_driver.fonts_ASCII->high,//y
 														str);
 
@@ -375,25 +377,25 @@ static void Wegui_update_info()
 
 	//--------显示PFS---------
 		str[0]='F';str[1]='P';str[2]='S';str[3]=':';
-		my_itoa(Wegui.sysInfo.info_fps,&str[4],10);
-		Lcd_Draw_UTF8_String(  SCREEN_WIDTH - 1 - Lcd_Get_UTF8_XLen(str),//x
+		my_itoa(wegui.sysInfo.info_fps,&str[4],10);
+		lcd_draw_utf8_string(  SCREEN_WIDTH - 1 - lcd_get_utf8_string_xlen(str),//x
 														SCREEN_HIGH - 1 - lcd_driver.fonts_ASCII->high - y++*lcd_driver.fonts_ASCII->high,//y
 														str);
 
 	//--恢复体字---
-	//lcd_driver.fonts_ASCII = i;
+	lcd_driver.fonts_ASCII = i;
 
 }
 
 
 
-void Wegui_loop_func()
+void wegui_loop_func()
 {
 	//两者帧率参数设为一致,获得最佳的视觉和性能体验
 
 	//可变帧率
-	#define UI_DRAW_TIME_MS        Wegui.setting.ui_fps_ms     //ui绘制速度   10ms=100hz 5ms=200hz 4=240hz 3=333hz 2=500hz 1=1000hz
-	#define SCREEN_REFRESH_TIME_MS Wegui.setting.screen_fps_ms //屏幕刷新速度 10ms=100hz 5ms=200hz 4=240hz 3=333hz 2=500hz 1=1000hz
+	#define UI_DRAW_TIME_MS        wegui.setting.ui_fps_ms     //ui绘制速度   10ms=100hz 5ms=200hz 4=240hz 3=333hz 2=500hz 1=1000hz
+	#define SCREEN_REFRESH_TIME_MS wegui.setting.screen_fps_ms //屏幕刷新速度 10ms=100hz 5ms=200hz 4=240hz 3=333hz 2=500hz 1=1000hz
 
 	//固定帧率
 	//#define UI_DRAW_TIME_MS        fps_2_ms(100)  //ui绘制速度   100Hz
@@ -404,11 +406,9 @@ void Wegui_loop_func()
 	static uint8_t ui_farmes;
 	static uint16_t time_count=0;
 	uint8_t fps_farmes;
-	uint16_t stick = Wegui_stick;
-	Wegui_stick = 0;
-
-
-
+	uint8_t refresh = 1;
+	uint16_t stick = wegui.ms_stick;
+	wegui.ms_stick = 0;
 
 	ui_time_count  += stick;
 	time_count += stick;
@@ -432,39 +432,46 @@ void Wegui_loop_func()
 	#else  //就算ui没刷新,屏幕也会重新刷一遍(浪费资源)
 	if((LCD_is_Busy()==0)&&(fps_farmes > 0))
 	{
-		//if(ui_farmes > 0)
 	#endif
 		{
-
 			//------------------屏幕刷新前自定义的操作---------------------
-
 
 			//------------------------开始刷屏--------------------------
 			do
 			{
 				//--------------------绘制对应菜单------------------------
-				switch (Wegui.menu->menuType)
+				switch (wegui.menu->menuType)
 				{
 					case mPorgram:  //自定义功能APP菜单
 					{
-						if(Wegui.menu->menuPar.mPorgram_Par.refresh_fun != 0x00)
+						if(wegui.menu->menuPar.mPorgram_Par.refresh_fun != 0x00)
 						{
-							Wegui.menu->menuPar.mPorgram_Par.refresh_fun(ui_farmes,time_count);
+							refresh = wegui.menu->menuPar.mPorgram_Par.refresh_fun(ui_farmes,time_count);
+						}
+						else
+						{
+							lcd_clear_gram();
+							refresh = 1;
 						}
 						//--------------------绘制弹窗------------------------
-						Wegui_show_tip(ui_farmes,time_count);
+						wegui_show_tip(ui_farmes,time_count);
+						//-------------------绘制调试窗-----------------------
+						if(wegui.setting.debug_windows_en)
+						{
+							wegui_update_info();
+						}
 					}break;
 					case mList:     //列表菜单菜单
 					{
-						Lcd_Clear_GRAM();
+						lcd_clear_gram();
 						//--------------------绘制菜单------------------------
-						Wegui_show_mList(ui_farmes);
+						wegui_show_mList(ui_farmes);
 						//--------------------绘制弹窗------------------------
-						Wegui_show_tip(ui_farmes,time_count);
+						wegui_show_tip(ui_farmes,time_count);
 						//-------------------绘制调试窗-----------------------
-						if(Wegui.setting.debug_windows_en)
+						if(wegui.setting.debug_windows_en)
 						{
-							Wegui_update_info();
+							wegui_update_info();
 						}
 					}break;
 					case wCheckBox: //控件(不会进入该菜单):复选框菜单
@@ -474,6 +481,7 @@ void Wegui_loop_func()
 				}
 				ui_farmes = 0;
 				time_count = 0;
+				if(refresh==0){break;}//0不刷新屏幕
 			}while(LCD_Refresh());
 
 
@@ -481,33 +489,30 @@ void Wegui_loop_func()
 			//---刷新调试窗的信息---
 			{
 				static uint16_t i;
-				Wegui.sysInfo.cpu_time = Wegui_stick ;//更新"刷屏一次cpu占用时间"
-				Reflash_CpuLoad(fps_time_count-i);//更新CPU负载百分比
-				Reflash_fps(fps_time_count);//更新帧率
-				Wegui.sysInfo.fps_time = fps_time_count - i; //更新"两次刷屏间隔时间"
+				wegui.sysInfo.cpu_time = wegui.ms_stick ;//更新"刷屏一次cpu占用时间"
+				reflash_cpuLoad(fps_time_count-i);//更新CPU负载百分比
+				reflash_fps(fps_time_count);//更新帧率
+				wegui.sysInfo.fps_time = fps_time_count - i; //更新"两次刷屏间隔时间"
 				fps_time_count %= SCREEN_REFRESH_TIME_MS;
 				i = fps_time_count;
 			}
 		}
 	}
-
-
-
 	//-------------------------菜单的自定义LOOP任务---------------------------
-	switch (Wegui.menu->menuType)
+	switch (wegui.menu->menuType)
 	{
 			case 	mList:     //列表菜单
 			{
-				if(Wegui.menu->menuPar.mList_Par.loop_fun != 0x00)
+				if(wegui.menu->menuPar.mList_Par.loop_fun != 0x00)
 				{
-					Wegui.menu->menuPar.mList_Par.loop_fun();
+					wegui.menu->menuPar.mList_Par.loop_fun();
 				}
 			}break;
 			case mPorgram:  //自定义功能APP
 			{
-				if(Wegui.menu->menuPar.mPorgram_Par.loop_fun != 0x00)
+				if(wegui.menu->menuPar.mPorgram_Par.loop_fun != 0x00)
 				{
-					Wegui.menu->menuPar.mPorgram_Par.loop_fun();
+					wegui.menu->menuPar.mPorgram_Par.loop_fun();
 				}
 			}break;
 			case wCheckBox: //控件:复选框
@@ -518,104 +523,92 @@ void Wegui_loop_func()
 	//-------------------------菜单的LOOP任务---------------------------
 
 
-	if(stick>0)
+	if(stick>0)//stick含义: 自上次运行到此, 过了stick毫秒
 	{
-		//stick含义: 自上次运行到此, 过了stick毫秒
-		Wegui_Interface_stick(stick);//按键处理 stick传递时间用于计时 (间隔执行减少占用)
+		wegui_itface_port_task(stick);//按键/编码器/蜂鸣器/自定义
 	}
-	Wegui_uart_rx_stick(stick);//串口处理 stick传递时间用于计时 (需要持续判断防止漏码)
-}
 
-void Wegui_Hello_Word()
-{
-
-	#if (LCD_PORT == _SOFT_3SPI)  //软件三线SPI驱动
-	char* string = "Hello WeGui!\nDriver:Soft3SPI";
-	#elif (LCD_PORT == _HARD_3SPI)  //硬件三线SPI驱动
-	char* string = "Hello WeGui!\nDriver:Hard3SPI";
-	#elif (LCD_PORT == _SOFT_4SPI)  //软件四线SPI驱动
-	char* string = "Hello WeGui!\nDriver:Soft4SPI";
-	#elif (LCD_PORT == _HARD_4SPI)  //硬件四线SPI驱动
-	char* string = "Hello WeGui!\nDriver:Hard4SPI";
-	#elif (LCD_PORT == _DMA_4SPI)   //DMA四线SPI驱动
-	char* string = "Hello WeGui!\nDriver:DMA 4SPI";
-	#elif ((LCD_PORT == _SOFT_IIC)||(LCD_PORT == _SOFT_I2C))//软件IIC驱动
-	char* string = "Hello WeGui!\nDriver:SoftI2C";
-	#elif ((LCD_PORT ==_HARD_IIC)||(LCD_PORT ==_HARD_I2C)||(LCD_PORT ==_HARD_I2C0)||(LCD_PORT ==_HARD_I2C1))//硬件IIC驱动
-	char* string = "Hello WeGui!\nDriver:HardI2C";
-	#else //其他自定义的驱动
-	#warning ("Driver:Other")
-	char* string = "Hello WeGui!";
+	#if (WEGUI_UART_EN)
+		wegui_uart_rx_stick(stick);//串口处理 stick传递时间用于计时 (需要持续判断防止漏码)
 	#endif
-
-	Wegui_Push_Message_tip(2, string, 8000);//推送提示信息, (推送y位置, 提示内容字符串, 展示时间ms)
 }
 
 
 
-void Wegui_1ms_stick()
-{
-	if(Wegui_stick < 65535)
-		Wegui_stick++;
 
-	//--模拟背光调节--
-	#if (defined LCD_USE_RGB565)
+/*
+ * @brief: 1ms定时器中断处理函数
+ * @param: None
+ * @retval: None
+*/
+void wegui_1ms_stick()
+{
+	if(wegui.ms_stick < 65535)
+	{
+		wegui.ms_stick++;
+	}
+	//--背光模拟pwm中断--
+	#if (LCD_TYPE == LCD_RGB565)
 	{
 		static uint8_t count=0;
-		if(count<bl_pwmd){LCD_BL_On();}
+		if(count<wegui.bl_pwmd){LCD_BL_On();}
 		else{LCD_BL_Off();}
 		if(++count>=BL_PWM_MAX){count=0;}
 	}
 	#endif
+
+	//-------交互接口定时中断----------
+	wegui_itface_port_ms_irq();//按键/编码器/蜂鸣器/自定义
 }
 
 void lcd_wegui_init()
 {
-	Wegui_Interface_port_Init();//交互接口初始化(6键/4键/编码器/自定义)
-	Wegui_Uart_Port_Init();//uart接口初始化,缓冲区初始化
+	//-------交互接口初始化----------
+	wegui_itface_port_init();//按键/编码器/蜂鸣器/自定义
 
-	Wegui.menu = &m_main;//开机初始菜单menu
-
-	//Wegui.setting.language = en_US; //默认语言设置 en_US  zh_CN
-	Wegui.setting.language = zh_CN; //默认语言设置 en_US  zh_CN
-
-	#if (defined LCD_USE_RGB565)
-		Wegui.setting.brightness=BL_PWM_MAX;//亮度
-		bl_pwmd = BL_PWM_MAX;//模拟PWM背光占空比
-	#else
-		Wegui.setting.brightness=127;//亮度
+	//-------//UART通讯接口----------
+	#if (WEGUI_UART_EN)
+	wegui_uart_port_init();//uart接口初始化,缓冲区初始化
 	#endif
 
+	wegui.menu = &m_main;//开机初始菜单menu
+	wegui.setting.language = zh_CN; //默认语言设置 en_US  zh_CN
 
-	Wegui.setting.screen_fps_ms = fps_2_ms(1000);//屏幕帧率设置(建议两者一致) 建议60~100
-	Wegui.setting.ui_fps_ms = fps_2_ms(60);//UI帧率设置(建议两者一致) 建议60~100
-	Wegui.setting.debug_windows_en=1;
+	wegui.setting.screen_fps_ms = fps_2_ms(1000);//屏幕帧率设置(建议两者一致) 建议60~100
+	wegui.setting.ui_fps_ms = fps_2_ms(60);//UI帧率设置(建议两者一致) 建议60~100
+	wegui.setting.debug_windows_en = STARTUP_DEBUG_WINDOWS_EN;//右小角调试窗口使能
+	wegui.setting.voice_volume = 5;//开机音量
 
-	Wegui.sysInfo.info_fps = 0;//CPU负载
-	Wegui.sysInfo.cpu_load = 0;//实时刷新率
-	Wegui.sysInfo.cpu_time = 0;//刷屏资源占用时间
-	Wegui.sysInfo.fps_time = 0;//刷屏间隔时间
+	wegui.sysInfo.info_fps = 0;//CPU负载
+	wegui.sysInfo.cpu_load = 0;//实时刷新率
+	wegui.sysInfo.cpu_time = 0;//刷屏资源占用时间
+	wegui.sysInfo.fps_time = 0;//刷屏间隔时间
 
-	Wegui_mList_Init();
+	#if (LCD_TYPE == LCD_RGB565)
+	wegui.setting.brightness = BL_PWM_MAX;//亮度
+	wegui.bl_pwmd = BL_PWM_MAX;//占空比变量
+	#else
+	wegui.setting.brightness=127;//亮度
+	#endif
+
+	wegui_mList_Init();
 
 	//--设置默认主题颜色--
-	#ifdef LCD_USE_RGB565
+	#if (LCD_TYPE == LCD_RGB565)
 		#if (LCD_COLOUR_BIT>=1)
-		RGB_Set_Driver_Colour(0,COLOUR_MLIST_DEFAULT_0);
-		RGB_Set_Driver_Colour(1,COLOUR_MLIST_DEFAULT_1);
+		rgb_set_driver_colour(0,COLOUR_MLIST_DEFAULT_0);
+		rgb_set_driver_colour(1,COLOUR_MLIST_DEFAULT_1);
 		#endif
 		#if (LCD_COLOUR_BIT>=2)
-		RGB_Set_Driver_Colour(2,COLOUR_MLIST_DEFAULT_2);
-		RGB_Set_Driver_Colour(3,COLOUR_MLIST_DEFAULT_3);
+		rgb_set_driver_colour(2,COLOUR_MLIST_DEFAULT_2);
+		rgb_set_driver_colour(3,COLOUR_MLIST_DEFAULT_3);
 		#endif
 		#if (LCD_COLOUR_BIT>=3)
-		RGB_Set_Driver_Colour(4,COLOUR_MLIST_DEFAULT_4);
-		RGB_Set_Driver_Colour(5,COLOUR_MLIST_DEFAULT_5);
-		RGB_Set_Driver_Colour(6,COLOUR_MLIST_DEFAULT_6);
-		RGB_Set_Driver_Colour(7,COLOUR_MLIST_DEFAULT_7);
+		rgb_set_driver_colour(4,COLOUR_MLIST_DEFAULT_4);
+		rgb_set_driver_colour(5,COLOUR_MLIST_DEFAULT_5);
+		rgb_set_driver_colour(6,COLOUR_MLIST_DEFAULT_6);
+		rgb_set_driver_colour(7,COLOUR_MLIST_DEFAULT_7);
 		#endif
 	#endif
-
-	//Wegui_Hello_Word();//开机欢迎弹窗
-	Wegui_stick = 0;
+	wegui.ms_stick = 0;
 }

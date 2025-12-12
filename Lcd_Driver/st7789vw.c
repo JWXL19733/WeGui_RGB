@@ -1,20 +1,27 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 #include "lcd_driver_config.h"
 
 #if (LCD_IC == _ST7789VW)
 #include "st7789vw.h"
 
-
-
-
-
 void ST7789VW_Set_Addr(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
 {
-	uint8_t i[]={0x2a,x1>>8,x1&0xff,(x2)>>8,(x2)&0xff};
-	uint8_t j[]={0x2b,y1>>8,(y1)&0xff,(y2)>>8,y2&0xff};
+	uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
+	uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
 	const uint8_t k[]={0x2c};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
@@ -107,27 +114,27 @@ void ST7789VW_Memory_Data_Access_Ctrl_Init()//36
 	//“0” = Top to Bottom (When MADCTL D7=”0”).
 	//“1” = Bottom to Top (When MADCTL D7=”1”).
 	#define MADCTL_MY 0 //Y镜像
-	
+
 	//“0” = Left to Right (When MADCTL D6=”0”).
 	//“1” = Right to Left (When MADCTL D6=”1”).
 	#define MADCTL_MX 1 //X镜像
-	
+
 	//“0” = Normal Mode (When MADCTL D5=”0”).
 	//“1” = Reverse Mode (When MADCTL D5=”1”)
 	#define MADCTL_MV 0 //90度转
-	
+
 	//‘0’ =Decrement,(LCD refresh Top to Bottom, when MADCTL (36h) D4=’0’)
 	//‘1’=Increment,(LCD refresh Bottom to Top, when MADCTL (36h) D4=’1’)
 	#define MADCTL_ML 0
-	
+
 	//“0” = RGB (When MADCTL D3=”0”)
 	//“1” = BGR (When MADCTL D3=”1”)
 	#define MADCTL_RGB 1
-	
+
 	//“0” = LCD Refresh Left to Right (When MADCTL D2=”0”)
 	//“1” = LCD Refresh Right to Left (When MADCTL D2=”1”)
 	#define MADCTL_MH 1
-	
+
 	const uint8_t i[]={0x36,(MADCTL_MY<<7)|(MADCTL_MX<<6)|(MADCTL_MV<<5)|(MADCTL_ML<<4)|(MADCTL_RGB<<3)|(MADCTL_MH<<2)};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -151,13 +158,13 @@ void ST7789VW_Set_RGB444_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x03};//4k(RGB444)
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
-	
+
 }
 void ST7789VW_Set_RGB565_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x05};//65k(RGB565)
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
-	
+
 }
 void ST7789VW_Set_RGB666_Mode()//3A
 {
@@ -188,21 +195,21 @@ void ST7789VW_Write_CTRL_Display()//53
 	//0 = Off (Brightness register are 00h, DBV[7:0])
 	//1 = On (Brightness register are active, according to the other parameters.)
 	#define CTRL_BCTRL 0
-	
+
 	//DD: Display Dimming (Only for manual brightness setting)
 	//DD = 0: Display Dimming is off.
 	//DD = 1: Display Dimming is on.
 	#define CTRL_DD 0
-	
+
 	//BL: Backlight Control On/Off
 	//0 = Off (Completely turn off backlight circuit. Control lines must be low.)
 	//1 = On
 	#define CTRL_BL 0
-	
+
 	//Dimming function is adapted to the brightness registers for display when bit BCTRL is changed at DD=1.
-	//When BL bit changed from ‘on’ to ‘off’, backlight is turned off without gradual dimming, 
+	//When BL bit changed from ‘on’ to ‘off’, backlight is turned off without gradual dimming,
 	//even if dimming-on (DD=1) are selected.
-	
+
 	const uint8_t i[]={0x53,(CTRL_BCTRL<<5)|(CTRL_DD<<3)|(CTRL_BL<<2)};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -224,34 +231,34 @@ void ST7789VW_RAM_Control()//B0
 	//RM=”0” : Ram access from MCU interface
 	//RM=”1” : Ram access from RGB interface
 	#define RAMCTRL_RM 0
-	
+
 	//DM[1:0] : Display operation selection.
 	//0 : MCU interface
 	//1 : RGB interface
 	//2 : VSYNC interface
 	//3 : Reserved
 	#define RAMCTRL_DM 0
-	
+
 	//ENDIAN :
 	//0 : Normal (MSB first)
 	//1 : Little Endian (LSB first)
 	//Note: Little Endian only can be supported in 65K 8-bit and 9-bit interface.
 	#define RAMCTRL_ENDIAN 00
-	
+
 	//MDT[1:0] : Method of pixel data transfer
 	//Please refer to section 8.8 Data Color Coding
 	#define RAMCTRL_MDT 0
-	
-	
-	
+
+
+
 	//RIM: Specify RGB interface bus width.
 	//RIM=”0”: 18 bit bus width.
 	//RIM=”1”: 6 bit bus width
 	#define RAMCTRL_RIM 0
-	
+
 	//EPF[1:0] : Data translate of 65k and 4k to frame data.
 	#define RAMCTRL_EPF 0
-	
+
 	const uint8_t i[]={0xB0,(RAMCTRL_RM<<4)|RAMCTRL_DM,(RAMCTRL_EPF<<4)|(RAMCTRL_ENDIAN<<3)|(RAMCTRL_RIM<<2)|(RAMCTRL_MDT)};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -261,40 +268,40 @@ void ST7789VW_RGB_Interface_Control()//B1
 	//0 : Memory
 	//1 : Shift register
 	#define RGBINTF_WO 0
-	
+
 	//RCM[1:0]: RGB I/F enable mode selection.
 	//0 : MCU interface
 	//1 : MCU interface
 	//2 : RGB DE mode
 	//3 : RGB HV mode
 	#define RGBINTF_RCM 0
-	
+
 	//VSPL : Sets the signal polarity of the VSYNC pin.
 	//VSPL=”0”, Low active
 	//VSPL=”1”, High active
 	#define RGBINTF_VSPL 0
-	
+
 	//HSPL : Sets the signal polarity of the HSYNC pin.
 	//HSPL=”0”, Low active
 	//HSPL=”1”, High active
 	#define RGBINTF_HSPL 0
-	
+
 	//DPL : Sets the signal polarity of the DOTCLK pin.
 	//DPL = “0” The data is input on the positive edge of DOTCLK
 	//DPL = “1” The data is input on the negative edge of DOTCLK
 	#define RGBINTF_DPL 0
-	
+
 	//EPL : Sets the signal polarity of the ENABLE pin.
 	//EPL = “0” The data DB17-0 is written when ENABLE = “1”. Disable data write operation when ENABLE = “0”.
 	//EPL = “1” The data DB17-0 is written when ENABLE = “0”. Disable data write operation when ENABLE = “1”.
 	#define RGBINTF_EPL 0
-	
+
 	//VBP[6:0]: RGB interface Vsync back porch setting. Minimum setting is 0x02.
 	#define RGBINTF_VBP 0x02
-	
+
 	//HBP[4:0]: RGB interface Hsync back porch setting. Please refer to the section 8.9.3 for minimum setting.
 	#define RGBINTF_HBP 0x12
-	
+
 	const uint8_t i[]={0xB1,(RGBINTF_WO<<7)|(RGBINTF_RCM<<5)|(RGBINTF_VSPL<<3)|(RGBINTF_HSPL<<2)|(RGBINTF_DPL<<1)|(RGBINTF_EPL),RGBINTF_VBP,RGBINTF_HBP};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -313,16 +320,16 @@ void ST7789VW_Porch_Setting_Init()//B2
 
 	//BPB[3:0]: Back porch setting in idle mode. The minimum setting is 0x01.
 	#define PORCH_BPB 0x01
-	
+
 	//FPB[3:0]: Front porch setting in idle mode. The minimum setting is 0x01.
 	#define PORCH_FPB 0x01
-	
+
 	//BPC[3:0]: Back porch setting in partial mode. The minimum setting is 0x01.
 	#define PORCH_BPC 0x01
-	
+
 	//FPC[3:0]: Front porch setting in partial mode. The minimum setting is 0x01.
 	#define PORCH_FPC 0x01
-	
+
 #if(SCREEN_MODEL ==_ZJY147TP)
 	const uint8_t i[]={0xB2,0x0C,0x0C,0x00,0x33,0x33};
 #else
@@ -339,37 +346,37 @@ void ST7789VW_Frame_Rate_Control_1_Init()//B3
 	//0:Disable separate FR control
 	//1:Enable separate FR control
 	#define FRC1_FRSEN 0
-	
+
 	//DIV[1:0]: Frame rate divided control
 	//0 Divide by 1
 	//1 Divide by 2
 	//2 Divide by 4
 	//3 Divide by 8
 	#define FRC1_DIV 0
-	
+
 	//NLB[2:0]: Inversion selection in idle mode.
 	//0x00: dot inversion.
 	//0x07: column inversion.
 	#define FRC1_NLB 0
-	
+
 	//RTNB[4:0]: Frame rate control in idle mode.
 	//RTNB[4:0] FR in idle mode (Hz)
 	//RTNB=00h		FR in idle mode = 119 Hz
-	//RTNB=01h		FR in idle mode = 111 Hz	 
-	//RTNB=02h		FR in idle mode = 105 Hz	 
-	//RTNB=03h		FR in idle mode = 99 Hz	 
-	//RTNB=04h		FR in idle mode = 94 Hz	 
-	//RTNB=05h		FR in idle mode = 90 Hz	 
-	//RTNB=06h		FR in idle mode = 86 Hz	 
-	//RTNB=07h		FR in idle mode = 82 Hz	 
-	//RTNB=08h		FR in idle mode = 78 Hz	 
-	//RTNB=09h		FR in idle mode = 75 Hz	 
-	//RTNB=0Ah		FR in idle mode = 72 Hz	 
-	//RTNB=0Bh		FR in idle mode = 69 Hz	 
-	//RTNB=0Ch		FR in idle mode = 67 Hz	 
-	//RTNB=0Dh		FR in idle mode = 64 Hz	 
-	//RTNB=0Eh		FR in idle mode = 62 Hz	 
-	//RTNB=0Fh		FR in idle mode = 60 Hz	 
+	//RTNB=01h		FR in idle mode = 111 Hz
+	//RTNB=02h		FR in idle mode = 105 Hz
+	//RTNB=03h		FR in idle mode = 99 Hz
+	//RTNB=04h		FR in idle mode = 94 Hz
+	//RTNB=05h		FR in idle mode = 90 Hz
+	//RTNB=06h		FR in idle mode = 86 Hz
+	//RTNB=07h		FR in idle mode = 82 Hz
+	//RTNB=08h		FR in idle mode = 78 Hz
+	//RTNB=09h		FR in idle mode = 75 Hz
+	//RTNB=0Ah		FR in idle mode = 72 Hz
+	//RTNB=0Bh		FR in idle mode = 69 Hz
+	//RTNB=0Ch		FR in idle mode = 67 Hz
+	//RTNB=0Dh		FR in idle mode = 64 Hz
+	//RTNB=0Eh		FR in idle mode = 62 Hz
+	//RTNB=0Fh		FR in idle mode = 60 Hz
 	//RTNB=10h		FR in idle mode = 58 Hz
 	//RTNB=11h		FR in idle mode = 57 Hz
 	//RTNB=12h		FR in idle mode = 55 Hz
@@ -391,15 +398,15 @@ void ST7789VW_Frame_Rate_Control_1_Init()//B3
 	//2. FPB[6:0] and BPB[6:0] are in command B2h
 	//3. In this frame rate table, FPB[3:0]=03h, BPB[3:0]=03h
 	#define FRC1_RTNB 0x00
-	
+
 	//NLC[2:0]: Inversion setting in partial mode.
 	//0x00: dot inversion.
 	//0x07: column inversion.
 	#define FRC1_NLC 0x00
-	
+
 	//RTNC[4:0]: Frame rate control in partial mode. This setting is equal to RTNB.
 	#define FRC1_RTNC 0x00
-	
+
 	const uint8_t i[]={0xB3,(FRC1_FRSEN<<4)|FRC1_DIV, (FRC1_NLB<<5)|FRC1_RTNB,(FRC1_NLC<<5)|FRC1_RTNC};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -409,14 +416,14 @@ void ST7789VW_Partial_Control_Init()//B5
 	//When NDL=0, source output level is V63.
 	//When NDL=1, source output level is V0.
 	#define PARTCTRL_NDL 0
-	
-	
+
+
 	//PTGISC: Non display area scan mode.
 	//When PTGISC=0, non-display area is normal scan.
 	//When PTGISC=1, non-display area is interval scan.
 	#define PARTCTRL_PTGISC 0
-	
-	
+
+
 	//ISC[3:0]: non-display area scan cycle selection.
 	//ISC[3:0] Scan cycle for non-display area
 	//00h Normal scan
@@ -427,7 +434,7 @@ void ST7789VW_Partial_Control_Init()//B5
 	//…
 	//0Fh Every 31 cycles scan 1 time
 	#define PARTCTRL_ISC 0x00
-	
+
 	const uint8_t i[]={0xB5,(PARTCTRL_NDL<<7)|(PARTCTRL_PTGISC<<4)|PARTCTRL_ISC};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -445,8 +452,8 @@ void ST7789VW_GCTRL_Gate_Control_Init()//B7
 	//06h 14.5
 	//07h 14.97
 	#define GATECTRL_VGHS 3
-	
-	
+
+
 	//VGLS[2:0]: VGL Setting.
 	//VGLS[2:0] VGL (V)
 	//00h -7.16
@@ -458,13 +465,13 @@ void ST7789VW_GCTRL_Gate_Control_Init()//B7
 	//06h -11.38
 	//07h -12.5
 	#define GATECTRL_VGLS 5
-	
+
 #if(SCREEN_MODEL ==_ZJY147TP)
 	const uint8_t i[]={0xB7,0x00};
 #else
 	const uint8_t i[]={0xB7,(GATECTRL_VGHS<<4)|GATECTRL_VGLS};
 #endif
-	
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
@@ -477,20 +484,20 @@ void ST7789VW_Gate_On_Timing_Adjustment_Init()//B8
 	//In 6bit RGB interface:
 	//Gate on timing=7*3dotclk+GTA[5:0]*4*3dotclk
 	#define GATEONTIMINGADJ_GTA 0x22
-	
+
 	//GOFR[3:0]: Gate off timing adjustment only for RGB interface
 	//In 18bit RGB interface:
 	//Gate off timing=516.5dotclk-16dotclk*GOFR[3:0]
 	//In 6bit RGB interface:
 	//Gate off timing=512*3dotclk-16dotclk*3*GOFR[3:0]
-	//Note:In rgb interface, if the setting of gate off timing is more than the number of 
+	//Note:In rgb interface, if the setting of gate off timing is more than the number of
 	//dotclk in one line, the gate offtiming is determined by hsync.
 	#define GATEONTIMINGADJ_GOFR 0x7
-	
+
 	//GOF[3:0]: Gate off timing adjustment
 	//Gate off timing=-GOF[3:0]*400ns
 	#define GATEONTIMINGADJ_GOF 0x5
-	
+
 	const uint8_t i[]={0xB8,0x2A,0x2B,GATEONTIMINGADJ_GTA,(GATEONTIMINGADJ_GOFR<<4)|GATEONTIMINGADJ_GOF};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -505,37 +512,37 @@ void ST7789VW_Digital_Gamma_Enable()//BA
 void ST7789VW_VCOM_Setting_Init()//BB
 {
 	//VCOMS[5:0] VCOM (V) VCOMS[5:0] VCOM (V)
-	//00h	0.1  	
-	//01h	0.125	
-	//02h	0.15 	
-	//03h	0.175	
-	//04h	0.2  	
-	//05h	0.225	
-	//06h	0.25 	
-	//07h	0.275	
-	//08h	0.3	 	
-	//09h	0.325	
-	//0Ah	0.35 	
-	//0Bh	0.375	
-	//0Ch	0.4	 	
-	//0Dh	0.425	
-	//0Eh	0.45 	
-	//0Fh	0.475	
-	//10h	0.5  	
-	//11h	0.525	
-	//12h	0.55 	
-	//13h	0.575	
-	//14h	0.6  	
-	//15h	0.625	
-	//16h	0.65 	
-	//17h	0.675	
-	//18h	0.7  	
-	//19h	0.725	
-	//1Ah	0.75 	
-	//1Bh	0.775	
-	//1Ch	0.8  	
-	//1Dh	0.825	
-	//1Eh	0.85 	
+	//00h	0.1
+	//01h	0.125
+	//02h	0.15
+	//03h	0.175
+	//04h	0.2
+	//05h	0.225
+	//06h	0.25
+	//07h	0.275
+	//08h	0.3
+	//09h	0.325
+	//0Ah	0.35
+	//0Bh	0.375
+	//0Ch	0.4
+	//0Dh	0.425
+	//0Eh	0.45
+	//0Fh	0.475
+	//10h	0.5
+	//11h	0.525
+	//12h	0.55
+	//13h	0.575
+	//14h	0.6
+	//15h	0.625
+	//16h	0.65
+	//17h	0.675
+	//18h	0.7
+	//19h	0.725
+	//1Ah	0.75
+	//1Bh	0.775
+	//1Ch	0.8
+	//1Dh	0.825
+	//1Eh	0.85
 	//1Fh	0.875
 	//20h	0.9
 	//21h	0.925
@@ -570,13 +577,13 @@ void ST7789VW_VCOM_Setting_Init()//BB
     //3Eh	1.65
     //3Fh	1.675
 	#define VCOMS 0x20
-	
+
 	#if(SCREEN_MODEL==_ZJY147TP)
 	const uint8_t i[]={0xBB,0x34};
 #else
 	const uint8_t i[]={0xBB,0x20};
 #endif
-	
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
@@ -585,11 +592,11 @@ void ST7789VW_Power_Saving_Mode_Init()//BC
 	//NS: Power save for normal mode.
 	//When NS=0, power consumption in normal mode will be saved.
 	#define POWERSAV_NS 0
-	
+
 	//IS: Power save for Idle mode.
 	//When IS=0, power consumption in idle mode will be saved.
 	#define POWERSAV_IS 0
-	
+
 	const uint8_t i[]={0xBC,0xEC|(POWERSAV_NS<<1)|POWERSAV_IS};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -598,7 +605,7 @@ void ST7789VW_Display_off_power_save_Init()//BD
 	//DOFSAVE: Power save for display off mode.
 	//When DOFSAVE=0, power consumption in display off mode will be saved.
 	#define DISPOFF_POWERSAVE_DOFSAVE 0
-	
+
 	const uint8_t i[]={0xBD,0xFE|DISPOFF_POWERSAVE_DOFSAVE};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -618,9 +625,9 @@ void ST7789VW_LCM_Control_Init()//C0
 	#define LCM_XMX 0
 	//XGS: XOR GS setting in command E4h.
 	#define LCM_XGS 0
-	
+
 	const uint8_t i[]={0xC0,(LCM_XMY<<6)|(LCM_XBGR<<5)|(LCM_XREV<<4)|(LCM_XMX<<3)|(LCM_XMH<<2)|(LCM_XMV<<1)|LCM_XGS};
-	
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VDV_and_VRH_Cmd_Enable_Init()//C2
@@ -629,39 +636,39 @@ void ST7789VW_VDV_and_VRH_Cmd_Enable_Init()//C2
 	//CMDEN=”0”: VDV and VRH register value comes from NVM.
 	//CMDEN=”1”, VDV and VRH register value comes from command write.
 	#define VDV_VRH_CMDEN 1
-		
+
 #if(SCREEN_MODEL==_ZJY147TP)
 	const uint8_t i[]={0xC2,0x01};
 #else
 	const uint8_t i[]={0xC2,VDV_VRH_CMDEN,0xFF};
 #endif
-	
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VRH_Set_Init()//C3
 {
 	//VRHS[5:0]: VRH Set.
 	//VRHS[5:0] VAP(GVDD) (V) VRHS[5:0] VAP(GVDD) (V)
-	//00h 3.55+(vcom+vcom offset+vdv)  
-	//01h 3.6 +( vcom+vcom offset+vdv)  
-	//02h 3.65+( vcom+vcom offset+vdv) 
-	//03h 3.7 +( vcom+vcom offset+vdv)  
-	//04h 3.75+( vcom+vcom offset+vdv) 
-	//05h 3.8+( vcom+vcom offset+vdv)  
-	//06h 3.85+( vcom+vcom offset+vdv) 
-	//07h 3.9 +( vcom+vcom offset+vdv)  
-	//08h 3.95+( vcom+vcom offset+vdv) 
-	//09h 4   +( vcom+vcom offset+vdv)    
-	//0Ah 4.05+( vcom+vcom offset+vdv) 
-	//0Bh 4.1 +( vcom+vcom offset+vdv)  
-	//0Ch 4.15+( vcom+vcom offset+vdv) 
-	//0Dh 4.2 +( vcom+vcom offset+vdv)  
-	//0Eh 4.25+( vcom+vcom offset+vdv) 
-	//0Fh 4.3 +( vcom+vcom offset+vdv)  
-	//10h 4.35+( vcom+vcom offset+vdv) 
-	//11h 4.4 +( vcom+vcom offset+vdv)  
-	//12h 4.45+( vcom+vcom offset+vdv) 
-	//13h 4.5 +( vcom+vcom offset+vdv)  
+	//00h 3.55+(vcom+vcom offset+vdv)
+	//01h 3.6 +( vcom+vcom offset+vdv)
+	//02h 3.65+( vcom+vcom offset+vdv)
+	//03h 3.7 +( vcom+vcom offset+vdv)
+	//04h 3.75+( vcom+vcom offset+vdv)
+	//05h 3.8+( vcom+vcom offset+vdv)
+	//06h 3.85+( vcom+vcom offset+vdv)
+	//07h 3.9 +( vcom+vcom offset+vdv)
+	//08h 3.95+( vcom+vcom offset+vdv)
+	//09h 4   +( vcom+vcom offset+vdv)
+	//0Ah 4.05+( vcom+vcom offset+vdv)
+	//0Bh 4.1 +( vcom+vcom offset+vdv)
+	//0Ch 4.15+( vcom+vcom offset+vdv)
+	//0Dh 4.2 +( vcom+vcom offset+vdv)
+	//0Eh 4.25+( vcom+vcom offset+vdv)
+	//0Fh 4.3 +( vcom+vcom offset+vdv)
+	//10h 4.35+( vcom+vcom offset+vdv)
+	//11h 4.4 +( vcom+vcom offset+vdv)
+	//12h 4.45+( vcom+vcom offset+vdv)
+	//13h 4.5 +( vcom+vcom offset+vdv)
 	//14h 4.55+( vcom+vcom offset+vdv)
 	//15h 4.6 +( vcom+vcom offset+vdv)
 	//16h 4.65+( vcom+vcom offset+vdv)
@@ -683,28 +690,28 @@ void ST7789VW_VRH_Set_Init()//C3
 	//26h 5.45+( vcom+vcom offset+vdv)
 	//27h 5.5 +( vcom+vcom offset+vdv)
 	//28h~3Fh Reserved
-	
+
 	//VRHS[5:0] VAN(GVCL) (V) VRHS[5:0] VAN(GVCL) (V)
-	//00h -3.55+( vcom+vcom offset-vdv) 
-	//01h -3.6 +( vcom+vcom offset-vdv) 
-	//02h -3.65+( vcom+vcom offset-vdv) 
-	//03h -3.7 +( vcom+vcom offset-vdv) 
-	//04h -3.75+( vcom+vcom offset-vdv) 
-	//05h -3.8 +( vcom+vcom offset-vdv) 
-	//06h -3.85+( vcom+vcom offset-vdv) 
-	//07h -3.9 +( vcom+vcom offset-vdv) 
-	//08h -3.95+( vcom+vcom offset-vdv) 
-	//09h -4   +( vcom+vcom offset-vdv) 
-	//0Ah -4.05+( vcom+vcom offset-vdv) 
-	//0Bh -4.1 +( vcom+vcom offset-vdv) 
-	//0Ch -4.15+( vcom+vcom offset-vdv) 
-	//0Dh -4.2 +( vcom+vcom offset-vdv) 
-	//0Eh -4.25+( vcom+vcom offset-vdv) 
-	//0Fh -4.3 +( vcom+vcom offset-vdv) 
-	//10h -4.35+( vcom+vcom offset-vdv) 
-	//11h -4.4 +( vcom+vcom offset-vdv) 
-	//12h -4.45+( vcom+vcom offset-vdv) 
-	//13h -4.5 +( vcom+vcom offset-vdv) 
+	//00h -3.55+( vcom+vcom offset-vdv)
+	//01h -3.6 +( vcom+vcom offset-vdv)
+	//02h -3.65+( vcom+vcom offset-vdv)
+	//03h -3.7 +( vcom+vcom offset-vdv)
+	//04h -3.75+( vcom+vcom offset-vdv)
+	//05h -3.8 +( vcom+vcom offset-vdv)
+	//06h -3.85+( vcom+vcom offset-vdv)
+	//07h -3.9 +( vcom+vcom offset-vdv)
+	//08h -3.95+( vcom+vcom offset-vdv)
+	//09h -4   +( vcom+vcom offset-vdv)
+	//0Ah -4.05+( vcom+vcom offset-vdv)
+	//0Bh -4.1 +( vcom+vcom offset-vdv)
+	//0Ch -4.15+( vcom+vcom offset-vdv)
+	//0Dh -4.2 +( vcom+vcom offset-vdv)
+	//0Eh -4.25+( vcom+vcom offset-vdv)
+	//0Fh -4.3 +( vcom+vcom offset-vdv)
+	//10h -4.35+( vcom+vcom offset-vdv)
+	//11h -4.4 +( vcom+vcom offset-vdv)
+	//12h -4.45+( vcom+vcom offset-vdv)
+	//13h -4.5 +( vcom+vcom offset-vdv)
 	//14h -4.55+( vcom+vcom offset-vdv)
 	//15h -4.6+( vcom+vcom offset-vdv)
 	//16h -4.65+( vcom+vcom offset-vdv)
@@ -728,13 +735,13 @@ void ST7789VW_VRH_Set_Init()//C3
 	//28h~3Fh Reserved
 
 	#define VRH_VRHS 0x0B
-		
+
 #if(SCREEN_MODEL==_ZJY147TP)
 	const uint8_t i[]={0xC3,0x09};
 #else
 	const uint8_t i[]={0xC3,VRH_VRHS};
 #endif
-	
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VDV_Set_Init()//C4
@@ -775,7 +782,7 @@ void ST7789VW_VDV_Set_Init()//C4
 	//1Fh -0.025 3Fh 0.775
 
 	#define VDV_VDVS 0x20
-		
+
 	const uint8_t i[]={0xC4,VDV_VDVS};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -816,7 +823,7 @@ void ST7789VW_VCOM_Offset_Set_Init()//C5
 	//1Dh -0.075 3Dh 0.725
 	//1Eh -0.05  3Eh 0.75
 	//1Fh -0.025 3Fh 0.775
-	
+
 	#define VCOM_VCMOFS 0x20
 	const uint8_t i[]={0xC5,VCOM_VCMOFS};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
@@ -825,13 +832,13 @@ void ST7789VW_VCOM_Offset_Set_Init()//C5
 
 void ST7789VW_Frame_Rate_Control_in_Normal_Mode_Init()//C6
 {
-	
+
 	//NLA[2 :0] : Inversion selection in normal mode.
 	//0x00 : dot inversion.
 	//0x07: column inversion.
 	#define FRCTRL_INNORMAL_NLA 0x00
-	
-	
+
+
 	//RTNA[4:0]:
 	//RTNA[4:0] FR in normal mode (Hz) RTNA[4:0] FR in normal mode (Hz)
 	//00h 119 10h 58
@@ -851,14 +858,14 @@ void ST7789VW_Frame_Rate_Control_in_Normal_Mode_Init()//C6
 	//0Eh 62  1Eh 40
 	//0Fh 60  1Fh 39
 	#define FRCTRL_INNORMAL_RTNA 0x0F
-	
+
 #if(SCREEN_MODEL==_ZJY147TP)
 	const uint8_t i[]={0xC6,0x19};
 #else
 	const uint8_t i[]={0xC6,(FRCTRL_INNORMAL_NLA<<4)|FRCTRL_INNORMAL_RTNA};
 #endif
-	
-	
+
+
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
@@ -868,23 +875,23 @@ void ST7789VW_CABC_Control_Init()//C7
 	//“0”: keep the status of LED_ON.
 	//“1”: reverse the status of LED_ON.
 	#define CABC_LEDONREV 0
-	
+
 	//DPOFPWM: initial state control of LEDPWM.
 	//“0”: The initial state of LEDPWM is low.
 	//“1”: The initial state of LEDPWM is high.
 	#define CABC_DPOFPWM 0
-	
+
 	//PWMFIX: LEDPWM fix control.
 	//“0”: LEDPWM control by CABC.
 	//“1”: fix LEDPWM in “ON” status.
 	#define CABC_PWMFIX 0
-	
-	
+
+
 	//PWMPOL: LEDPWM polarity control.
 	//“0”: polarity high.
 	//“1”: polarity low.
 	#define CABC_PWMPOL 0
-	
+
 	const uint8_t i[]={0xC7,(CABC_LEDONREV<<3)|(CABC_DPOFPWM<<2)|(CABC_PWMFIX<<1)|CABC_PWMPOL};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -906,10 +913,10 @@ void ST7789VW_PWM_Frequency_Selection_Init()//CC
 // |   07h    |0.31  |0.62  |1.24  |2.5   |5.2   |11.2  |
 // |----------------------------------------------------|
 // Unit:kHz
-	
+
 	#define PWM_Fr_CLK 0x00
 	#define PWM_Fr_CS  0x02
-	
+
 	const uint8_t i[]={0xCC,(PWM_Fr_CLK<<3)|PWM_Fr_CS};
 	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
@@ -922,14 +929,14 @@ void ST7789VW_Power_Control_1_Init()//D0
 	//02h 6.8
 	//03h Reserved
 	#define POWER_CTRL_1_AVDD 2
-	
+
 	//AVCL[1:0] AVCL (V)
 	//00h -4.4
 	//01h -4.6
 	//02h -4.8
 	//03h -5.0
 	#define POWER_CTRL_1_AVCL 2
-	
+
 	//VDS[1:0] VDDS (V)
 	//00h 2.19
 	//01h 2.3
@@ -937,7 +944,7 @@ void ST7789VW_Power_Control_1_Init()//D0
 	//03h 2.51
 	//VDDS: Power of source OP
 	#define POWER_CTRL_1_VDDS 1
-	
+
 #if(SCREEN_MODEL==_ZJY147TP)
 	const uint8_t i[]={0xD0,0xA4,0xA1};
 #else
@@ -1035,7 +1042,7 @@ void ST7789VW_NVM_Setting_Init()//FC
 void ST7789VW_Clear()//清除IC显示缓存
 {
 	uint32_t i;
-	
+
 //	ST7789VW_Set_Addr(0,0,320-1,480-1);
 //	i=0;
 //	while(i++<240*320)
@@ -1043,23 +1050,29 @@ void ST7789VW_Clear()//清除IC显示缓存
 //		//LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
 //		LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
 //	}
-//	
-	
+//
+
 	ST7789VW_Set_Addr(0,0,320-1,320-1);
 	i=0;
 	while(i++<320*320)
 	{
-		LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
+		LCD_Send_1Dat(0x78);LCD_Send_1Dat(0x78);//测试
 		//LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
 	}
-	
+
 }
 
 
 
 
 
-//自定义初始化示例
+/*--------------------------------------------------------------
+  * 名称: ST7789VW_Init()
+  * 传入: 无
+  * 返回: 无
+  * 功能: 初始化屏幕
+  * 说明: 推荐更改为屏幕资料中的初始化指令
+----------------------------------------------------------------*/
 //void ST7789VW_Init()
 //{
 //	ST7735_Soft_Reset();
@@ -1067,100 +1080,100 @@ void ST7789VW_Clear()//清除IC显示缓存
 //	LCD_Delay(100);
 //	LCD_RES_Set();
 //	LCD_Delay(100);
-//	
+//
 //  LCD_delay_ms(100);
-//	
-//	LCD_Send_1Cmd(0x11);//Sleep exit 
+//
+//	LCD_Send_1Cmd(0x11);//Sleep exit
 //	LCD_delay_ms(120);
-//		
+//
 //	//ST7735R Frame Rate
-//	LCD_Send_1Cmd(0xB1); 
-//	LCD_Send_1Dat(0x01); 
-//	LCD_Send_1Dat(0x2C); 
-//	LCD_Send_1Dat(0x2D); 
+//	LCD_Send_1Cmd(0xB1);
+//	LCD_Send_1Dat(0x01);
+//	LCD_Send_1Dat(0x2C);
+//	LCD_Send_1Dat(0x2D);
 
-//	LCD_Send_1Cmd(0xB2); 
-//	LCD_Send_1Dat(0x01); 
-//	LCD_Send_1Dat(0x2C); 
-//	LCD_Send_1Dat(0x2D); 
+//	LCD_Send_1Cmd(0xB2);
+//	LCD_Send_1Dat(0x01);
+//	LCD_Send_1Dat(0x2C);
+//	LCD_Send_1Dat(0x2D);
 
-//	LCD_Send_1Cmd(0xB3); 
-//	LCD_Send_1Dat(0x01); 
-//	LCD_Send_1Dat(0x2C); 
-//	LCD_Send_1Dat(0x2D); 
-//	LCD_Send_1Dat(0x01); 
-//	LCD_Send_1Dat(0x2C); 
-//	LCD_Send_1Dat(0x2D); 
-//	
-//	LCD_Send_1Cmd(0xB4); //Column inversion 
-//	LCD_Send_1Dat(0x07); 
-//	
+//	LCD_Send_1Cmd(0xB3);
+//	LCD_Send_1Dat(0x01);
+//	LCD_Send_1Dat(0x2C);
+//	LCD_Send_1Dat(0x2D);
+//	LCD_Send_1Dat(0x01);
+//	LCD_Send_1Dat(0x2C);
+//	LCD_Send_1Dat(0x2D);
+//
+//	LCD_Send_1Cmd(0xB4); //Column inversion
+//	LCD_Send_1Dat(0x07);
+//
 //	//ST7735R Power Sequence
-//	LCD_Send_1Cmd(0xC0); 
-//	LCD_Send_1Dat(0xA2); 
-//	LCD_Send_1Dat(0x02); 
-//	LCD_Send_1Dat(0x84); 
-//	LCD_Send_1Cmd(0xC1); 
-//	LCD_Send_1Dat(0xC5); 
+//	LCD_Send_1Cmd(0xC0);
+//	LCD_Send_1Dat(0xA2);
+//	LCD_Send_1Dat(0x02);
+//	LCD_Send_1Dat(0x84);
+//	LCD_Send_1Cmd(0xC1);
+//	LCD_Send_1Dat(0xC5);
 
-//	LCD_Send_1Cmd(0xC2); 
-//	LCD_Send_1Dat(0x0A); 
-//	LCD_Send_1Dat(0x00); 
+//	LCD_Send_1Cmd(0xC2);
+//	LCD_Send_1Dat(0x0A);
+//	LCD_Send_1Dat(0x00);
 
-//	LCD_Send_1Cmd(0xC3); 
-//	LCD_Send_1Dat(0x8A); 
-//	LCD_Send_1Dat(0x2A); 
-//	LCD_Send_1Cmd(0xC4); 
-//	LCD_Send_1Dat(0x8A); 
-//	LCD_Send_1Dat(0xEE); 
-//	
-//	LCD_Send_1Cmd(0xC5); //VCOM 
-//	LCD_Send_1Dat(0x0E); 
-//	
+//	LCD_Send_1Cmd(0xC3);
+//	LCD_Send_1Dat(0x8A);
+//	LCD_Send_1Dat(0x2A);
+//	LCD_Send_1Cmd(0xC4);
+//	LCD_Send_1Dat(0x8A);
+//	LCD_Send_1Dat(0xEE);
+//
+//	LCD_Send_1Cmd(0xC5); //VCOM
+//	LCD_Send_1Dat(0x0E);
+//
 //	//方向选择其一
 //	LCD_Send_1Cmd(0x36);
 //	LCD_Send_1Dat(0xC8);//方向1
 //	//LCD_Send_1Dat(0x08);//方向2
 //	//LCD_Send_1Dat(0x78);//方向3
 //	//LCD_Send_1Dat(0xA8);//方向4
-//	
+//
 //	//ST7735R Gamma Sequence
-//	LCD_Send_1Cmd(0xe0); 
-//	LCD_Send_1Dat(0x0f); 
-//	LCD_Send_1Dat(0x1a); 
-//	LCD_Send_1Dat(0x0f); 
-//	LCD_Send_1Dat(0x18); 
-//	LCD_Send_1Dat(0x2f); 
-//	LCD_Send_1Dat(0x28); 
-//	LCD_Send_1Dat(0x20); 
-//	LCD_Send_1Dat(0x22); 
-//	LCD_Send_1Dat(0x1f); 
-//	LCD_Send_1Dat(0x1b); 
-//	LCD_Send_1Dat(0x23); 
-//	LCD_Send_1Dat(0x37); 
-//	LCD_Send_1Dat(0x00); 	
-//	LCD_Send_1Dat(0x07); 
-//	LCD_Send_1Dat(0x02); 
-//	LCD_Send_1Dat(0x10); 
+//	LCD_Send_1Cmd(0xe0);
+//	LCD_Send_1Dat(0x0f);
+//	LCD_Send_1Dat(0x1a);
+//	LCD_Send_1Dat(0x0f);
+//	LCD_Send_1Dat(0x18);
+//	LCD_Send_1Dat(0x2f);
+//	LCD_Send_1Dat(0x28);
+//	LCD_Send_1Dat(0x20);
+//	LCD_Send_1Dat(0x22);
+//	LCD_Send_1Dat(0x1f);
+//	LCD_Send_1Dat(0x1b);
+//	LCD_Send_1Dat(0x23);
+//	LCD_Send_1Dat(0x37);
+//	LCD_Send_1Dat(0x00);
+//	LCD_Send_1Dat(0x07);
+//	LCD_Send_1Dat(0x02);
+//	LCD_Send_1Dat(0x10);
 
-//	LCD_Send_1Cmd(0xe1); 
-//	LCD_Send_1Dat(0x0f); 
-//	LCD_Send_1Dat(0x1b); 
-//	LCD_Send_1Dat(0x0f); 
-//	LCD_Send_1Dat(0x17); 
-//	LCD_Send_1Dat(0x33); 
-//	LCD_Send_1Dat(0x2c); 
-//	LCD_Send_1Dat(0x29); 
-//	LCD_Send_1Dat(0x2e); 
-//	LCD_Send_1Dat(0x30); 
-//	LCD_Send_1Dat(0x30); 
-//	LCD_Send_1Dat(0x39); 
-//	LCD_Send_1Dat(0x3f); 
-//	LCD_Send_1Dat(0x00); 
-//	LCD_Send_1Dat(0x07); 
-//	LCD_Send_1Dat(0x03); 
-//	LCD_Send_1Dat(0x10);  
-//	
+//	LCD_Send_1Cmd(0xe1);
+//	LCD_Send_1Dat(0x0f);
+//	LCD_Send_1Dat(0x1b);
+//	LCD_Send_1Dat(0x0f);
+//	LCD_Send_1Dat(0x17);
+//	LCD_Send_1Dat(0x33);
+//	LCD_Send_1Dat(0x2c);
+//	LCD_Send_1Dat(0x29);
+//	LCD_Send_1Dat(0x2e);
+//	LCD_Send_1Dat(0x30);
+//	LCD_Send_1Dat(0x30);
+//	LCD_Send_1Dat(0x39);
+//	LCD_Send_1Dat(0x3f);
+//	LCD_Send_1Dat(0x00);
+//	LCD_Send_1Dat(0x07);
+//	LCD_Send_1Dat(0x03);
+//	LCD_Send_1Dat(0x10);
+//
 //	LCD_Send_1Cmd(0x2a);
 //	LCD_Send_1Dat(0x00);
 //	LCD_Send_1Dat(0x00);
@@ -1172,30 +1185,27 @@ void ST7789VW_Clear()//清除IC显示缓存
 //	LCD_Send_1Dat(0x00);
 //	LCD_Send_1Dat(0x00);
 //	LCD_Send_1Dat(0x9f);
-//	
-//	LCD_Send_1Cmd(0xF0); //Enable test command  
-//	LCD_Send_1Dat(0x01); 
-//	LCD_Send_1Cmd(0xF6); //Disable ram power save mode 
-//	LCD_Send_1Dat(0x00); 
-//	
-//	LCD_Send_1Cmd(0x3A); //65k mode 
-//	LCD_Send_1Dat(0x05); 
+//
+//	LCD_Send_1Cmd(0xF0); //Enable test command
+//	LCD_Send_1Dat(0x01);
+//	LCD_Send_1Cmd(0xF6); //Disable ram power save mode
+//	LCD_Send_1Dat(0x00);
+//
+//	LCD_Send_1Cmd(0x3A); //65k mode
+//	LCD_Send_1Dat(0x05);
 
 //	ST7735_Clear();//清除IC显示缓存
-//	LCD_Send_1Cmd(0x29);//Display on	 
+//	LCD_Send_1Cmd(0x29);//Display on
 //}
-
-
-
 
 void ST7789VW_Init()
 {
-	LCD_RES_Clr();
-	LCD_delay_ms(100);
-	LCD_RES_Set();
-	LCD_delay_ms(100);
+//	LCD_RES_Clr();
+//	LCD_delay_ms(100);
+//	LCD_RES_Set();
+//	LCD_delay_ms(100);
 
-	
+
 	ST7789VW_Sleep_Out();//11
 	LCD_delay_ms(120);
 	//----设置显示方向和RGB顺序和反色----
@@ -1207,9 +1217,7 @@ void ST7789VW_Init()
 	ST7789VW_Set_RGB565_Mode();//3A
 	//ST7789VW_Set_RGB666_Mode();//3A
 	//ST7789VW_Set_RGB888_Mode();//3A
-	
 
-	
 	//-------------次要设置-------------
 //	ST7789VW_Write_Display_Brightness(0);//51
 //	ST7789VW_Write_CTRL_Display();//53
@@ -1237,10 +1245,10 @@ void ST7789VW_Init()
 //	//ST7789VW_Program_Mode_Enable();//FA
 //	ST7789VW_Program_Mode_Disable();//FA
 //	ST7789VW_NVM_Setting_Init();//FC
-	
-	
+
+
 	//------------基础设置----------
-	
+
 	ST7789VW_Porch_Setting_Init();//B2
 	ST7789VW_GCTRL_Gate_Control_Init();//B7
 	ST7789VW_VCOM_Setting_Init();//BB
@@ -1252,13 +1260,13 @@ void ST7789VW_Init()
 	ST7789VW_Positive_Voltage_Gamma_Control_Init();//E0
 	ST7789VW_Negative_Voltage_Gamma_Control_Init();//E1
 	ST7789VW_Power_Control_2_Init();//E8
-	
-	
-	
+
+
+
 	//ST7789VW_Partial_Control_Init();//B5
 	//ST7789VW_Partial_Area_Set();//30
 	//ST7789VW_Partial_Mode_On();//12
-	
+
 	ST7789VW_Sleep_Out();//11
 	ST7789VW_Clear();//清除IC显示缓存
 	ST7789VW_Display_On();//29

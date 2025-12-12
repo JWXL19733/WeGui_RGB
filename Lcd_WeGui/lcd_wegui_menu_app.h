@@ -8,8 +8,6 @@
 
 
 
-#include "stdint.h"
 
-void m_wDemo_wMessage_ADC_func(void);//持续刷新显示的ADC值
 
 #endif

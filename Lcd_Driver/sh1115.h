@@ -1,12 +1,22 @@
 /*
 	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 #ifndef __SH1115_H__
 #define __SH1115_H__
 
-
+#include "stdint.h"
 
 #define SH1115_Set_Lower_Column_Address(x)  do{LCD_Send_1Cmd(x);}while(0)//[0:15]默认0
 #define SH1115_Set_Higher_Column_Address(x) do{LCD_Send_1Cmd(0x10|x);}while(0)//[0:7]默认0

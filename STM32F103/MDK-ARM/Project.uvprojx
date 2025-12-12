@@ -52,7 +52,7 @@
           <OutputName>Project</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\Listings\</ListingPath>
@@ -326,7 +326,7 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
+            <uC99>1</uC99>
             <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
@@ -337,10 +337,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls>--locale=english</MiscControls>
+              <MiscControls>--no-multibyte-chars</MiscControls>
               <Define>USE_STDPERIPH_DRIVER,STM32F10X_MD</Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Oled_Port;..\..\Lcd_Driver;..\..\Lcd_WeGui;..\..\STM32F103;..\MDK-ARM</IncludePath>
+              <IncludePath>..\Libraries\CMSIS\CM3\CoreSupport;..\Libraries\CMSIS\CM3\DeviceSupport\ST\STM32F10x;..\Libraries\STM32F10x_StdPeriph_Driver\inc;..\Lcd_Port;..\..\Lcd_Driver;..\..\Lcd_WeGui;..\..\STM32F103;..\MDK-ARM;..\..\Lcd_Demo;..\..\Misc\ATK_RTC</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -371,7 +371,7 @@
             <TextAddressRange>0x08000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile></ScatterFile>
+            <ScatterFile>.\Objects\Project.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -388,6 +388,57 @@
               <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\CMSIS\CM3\CoreSupport\core_cm3.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -843,62 +894,77 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Oled_Port</GroupName>
+          <GroupName>Lcd_Port</GroupName>
           <Files>
             <File>
               <FileName>lcd_driver_config.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Oled_Port\lcd_driver_config.h</FilePath>
+              <FilePath>..\Lcd_Port\lcd_driver_config.h</FilePath>
             </File>
             <File>
               <FileName>lcd_wegui_config.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Oled_Port\lcd_wegui_config.h</FilePath>
+              <FilePath>..\Lcd_Port\lcd_wegui_config.h</FilePath>
             </File>
             <File>
               <FileName>stm32f103_lcd_dma_4spi_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_dma_4spi_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_dma_4spi_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_lcd_hard_4spi_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_hard_4spi_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_hard_4spi_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_lcd_hard_iic_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_hard_iic_port.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f103_lcd_soft_iic_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_soft_iic_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_hard_iic_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_lcd_soft_3spi_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_soft_3spi_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_soft_3spi_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_lcd_soft_4spi_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_lcd_soft_4spi_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_soft_4spi_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f103_lcd_soft_iic_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Lcd_Port\stm32f103_lcd_soft_iic_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_wegui_4key_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_wegui_4key_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_wegui_4key_port.c</FilePath>
             </File>
             <File>
-              <FileName>stm32f103_wegui_6key_port.c</FileName>
+              <FileName>stm32f103_wegui_ec_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_wegui_6key_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_wegui_ec_port.c</FilePath>
             </File>
             <File>
               <FileName>stm32f103_wegui_uart_port.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Oled_Port\stm32f103_wegui_uart_port.c</FilePath>
+              <FilePath>..\Lcd_Port\stm32f103_wegui_uart_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f103_flash_soft_stdspi_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Lcd_Port\stm32f103_flash_soft_stdspi_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f103_flash_hard_stdspi_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Lcd_Port\stm32f103_flash_hard_stdspi_port.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f103_flash_dma_stdspi_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Lcd_Port\stm32f103_flash_dma_stdspi_port.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -924,6 +990,16 @@
               <FileName>lcd_res.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Lcd_Driver\lcd_res.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Lcd_Driver\flash_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>w25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Lcd_Driver\w25qxx.c</FilePath>
             </File>
             <File>
               <FileName>sh1106.c</FileName>
@@ -1001,19 +1077,14 @@
           <GroupName>Lcd_WeGui</GroupName>
           <Files>
             <File>
-              <FileName>user_wegui_menu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Lcd_WeGui\user_wegui_menu.c</FilePath>
-            </File>
-            <File>
               <FileName>lcd_wegui_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Lcd_WeGui\lcd_wegui_driver.c</FilePath>
             </File>
             <File>
-              <FileName>lcd_wegui_menu_app.c</FileName>
+              <FileName>lcd_wegui_tip.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Lcd_WeGui\lcd_wegui_menu_app.c</FilePath>
+              <FilePath>..\..\Lcd_WeGui\lcd_wegui_tip.c</FilePath>
             </File>
             <File>
               <FileName>lcd_wegui_menu_mlist.c</FileName>
@@ -1021,9 +1092,85 @@
               <FilePath>..\..\Lcd_WeGui\lcd_wegui_menu_mlist.c</FilePath>
             </File>
             <File>
-              <FileName>lcd_wegui_tip.c</FileName>
+              <FileName>lcd_wegui_menu_mlist2.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\Lcd_WeGui\lcd_wegui_tip.c</FilePath>
+              <FilePath>..\..\Lcd_WeGui\lcd_wegui_menu_mlist2.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Lcd_Demo</GroupName>
+          <Files>
+            <File>
+              <FileName>driver_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Lcd_Demo\driver_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>wegui_menu_demo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\Lcd_Demo\wegui_menu_demo.h</FilePath>
+            </File>
+            <File>
+              <FileName>wegui_menu_demo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Lcd_Demo\wegui_menu_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_img_demo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\Lcd_Demo\flash_img_demo.h</FilePath>
             </File>
           </Files>
         </Group>

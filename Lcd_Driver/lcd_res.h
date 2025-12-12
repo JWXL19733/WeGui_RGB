@@ -2,14 +2,12 @@
 	Copyright 2025 Lu Zhihao
 	本程序仅供学习用途, 暂不公开对其他用途的授权
 */
-
-#ifndef _OLED_WEGUI_RES_H_
-#define _OLED_WEGUI_RES_H_
-
+#ifndef LCD_RES_H
+#define LCD_RES_H
 
 #include "stdint.h"
-
-
+#include "lcd_driver_config.h"
+#include "lcd_wegui_config.h"
 
 /*
 	最新字库取模,可使用最新v0.4.4以上的上位机一键导出字库
@@ -56,26 +54,25 @@
 	byte_size = width * (high+7 / 8);
 */
 
-
-
-typedef struct fonts
+typedef struct
 {
-	const unsigned char width;    //宽
-	const unsigned char high;     //高
-	const unsigned char byte_size;//单字大小
-	const unsigned char scape;    //间隔(默认0)
-	const unsigned char *unicode_index;   //目录(UTF8查表用)
-	const unsigned char *font;    //字库
+	const uint8_t width;    //宽
+	const uint8_t high;     //高
+	const uint8_t byte_size;//单字大小
+	const uint8_t scape;    //间隔(默认0)
+	const uint8_t *unicode_index;   //目录(UTF8查表用)
+	const uint8_t *font;    //字库
 		
 }fonts_t;
 
-extern const unsigned char demo_bitmap_128x64[];
-	
-extern const fonts_t ascii_SongTi_6X12;
-extern const fonts_t ascii_SongTi_8X16;
-extern const fonts_t ascii_SongTi_12X24;
-extern const fonts_t SongTi_UTF8_12X12;
-extern const fonts_t SongTi_UTF8_16X16;
-extern const fonts_t SongTi_UTF8_24X24;
 
+
+extern const fonts_t fonts_ascii_songti_6X12;
+extern const fonts_t fonts_ascii_songti_8X16;
+extern const fonts_t fonts_ascii_songti_12X24;
+extern const fonts_t fonts_utf8_songti_12X12;
+extern const fonts_t fonts_utf8_songti_16X16;
+extern const fonts_t fonts_utf8_songti_24X24;
+
+extern const fonts_t fonts_user_utf8_16X16;//自定义字体(随时修改)
 #endif
