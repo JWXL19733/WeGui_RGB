@@ -10,6 +10,8 @@
 * 2.新增RLE压缩bitmap刷图驱动,gui支持使用RLE压缩图形,用法参考driver_demo();暂时使用LCD_mcuTool取模,后续集成到上位机上
 * 3.修改了字体取模,后续支持外挂字体,旧版本字体失效,需要更新上位机重新取
 * 4.优化了bitmap驱动,提升了帧率
+* 5.新增OLED动态刷新细分
+* 6.接口更变, 暂时取消灰度屏的支持
 
 <img width="1507" height="901" alt="e19dd96cf96ecd11f9eb9ba332850934" src="https://github.com/user-attachments/assets/8d35da06-3e9b-4f66-bf5c-85654a63c94c" />
 <img width="1507" height="841" alt="58240881daed64d228ad3defd6334cfe" src="https://github.com/user-attachments/assets/c0f4cf90-61c1-42be-ae87-93b6ada8abe7" />  
