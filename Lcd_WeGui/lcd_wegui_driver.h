@@ -73,7 +73,7 @@ typedef struct language_string_t
 	/*const*/ char * str_en_US;//ENGLISH
 	/*const*/ char * str_zh_CN;//简体
 	/*const*/ char * str_zh_TC;//繁体
-}Wegui_string_t;
+}wegui_string_t;
 //--------------------设置--------------------
 typedef struct Wegui_t_setting
 {
@@ -142,7 +142,7 @@ typedef struct wSliderTip_Propertys
 	void (*Change_Value_func)();//值被修改 执行一次
 	void (*End_tip_func)();     //控件退出 执行一次
 	int16_t *pvalue;              //滑条控制的数据指针
-	Wegui_string_t tip_string;    //提示框字符串
+	wegui_string_t tip_string;    //提示框字符串
 	int16_t min;  //整数最小值
 	int16_t max;  //整数最大值
 
@@ -152,7 +152,7 @@ typedef struct wMessage_Propertys
 {
 	void (*Press_func)();              //按下执行一次
 	char* Value_string;                //末尾显示的值 0x00不显示
-	Wegui_string_t Tip_string;         //提示框字符串
+	wegui_string_t Tip_string;         //提示框字符串
 }wMessage_Par_t;
 
 //-------参数共同体-------
@@ -174,8 +174,8 @@ typedef union menuType_Propertys
 			struct menu_t * fatherMenu;//父菜单
 			struct menu_t * subMenu;//(首个)子菜单
 			struct menu_t * nextMenu;//同级下一个菜单
-			Wegui_string_t titel;//多语言标题
-			Wegui_string_t discribe;//多语言描述
+			wegui_string_t titel;//多语言标题
+			wegui_string_t discribe;//多语言描述
 			menuType_t menuType;//菜单类型
 			menuType_Par_t menuPar;//菜单属性
 	}menu_t;
@@ -186,8 +186,8 @@ typedef union menuType_Propertys
 			const struct menu_t * fatherMenu;//父菜单
 			const struct menu_t * subMenu;//(首个)子菜单
 			const struct menu_t * nextMenu;//同级下一个菜单
-			const Wegui_string_t titel;//多语言标题
-			const Wegui_string_t discribe;//多语言描述
+			const wegui_string_t titel;//多语言标题
+			const wegui_string_t discribe;//多语言描述
 			const menuType_t menuType;//菜单类型
 			const menuType_Par_t menuPar;//菜单属性
 	}menu_t;
@@ -293,12 +293,12 @@ char *my_itoa(int16_t num,char *str,uint8_t radix);
 uint8_t Get_submenu_sum(menu_t* m);//获取菜单中子菜单的总数
 
 /*--------------------------------------------------------------
-  * 名称: uint8_t* wegui_get_string(Wegui_string_t object,langage_t language)
+  * 名称: uint8_t* wegui_get_string(wegui_string_t object,langage_t language)
   * 传入1: object 语言包
   * 传入2: language 语言
   * 功能: 返回"语言包"里对应的"language语言"字符串指针,
 ----------------------------------------------------------------*/
-char* wegui_get_string(Wegui_string_t object,langage_t language);
+char* wegui_get_string(wegui_string_t object,langage_t language);
 
 /*--------------------------------------------------------------
   * 名称: menu_history_t* Pop_menu_historyPar(void)

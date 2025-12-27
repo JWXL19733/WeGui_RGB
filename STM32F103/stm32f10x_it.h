@@ -32,7 +32,7 @@
 /* Exported types ------------------------------------------------------------*/
 
 /* Exported constants --------------------------------------------------------*/
-extern uint8_t sys1ms_stick;
+extern volatile uint8_t sys1ms_stick;
 extern volatile uint32_t sys1ms_delay;
 /* Exported macro ------------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */

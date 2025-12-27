@@ -52,9 +52,9 @@ void wegui_push_message_tip(int16_t y, char* string, uint16_t time)//(推送y位
 		switch(wegui.setting.language)
 		{
 			case zh_CN://中文
-				if(lcd_driver.fonts_UTF8_cut != 0x00)
+				if(lcd_driver.fonts_UTF8 != 0x00)
 				{
-					wegui.tip.fonts_high = lcd_driver.fonts_UTF8_cut->high;
+					wegui.tip.fonts_high = lcd_driver.fonts_UTF8->high;
 					break;
 				}
 			case en_US://英语
@@ -102,9 +102,9 @@ void wegui_push_slider_tip(int16_t y, char* string, int16_t *p_value,int16_t val
 	switch(wegui.setting.language)
 	{
 		case zh_CN://中文
-			if(lcd_driver.fonts_UTF8_cut != 0x00)
+			if(lcd_driver.fonts_UTF8 != 0x00)
 			{
-				wegui.tip.fonts_high = lcd_driver.fonts_UTF8_cut->high;
+				wegui.tip.fonts_high = lcd_driver.fonts_UTF8->high;
 				break;
 			}
 		case en_US://英语

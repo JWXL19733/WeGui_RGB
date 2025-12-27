@@ -10,7 +10,7 @@
 #include "lcd_wegui_config.h"
 
 /*
-	最新字库取模,可使用最新v0.4.4以上的上位机一键导出字库
+	最新字库取模,可使用最新v0.4.4以上的上位机一键导出字库!!
 	--------------------------------------------------
 	或者使用旧教程,旧教程如下:
 	!详细的教程前往git获取doc文件!
@@ -54,25 +54,101 @@
 	byte_size = width * (high+7 / 8);
 */
 
+//----------------------------ASCII字体--------------------------------
+typedef enum //ascii字体储存方式
+{
+	ASCII_IN_MCU = 0,  //字体在MCU内部
+	ASCII_IN_EX_FLASH, //字体在外部FLASH
+}ascii_store_t;
+
 typedef struct
 {
-	const uint8_t width;    //宽
-	const uint8_t high;     //高
-	const uint8_t byte_size;//单字大小
-	const uint8_t scape;    //间隔(默认0)
-	const uint8_t *unicode_index;   //目录(UTF8查表用)
-	const uint8_t *font;    //字库
-		
-}fonts_t;
+	uint8_t byte_size; //单字大小
+	uint8_t* font;    //字库
+}ascii_IN_MCU_par_t;
+
+typedef struct
+{
+	uint8_t byte_size;   //单字大小
+	uint32_t flash_addr; //字库flash地址
+}ascii_in_EX_FLASH_par_t;
+
+typedef union
+{
+	ascii_IN_MCU_par_t      IN_MCU_par;
+	ascii_in_EX_FLASH_par_t IN_EX_FLASH_par;
+}ascii_par_t;
+
+typedef const struct 
+{
+	uint8_t width;    //宽
+	uint8_t high;     //高
+	uint8_t scape;    //间隔(默认0)
+	ascii_store_t store_type; //字体储存类型
+	ascii_par_t   store_par;  //字库及参数
+}fonts_ascii_t;
+
+
+//----------------------------UTF8字体--------------------------------
+typedef enum //字体储存方式
+{
+	UTF8_IN_MCU_INDEX=0,           //字体在MCU内部   索引型
+	UTF8_IN_EX_FLASH_INDEX,        //字体在外部FLASH 索引型
+	UTF8_IN_EX_FLASH_CONTINUOUS,   //字体在外部FLASH 连续型
+}utf8_store_t;
+
+typedef struct
+{
+	uint8_t byte_size;     //单字占用
+	uint8_t *unicode_index;//索引数量
+	uint8_t index_size;    //索引大小
+	uint8_t *font;         //字库
+}utf8_in_mcu_index_par_t;
+
+typedef struct
+{
+	uint8_t byte_size;      //单字占用
+	uint8_t *unicode_index; //索引
+	uint8_t index_size;     //索引数量
+	uint32_t flash_addr;    //字库flash地址
+}utf8_in_ex_flash_index_par_t;
+
+typedef struct
+{
+	uint8_t byte_size;      //单字大小
+	uint16_t unicode_start; //unicode范围:起始
+	uint8_t unicode_end;    //unicode范围:结束
+	uint32_t flash_addr;    //字库flash地址
+}utf8_in_ex_flash_continuous_par_t;
+
+typedef union
+{
+	utf8_in_mcu_index_par_t           IN_MCU_INDEX_par;
+	utf8_in_ex_flash_index_par_t      IN_EX_FLASH_INDEX_par;
+	utf8_in_ex_flash_continuous_par_t IN_EX_FLASH_CONTINUOUS_par;
+}utf8_par_t;
+
+typedef const struct
+{
+	uint8_t width;    //宽
+	uint8_t high;     //高
+	uint8_t scape;    //间隔(默认0)
+	utf8_store_t store_type;//字体储存类型
+	utf8_par_t   store_par; //字库及参数;
+}fonts_utf8_t;
 
 
 
-extern const fonts_t fonts_ascii_songti_6X12;
-extern const fonts_t fonts_ascii_songti_8X16;
-extern const fonts_t fonts_ascii_songti_12X24;
-extern const fonts_t fonts_utf8_songti_12X12;
-extern const fonts_t fonts_utf8_songti_16X16;
-extern const fonts_t fonts_utf8_songti_24X24;
+//----------------------------字体声明--------------------------------
+extern fonts_ascii_t mcu_fonts_ascii_songti_6X12;
+extern fonts_ascii_t mcu_fonts_ascii_songti_8X16;
+extern fonts_ascii_t mcu_fonts_ascii_songti_12X24;
 
-extern const fonts_t fonts_user_utf8_16X16;//自定义字体(随时修改)
+extern fonts_utf8_t mcu_fonts_utf8_songti_12X12;
+extern fonts_utf8_t mcu_fonts_utf8_songti_16X16;
+extern fonts_utf8_t mcu_fonts_utf8_songti_24X24;
+
+
+extern fonts_utf8_t fonts_user_utf8_16X16;//自定义字体(随时修改)
+
 #endif

@@ -24,7 +24,7 @@
 #include "stm32f10x_it.h"
 #include "lcd_wegui_driver.h"
 
-uint8_t sys1ms_stick;
+volatile uint8_t sys1ms_stick;
 volatile uint32_t sys1ms_delay;
 
 /** @addtogroup STM32F10x_StdPeriph_Template

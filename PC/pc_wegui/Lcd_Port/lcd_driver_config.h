@@ -49,15 +49,15 @@
 #define LCD_MODE    _FULL_BUFF_FULL_UPDATE //选择一个刷屏模式
 
 //---------------------------4.设置开机字体--------------------------------
-//extern const fonts_t fonts_ascii_songti_6X12;
-//extern const fonts_t fonts_ascii_songti_8X16;
-//extern const fonts_t fonts_ascii_songti_12X24;
-#define STARTUP_FONTS_ASCII (fonts_ascii_songti_8X16)//开机ascii字体 建议两者高度一致
+//&mcu_fonts_ascii_songti_6X12;
+//&mcu_fonts_ascii_songti_8X16;
+//&mcu_fonts_ascii_songti_12X24;
+#define STARTUP_FONTS_ASCII (&mcu_fonts_ascii_songti_12X24)//开机ascii字体 建议两者高度一致
 
-//extern const fonts_t fonts_utf8_songti_12X12;
-//extern const fonts_t fonts_utf8_songti_16X16;
-//extern const fonts_t fonts_utf8_songti_24X24;
-#define STARTUP_FONTS_UTF8  (fonts_utf8_songti_16X16)//开机utf8字体 建议两者高度一致
+//&mcu_fonts_utf8_songti_12X12;
+//&mcu_fonts_utf8_songti_16X16;
+//&mcu_fonts_utf8_songti_24X24;
+#define STARTUP_FONTS_UTF8  (&mcu_fonts_utf8_songti_24X24)//开机utf8字体 建议两者高度一致
 
 
 //-------------------------6.1.选择一个外挂FLASH接口--------------------------------

@@ -141,9 +141,7 @@ void LCD_Send_nCmd(uint8_t *p,uint16_t num);//向屏幕发送num个命令
 uint8_t LCD_Refresh(void);
 	
 	
-#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
-	void LCD_Reset_crc(void);//刷新一次crc值, 用于强制刷新屏幕,防止动态刷新出现区域不刷新
-#endif
+
 	
 #endif
 	

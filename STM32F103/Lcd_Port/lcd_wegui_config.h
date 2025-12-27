@@ -25,7 +25,7 @@ limitations under the License.
 #define STR_MCU_CLASS "STM32F1"
 #define STR_MCU_MODEL "STM32F103C8"
 #define STR_WEGUI_VERSION_CLASS "V0.5"
-#define STR_WEGUI_VERSION "V0.5.6"
+#define STR_WEGUI_VERSION "V0.5.7"
 
 //--------------------------1.设置菜单--------------------
 #define MENU_CONST_DIS              (0) //菜单结构是否允许修改 0不可修改(省RAM) 1可修改

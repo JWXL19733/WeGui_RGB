@@ -111,23 +111,7 @@ static void I2C_send_1Byte(uint8_t dat)
 
 
 
-#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
-static uint16_t crc[((SCREEN_HIGH+7)/8)];//储存crc
-/*--------------------------------------------------------------
-  * 名称: LCD_Reset_crc()
-  * 功能: 刷新一次crc值(动态刷新专用)
-  * 说明: 用于强制刷新屏幕,防止动态刷新出现区域不刷新
-----------------------------------------------------------------*/
-void LCD_Reset_crc()
-{
-	uint16_t i=0;
-	while(i < ((SCREEN_HIGH+7)/8))
-	{
-		crc[i]=0xff;//随机值,不是0x0就ok
-		i++;
-	}
-}
-#endif
+
 
 /*--------------------------------------------------------------
   * 名称: LCD_Send_1Cmd(uint8_t dat)
@@ -263,309 +247,75 @@ void LCD_Port_Init(void)
 	LCD_RES_Set();
 }
 
+
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
 /*--------------------------------------------------------------
-  * 名称: LCD_Refresh(void)
-  * 功能: 驱动接口,将显存LCD_GRAM全部内容发送至屏幕
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: 原函数为weak,改写自lcd_Driver.c
 ----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+{
+		uint16_t i;
+		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
+		for(i=0;i<=len;i++)
+		{
+			CRC->DR = *gram++;//CRC_CalcCRC(*gram++);//计算校验
+		}
+		return CRC->DR;//return CRC_GetCRC();
+}
+#endif
 
 //----------------------------普通OLED屏幕刷屏接口-------------------------------------
 #if (LCD_TYPE == LCD_OLED)
-#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
-//---------方式1:全屏刷新----------
-//--优点:全屏刷新
-//--缺点:内容不变的区域也参与了刷新
-uint8_t LCD_Refresh(void)
+/*--------------------------------------------------------------
+  * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: OLED屏幕从x,page位置开始刷屏
+  * 说明: OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
-	unsigned char ypage;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		LCD_Set_Addr(0,ypage);
-		LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-	}
-	return 0;
+	//--1.配置刷新窗口位置--
+	LCD_Set_Addr(x0,page);
+	//--2.快速发送点阵数据--
+	LCD_Send_nDat(page_gram,(x1-x0));
 }
 
-#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
-//---------方式2:动态刷新----------
-//--优点:性能好,按需区域刷新,节省MCU资源
-//--缺点:全屏刷新相对变慢
-uint8_t LCD_Refresh(void)
-{
-	//每page做"sum+mini_crc组合"校验,若校验码没变,则不刷新该page
-	uint8_t ypage,x;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		
-		//-----方式1:CRC算法校验-----
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][x][0];//CRC_CalcCRC(lcd_driver.LCD_GRAM[ypage][x][0]);
-		}
-		i_crc = CRC->DR;//i_sum1 = CRC_GetCRC();
-		//---------------------------
-
-		if(crc[ypage] != i_crc)
-		{
-			LCD_Set_Addr(0,ypage);
-			LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-		}
-		crc[ypage] = i_crc;
-	}
-	return 0;
-}
-//---------方式3:页缓存全局刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
-uint8_t LCD_Refresh(void)
-{
-	uint8_t i=0;
-	for(i=0;i<GRAM_YPAGE_NUM;i++)
-	{
-		LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage);
-		LCD_Send_nDat(&lcd_driver.LCD_GRAM[i][0][0],SCREEN_WIDTH);
-		lcd_driver.lcd_refresh_ypage++;
-		if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-		{
-			lcd_driver.lcd_refresh_ypage = 0;
-			break;
-		}
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-//---------方式4:页缓存动态刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
-uint8_t LCD_Refresh(void)
-{
-	//每page做校验,若校验码没变,则不刷新该page
-	uint8_t ypage,x;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		if((lcd_driver.lcd_refresh_ypage + ypage)>=((SCREEN_HIGH+7)/8))
-		{
-			break;
-		}
-		//-----方式1:CRC算法校验-----
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][x][0];//CRC_CalcCRC(lcd_driver.LCD_GRAM[ypage][x][0]);
-		}
-		i_crc = CRC->DR;//i_sum1 = CRC_GetCRC();
-		//---------------------------
-
-		if(crc[lcd_driver.lcd_refresh_ypage + ypage] != i_crc)
-		{
-			LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage + ypage);
-			LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-		}
-		crc[lcd_driver.lcd_refresh_ypage + ypage] = i_crc;
-	}
-	
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-#endif
-
+#elif (LCD_TYPE == LCD_GRAY)
 //----------------------------灰度OLED屏幕刷屏接口-------------------------------------
-#elif defined (LCD_USE_GRAY_OLED)//灰度OLED
-#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
-//---------方式1:全屏刷新----------
-//--优点:全屏刷新
-//--缺点:内容不变的区域也参与了刷新
-uint8_t LCD_Refresh(void)
+/*--------------------------------------------------------------
+  * 名称: void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: 灰度OLED屏幕从x,page位置开始刷屏
+  * 说明: 灰度OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+/*
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
-	unsigned char x,y,i;
-	#if defined(GRAY_DRIVER_0DEG)
-	//---扫描方向1(不旋转)----
-	LCD_Set_Addr(0,0,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-	LCD_I2C_Start();
-	I2C_send_1Byte(OLED_IIC_7ADDR<<1);
-	LCD_I2C_WaitAck();
-	I2C_send_1Byte(0x40);
-	LCD_I2C_WaitAck();
-	for(y=0;y<SCREEN_HIGH;y++)
+	//待移植
+	while(1)//需要移植
 	{
-		uint8_t page,mask;
-		page=y/8;
-		mask=(0x01<<y%8);
-		for(x=0;x<SCREEN_WIDTH;)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page][x]&mask)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			x++;
-			//第二个点
-			if(x<SCREEN_WIDTH)
-			{
-				if(lcd_driver.LCD_GRAM[page][x]&mask)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			x++;
-			I2C_send_1Byte(i);
-			LCD_I2C_WaitAck();
-		}
+		;
 	}
-
-	#elif defined(GRAY_DRIVER_90DEG)
-	//---扫描方向2(90度旋转)---
-	LCD_Set_Addr(0,0,(SCREEN_HIGH/2-1),(SCREEN_WIDTH-1));
-	LCD_I2C_Start();
-	I2C_send_1Byte(OLED_IIC_7ADDR<<1);
-	LCD_I2C_WaitAck();
-	I2C_send_1Byte(0x40);
-	LCD_I2C_WaitAck();
-	for(y=0;y<SCREEN_HIGH;y+=2)
-	{
-		uint8_t page1,page2,mask1,mask2;
-		page1=y/8;
-		page2=(y+1)/8;
-		mask1=(0x01<<y%8);
-		mask2=(0x01<<(y+1)%8);
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page1][x]&mask1)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			//第二个点
-			if((y+1)<SCREEN_HIGH)
-			{
-				if(lcd_driver.LCD_GRAM[page2][x]&mask2)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			I2C_send_1Byte(i);
-			LCD_I2C_WaitAck();
-		}
-	}
-	#endif
-	LCD_I2C_Stop();
-	return 0;
 }
-#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
-//---------方式2:动态刷新----------
-//--优点:性能好,按需区域刷新,节省MCU资源
-//--缺点:全屏刷新相对变慢
-uint8_t LCD_Refresh(void)
-{
-	//每page做"sum+mini_crc组合"校验,若校验码没变,则不刷新该page
-	static uint32_t sum1[GRAM_YPAGE_NUM];
-	unsigned char ypage,x,y,i,ycount;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_sum1;
-		
-		//-----方式1:CRC算法校验-----
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][x];//CRC_CalcCRC(lcd_driver.LCD_GRAM[ypage][x]);
-		}
-		i_sum1 = CRC->DR;//i_sum1 = CRC_GetCRC();
-		//---------------------------
-
-		if(sum1[ypage] != i_sum1)
-		{
-			ycount = 8* ypage;
-#if defined(GRAY_DRIVER_0DEG)
-			//----扫描方向1(不旋转)---
-			LCD_Set_Addr(0,ycount,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-			LCD_I2C_Start();
-			I2C_send_1Byte(OLED_IIC_7ADDR<<1);
-			LCD_I2C_WaitAck();
-			I2C_send_1Byte(0x40);
-			LCD_I2C_WaitAck();
-			
-			for(y=0;y<8;y++)
-			{
-				uint8_t mask;
-				if(++ycount >= SCREEN_HIGH){break;}
-				mask=0x01<<(y%8);
-				for(x=0;x<SCREEN_WIDTH;)
-				{
-					//----第一个点----
-					i = 0x00;
-					if(lcd_driver.LCD_GRAM[ypage][x]&mask)
-					{
-						i = GRAY_COLOUR<<4;
-					}
-					//----第二个点----
-					x++;
-					if((lcd_driver.LCD_GRAM[ypage][x]&mask)&&(x<SCREEN_WIDTH))
-					{
-						i |= GRAY_COLOUR;
-					}
-					x++;
-					I2C_send_1Byte(i);
-					LCD_I2C_WaitAck();
-				}
-			}
-
-#elif defined(GRAY_DRIVER_90DEG)
-			//---扫描方向2(90度旋转)----
-			LCD_Set_Addr(ycount/2,0,(SCREEN_HIGH/2-1),(SCREEN_WIDTH-1));
-			LCD_I2C_Start();
-			I2C_send_1Byte(OLED_IIC_7ADDR<<1);
-			LCD_I2C_WaitAck();
-			I2C_send_1Byte(0x40);
-			LCD_I2C_WaitAck();
-			for(y=0;y<8;y+=2)
-			{
-				if(++ycount >= SCREEN_HIGH){break;}
-				for(x=0;x<SCREEN_WIDTH;x++)
-				{
-					//(4位一个点)
-					//----第一个点----
-					i = 0x00;
-					if(lcd_driver.LCD_GRAM[ypage][x]&(0x01<<y))
-					{
-						i = GRAY_COLOUR<<4;
-					}
-					//----第二个点----
-					if((y+1)<SCREEN_HIGH)
-					{
-						if(lcd_driver.LCD_GRAM[ypage][x]&(0x01<<(y+1)))
-						{
-							i |= GRAY_COLOUR;
-						}
-					}
-					I2C_send_1Byte(i);
-					LCD_I2C_WaitAck();
-				}
-			}
-#endif
-			LCD_I2C_Stop();
-		}
-		sum1[ypage] = i_sum1;
-	}
-	return 0;
-}
-//---------方式3:页缓存全局刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
-	#error ("_PAGE_BUFF mode not support Gray OLED yet!");
-//---------方式4:页缓存动态刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
-	#error ("_PAGE_BUFF mode not support Gray OLED yet!");
-#endif
+*/
+	#error ("GRAY not support I2C driver yet!");
 
 //----------------------------RGB565屏幕刷屏接口-------------------------------------
-#elif defined (LCD_USE_RGB565)
+#elif (LCD_TYPE == LCD_RGB565)
 	//彩屏TFT屏不支持I2C方式驱动 请更改屏幕驱动IC型号
-	#error ("TFT not support I2C Driver!");
+	#error ("TFT not support I2C driver yet!");
 #endif
 #endif
 

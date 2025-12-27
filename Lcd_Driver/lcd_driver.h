@@ -13,10 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 #ifndef LCD_DRIVER_H
 #define LCD_DRIVER_H
 
 #include "stdint.h"
+#include "string.h"
 #include "lcd_driver_config.h"
 #include "lcd_wegui_config.h"
 #include "lcd_res.h"
@@ -26,6 +28,9 @@ extern "C"{
 #endif
 
 //--RAM加速宏--
+#ifndef RAM_SPEEDUP_FUNC_0
+#	define RAM_SPEEDUP_FUNC_0
+#endif
 #ifndef RAM_SPEEDUP_FUNC_1
 #	define RAM_SPEEDUP_FUNC_1
 #endif
@@ -128,6 +133,10 @@ typedef struct lcd_driver
 	uint8_t LCD_GRAM[GRAM_YPAGE_NUM][SCREEN_WIDTH][LCD_COLOUR_BIT];
 	uint8_t lcd_refresh_ypage;//记录当前刷屏的是哪一页
 	#endif
+	//--------动态刷新--------
+	#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//动态刷新模式
+	uint16_t crc[((SCREEN_HIGH+7)/8)][PAGE_CRC_NUM];//储存crc校验值
+	#endif
 	//--------绘画驱动--------
 	void (*Write_GRAM)(uint16_t x,uint16_t ypage,uint8_t u8_value);//普通写,显示驱动函数
 	void (*Clear_GRAM)(uint16_t x,uint16_t ypage,uint8_t u8_value);//普通清,显示驱动函数
@@ -144,13 +153,13 @@ typedef struct lcd_driver
 		#endif
 	#endif
 	//----------字体----------
-	const fonts_t *fonts_ASCII;   //ASCII字体
-	const fonts_t *fonts_UTF8_cut;//UTF8裁剪字体
-	uint8_t newline_high;//\n换行距离
+	const fonts_ascii_t *fonts_ASCII;   //ASCII字体
+	const fonts_utf8_t *fonts_UTF8;//UTF8裁剪字体
+	uint8_t newline_high;//字符串\n换行距离
 }lcd_driver_t;
 
 
-#if (LCD_TYPE == LCD_RGB565)
+
 typedef enum //flash图片格式代码
 {
   IMG_RGB565=0x00,//无压缩 RGB565
@@ -158,13 +167,41 @@ typedef enum //flash图片格式代码
   IMG_RGB555=0x02,//无压缩 RGB555
   IMG_RGB444=0x03,//无压缩 RGB444
   IMG_RGB332=0x04,//无压缩 RGB332
+  IMG_OLED=0x0F,//无压缩 点阵
   IMG_RGB565_ZIP_ORLE2=0x20,//原始RLE_2字节对齐压缩 RGB565
   IMG_RGB888_ZIP_ORLE3=0x31,//原始RLE_3字节对齐压缩 RGB888
   IMG_RGB555_ZIP_ORLE2=0x22,//原始RLE_2字节对齐压缩 RGB555
   IMG_RGB444_ZIP_ORLE2=0x23,//原始RLE_2字节对齐压缩 RGB555
   IMG_RGB332_ZIP_ORLE1=0x14,//原始RLE_1字节对齐压缩 RGB332
+  IMG_OLED_ZIP_ORLE1=0x1F,//原始RLE_1字节对齐压缩 点阵
 }imgarry_type_t;
 
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//动态刷新
+/*--------------------------------------------------------------
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: weak类型 需要移植,否则无法使用动态刷新
+----------------------------------------------------------------*/
+uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len);
+
+/*--------------------------------------------------------------
+  * 名称: lcd_reset_crc()
+  * 功能: 刷新一次crc值(动态刷新专用)
+  * 说明: 用于强制刷新屏幕,防止动态刷新出现区域不刷新
+----------------------------------------------------------------*/
+void lcd_reset_crc(void);
+#endif
+
+/*--------------------------------------------------------------
+  * 名称: LCD_Refresh(void)
+  * 功能: 驱动接口,将显存LCD_GRAM全部内容发送至屏幕
+  * 说明: weak类型 允许重写
+----------------------------------------------------------------*/
+uint8_t LCD_Refresh(void);
+
+#if (LCD_TYPE == LCD_RGB565)
 /*--------------------------------------------------------------
   * 名称: rgb_set_driver_colour(uint8_t num,uint16_t colour)
   * 传入: num 颜色序号 对应设置writer_num的笔刷颜色
@@ -188,6 +225,15 @@ void lcd_set_driver_mode(lcd_driver_mode_t mode);
   * 功能: 设置高级驱动的限制区域(Box)
 ----------------------------------------------------------------*/
 void lcd_set_driver_box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t y_max);
+
+/*--------------------------------------------------------------
+  * 名称: gram_draw_one_byte(uint16_t x,int16_t y,uint8_t u8_value)
+  * 传入1: (x,y)坐标
+  * 传入2: u8_page 一字节点阵数据
+  * 功能: 将u8_page值以对其坐标的方式写到显存
+  * 说明: 坐标点x,y支持负数
+----------------------------------------------------------------*/
+void gram_draw_one_byte(int16_t x,int16_t y,uint8_t u8_page);
 
 /*--------------------------------------------------------------
   * 名称: lcd_draw_pixl(int16_t x,uint16_t y)
@@ -258,8 +304,20 @@ void lcd_draw_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, ui
   * 功能: 将点阵图形摆放到任意坐标点上
   * 说明: 坐标点支持负数
 ----------------------------------------------------------------*/
-void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[]);
+void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,const uint8_t BMP[]);
 
+/*--------------------------------------------------------------
+  * 名称: lcd_draw_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint8_t sizey,uint8_t BMP[])
+  * 传入1: x0 坐标左上角横坐标点
+	* 传入2: y0 坐标左上角纵坐标点
+  * 传入3: sizex 点阵图形x宽度
+  * 传入4: sizey 点阵图形y高度
+  * 传入5: BMP[] 点阵图形数组地址
+  * 功能: 将压缩点阵图形摆放到任意坐标点上
+  * 说明: 坐标点支持负数
+----------------------------------------------------------------*/
+void lcd_draw_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,const uint8_t RLEBMP[]);
+	
 /*--------------------------------------------------------------
   * 名称: lcd_draw_ascii(int16_t x,int16_t y,char chr)
   * 传入: (x,y)左上角坐标 char:字符

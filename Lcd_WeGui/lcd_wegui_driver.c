@@ -77,12 +77,12 @@ char *my_itoa(int16_t num,char *str,uint8_t radix)
 }
 
 /*--------------------------------------------------------------
-  * 名称: char* wegui_get_string(Wegui_string_t object,langage_t language)
+  * 名称: char* wegui_get_string(wegui_string_t object,langage_t language)
   * 传入1: object 语言包
   * 传入2: language 语言
   * 功能: 返回"语言包"里对应的"language语言"字符串指针,
 ----------------------------------------------------------------*/
-char* wegui_get_string(Wegui_string_t object,langage_t language)
+char* wegui_get_string(wegui_string_t object,langage_t language)
 {
 	char* i=0;
 	switch(language)
@@ -336,8 +336,8 @@ static void wegui_update_info()
 		uint8_t y=0;
 
 	//--调整体字---
-	const fonts_t *i  = lcd_driver.fonts_ASCII;
-	lcd_driver.fonts_ASCII = &fonts_ascii_songti_6X12;
+	const fonts_ascii_t *i  = lcd_driver.fonts_ASCII;
+	lcd_driver.fonts_ASCII = &mcu_fonts_ascii_songti_6X12;
 
 	//---1.边框---
 	lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BORDER);

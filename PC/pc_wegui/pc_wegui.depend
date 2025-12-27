@@ -1,24 +1,25 @@
 # depslib dependency file v1.0
-1765460671 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.c
+1766861451 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.c
 	"lcd_driver.h"
 
-1765373721 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.h
+1766854008 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_driver.h
 	"stdint.h"
+	"string.h"
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"lcd_res.h"
 
-1765381324 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.h
+1766330595 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.h
 	"stdint.h"
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 
-1765453004 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.c
+1766330661 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.c
 	"lcd_driver_config.h"
 	"lcd_wegui_config.h"
 	"lcd_wegui_driver.h"
 
-1765223166 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.h
+1766070367 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_driver.h
 	"lcd_wegui_config.h"
 	"lcd_driver.h"
 	"lcd_res.h"
@@ -41,10 +42,10 @@
 
 1761323434 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_app.h
 
-1765453174 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.c
+1766081604 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_menu_mlist.c
 	"lcd_wegui_menu_mlist.h"
 
-1765451880 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.c
+1766081604 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\lcd_wegui_tip.c
 	"lcd_wegui_tip.h"
 
 1755730538 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_wegui\user_wegui_menu.c
@@ -60,7 +61,7 @@
 	"lcd_wegui_menu_mlist.h"
 	"lcd_wegui_tip.h"
 
-1765460868 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_driver_config.h
+1766861482 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\lcd_port\lcd_driver_config.h
 	"pc_lcd_port.h"
 	"SDL.h"
 	"TFT_Color.h"
@@ -95,7 +96,7 @@
 1755535700 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\pc_wegui\poker.h
 	"stdint.h"
 
-1765381243 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.c
+1766330661 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\lcd_res.c
 	"lcd_res.h"
 
 1756653427 e:\onedrive\mcu_program\library\wegui\wegui_rgb\pc\sdl2\x86_64-w64-mingw32\include\sdl2\sdl.h
@@ -1087,7 +1088,7 @@
 	"stdint.h"
 	"lcd_wegui_driver.h"
 
-1765381460 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\driver_demo.c
+1766859721 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\driver_demo.c
 	"driver_demo.h"
 
 1761370346 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\driver_demo.h
@@ -1095,16 +1096,16 @@
 	"lcd_driver.h"
 	"lcd_wegui_driver.h"
 
-1765453095 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\wegui_menu_demo.c
+1766855880 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\wegui_menu_demo.c
 	"wegui_menu_demo.h"
-	"lcd_wegui_tip.h"
+	"flash_driver.h"
 	"flash_img_demo.h"
 
-1765385583 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\flash_img_demo.h
+1766855880 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_demo\flash_img_demo.h
 
-1765448924 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.c
+1766782041 source:e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.c
 	"flash_driver.h"
 
-1765374548 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.h
+1766055401 e:\onedrive\mcu_program\library\wegui\wegui_rgb\lcd_driver\flash_driver.h
 	"lcd_driver.h"
 

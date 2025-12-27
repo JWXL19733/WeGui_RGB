@@ -25,26 +25,6 @@ limitations under the License.
 #	define RAM_SPEEDUP_FUNC_0
 #endif
 
-#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
-static uint16_t crc[((SCREEN_HIGH+7)/8)][PAGE_CRC_NUM];//储存crc
-/*--------------------------------------------------------------
-  * 名称: LCD_Reset_crc()
-  * 功能: 刷新一次crc值(动态刷新专用)
-  * 说明: 用于强制刷新屏幕,防止动态刷新出现区域不刷新
-----------------------------------------------------------------*/
-void LCD_Reset_crc()
-{
-	uint16_t i=0;
-	uint16_t *p=&crc[0][0];
-	while(i < ((SCREEN_HIGH+7)/8)*PAGE_CRC_NUM)
-	{
-		p[i]=0xff;//随机值,不是0x0就ok
-		i++;
-	}
-}
-
-#endif
-
 /*--------------------------------------------------------------
   * 名称: LCD_delay_ms(uint32_t ms)
   * 传入1: ms
@@ -307,728 +287,127 @@ void LCD_Send_nCmd(uint8_t *p,uint16_t num)
 }
 #endif
 
+
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
 /*--------------------------------------------------------------
-  * 名称: LCD_Refresh(void)
-  * 功能: 驱动接口,将显存LCD_GRAM全部内容发送至屏幕
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: 原函数为weak,改写自lcd_Driver.c
 ----------------------------------------------------------------*/
-//----------------------------普通OLED屏幕刷屏接口-------------------------------------
+RAM_SPEEDUP_FUNC_0
+uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+{
+		uint16_t i;
+		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
+		for(i=0;i<=len;i++)
+		{
+			CRC->DR = *gram++;//CRC_CalcCRC(*gram++);//计算校验
+		}
+		return CRC->DR;//return CRC_GetCRC();
+}
+#endif
+
 #if (LCD_TYPE == LCD_OLED)
-//---------方式1:全屏刷新----------
-#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
+//----------------------------普通OLED屏幕刷屏接口-------------------------------------
+/*--------------------------------------------------------------
+  * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: OLED屏幕从x,page位置开始刷屏
+  * 说明: OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
-	uint8_t ypage;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		LCD_Set_Addr(0,ypage);
-		LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-	}
-	return 0;
-}
-//---------方式2:动态刷新----------
-#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	//每page做"sum+mini_crc组合"校验,若校验码没变,则不刷新该page
-	uint8_t ypage;
-	uint16_t x;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		//--------CRC算法校验--------
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-		for(x=0;x<(SCREEN_WIDTH*LCD_COLOUR_BIT);x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][x][0];
-		}
-		i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-		//---------------------------
-		if(crc[ypage][0] != i_crc)
-		{
-			LCD_Set_Addr(0,ypage);
-			LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-			crc[ypage][0] = i_crc;
-		}
-	}
-	return 0;
+	//--1.配置刷新窗口位置--
+	LCD_Set_Addr(x0,page);
+	//--2.快速发送点阵数据--
+	LCD_Send_nDat(page_gram,(x1-x0));
 }
 
-//---------方式3:页缓存全局刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	uint8_t i=0;
-	for(i=0;i<GRAM_YPAGE_NUM;i++)
-	{
-		LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage);
-		LCD_Send_nDat(&lcd_driver.LCD_GRAM[i][0][0],SCREEN_WIDTH);
-		lcd_driver.lcd_refresh_ypage++;
-		if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-		{
-			lcd_driver.lcd_refresh_ypage = 0;
-			break;
-		}
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-//---------方式4:页缓存动态刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	//每page做校验,若校验码没变,则不刷新该page
-	uint8_t ypage;
-	uint16_t x;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		//判断屏幕是否已刷完
-		if(lcd_driver.lcd_refresh_ypage + ypage > ((SCREEN_HIGH+7)/8)-1)
-		{
-			break;
-		}
-		//--------CRC算法校验--------
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-		for(x=0;x<(SCREEN_WIDTH*LCD_COLOUR_BIT);x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][0][x];
-		}
-		i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-		//---------------------------
-		if(crc[lcd_driver.lcd_refresh_ypage + ypage][0] != i_crc)
-		{
-			LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage + ypage);
-			LCD_Send_nDat(&lcd_driver.LCD_GRAM[ypage][0][0],SCREEN_WIDTH);
-			crc[lcd_driver.lcd_refresh_ypage + ypage][0] = i_crc;
-		}
-	}
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-#endif
-//----------------------------灰度OLED屏幕刷屏接口-------------------------------------
 #elif (LCD_TYPE == LCD_GRAY)
-#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
-//---------方式1:全缓存全屏刷新----------
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
+//----------------------------灰度OLED屏幕刷屏接口-------------------------------------
+/*--------------------------------------------------------------
+  * 名称: void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: 灰度OLED屏幕从x,page位置开始刷屏
+  * 说明: 灰度OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
-	uint8_t x,y,i;
-	#if defined(GRAY_DRIVER_0DEG)
-	//---扫描方向1(不旋转)----
-	LCD_Set_Addr(0,0,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	for(y=0;y<SCREEN_HIGH;y++)
+	//灰度屏待移植
+	while(1)//需要移植
 	{
-		uint8_t page,mask;
-		page=y/8;
-		mask=(0x01<<y%8);
-		for(x=0;x<SCREEN_WIDTH;)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page][x][0]&mask)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			x++;
-			//第二个点
-			if(x<SCREEN_WIDTH)
-			{
-				if(lcd_driver.LCD_GRAM[page][x][0]&mask)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			x++;
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-		}
+		;
 	}
-
-	#elif defined(GRAY_DRIVER_90DEG)
-	//---扫描方向2(90度旋转)---
-	LCD_Set_Addr(0,0,(SCREEN_HIGH/2-1),(SCREEN_WIDTH-1));
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	for(y=0;y<SCREEN_HIGH;y+=2)
-	{
-		uint8_t page1,page2,mask1,mask2;
-		page1=y/8;
-		page2=(y+1)/8;
-		mask1=(0x01<<y%8);
-		mask2=(0x01<<(y+1)%8);
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page1][x][0]&mask1)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			//第二个点
-			if((y+1)<SCREEN_HIGH)
-			{
-				if(lcd_driver.LCD_GRAM[page2][x][0]&mask2)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-		}
-	}
-	#endif
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-	send_lcd_spi_done();//等待SPI发送器空闲(发完)
-	LCD_CS_Set();
-	return 0;
 }
 
-#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
-//---------方式2:全缓存动态刷新----------
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	uint8_t ypage,y,i;
-	uint16_t x,ycount;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		//--------CRC算法校验--------
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-		for(x=0;x<(SCREEN_WIDTH*LCD_COLOUR_BIT);x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][0][x];
-		}
-		i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-		//---------------------------
-		if(crc[ypage][0] != i_crc)
-		{
-			ycount = 8* ypage;
-#if defined(GRAY_DRIVER_0DEG)
-			//----扫描方向1(不旋转)---
-			LCD_Set_Addr(0,ycount,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-			LCD_DC_Set();
-			LCD_CS_Clr();
-			
-			for(y=0;y<8;y++)
-			{
-				uint8_t mask;
-				if(++ycount >= SCREEN_HIGH){break;}
-				mask=0x01<<(y%8);
-				for(x=0;x<SCREEN_WIDTH;)
-				{
-					//----第一个点----
-					i = 0x00;
-					if(lcd_driver.LCD_GRAM[ypage][x][0]&mask)
-					{
-						i = GRAY_COLOUR<<4;
-					}
-					//----第二个点----
-					x++;
-					if((lcd_driver.LCD_GRAM[ypage][x][0]&mask)&&(x<SCREEN_WIDTH))
-					{
-						i |= GRAY_COLOUR;
-					}
-					x++;
-					wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-					send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-				}
-			}
-
-#elif defined(GRAY_DRIVER_90DEG)
-			//---扫描方向2(90度旋转)----
-			LCD_Set_Addr(ycount/2,0,(SCREEN_HIGH/2-1),(SCREEN_WIDTH-1));
-			LCD_DC_Set();
-			LCD_CS_Clr();
-			for(y=0;y<8;y+=2)
-			{
-				if(++ycount >= SCREEN_HIGH){break;}
-				for(x=0;x<SCREEN_WIDTH;x++)
-				{
-					//(4位一个点)
-					//----第一个点----
-					i = 0x00;
-					if(lcd_driver.LCD_GRAM[ypage][x][0]&(0x01<<y))
-					{
-						i = GRAY_COLOUR<<4;
-					}
-					//----第二个点----
-					if(lcd_driver.LCD_GRAM[ypage][x][0]&(0x01<<(y+1)))
-					{
-						i |= GRAY_COLOUR;
-					}
-					wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-					send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-				}
-			}
-#endif
-			crc[ypage][0] = i_crc;
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_done();//等待SPI发送器空闲(发完)
-			LCD_CS_Set();
-		}
-	}
-	return 0;
-}
-//---------方式3:页缓存全局刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	uint8_t i;
-	uint16_t x,y;
-	#if defined(GRAY_DRIVER_0DEG)
-	//---扫描方向1(不旋转)----
-	LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage*8,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	for(y=0;(y+lcd_driver.lcd_refresh_ypage*8)<SCREEN_HIGH;)
-	{
-		uint8_t page,mask;
-		page=y/8;
-		mask=(0x01<<y%8);
-		for(x=0;x<SCREEN_WIDTH;)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page][x][0]&mask)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			x++;
-			//第二个点
-			if(x<SCREEN_WIDTH)
-			{
-				if(lcd_driver.LCD_GRAM[page][x][0]&mask)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			x++;
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-		}
-		y++;
-		if(y>=(GRAM_YPAGE_NUM*8))
-		{
-			break;
-		}
-	}
-
-	#elif defined(GRAY_DRIVER_90DEG)
-	//---扫描方向2(90度旋转)---
-	LCD_Set_Addr(lcd_driver.lcd_refresh_ypage*4,0,(SCREEN_HIGH/2-1),(SCREEN_WIDTH-1));
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	for(y=0;(y+lcd_driver.lcd_refresh_ypage*8)<SCREEN_HIGH;)
-	{
-		uint8_t page1,page2,mask1,mask2;
-		page1=y/8;
-		page2=(y+1)/8;
-		mask1=(0x01<<y%8);
-		mask2=(0x01<<(y+1)%8);
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			i = 0x00;
-			//第一个点
-			if(lcd_driver.LCD_GRAM[page1][x][0]&mask1)
-			{
-				i = GRAY_COLOUR<<4;
-			}
-			//第二个点
-			if((y+1)<SCREEN_HIGH)
-			{
-				if(lcd_driver.LCD_GRAM[page2][x][0]&mask2)
-				{
-					i |= GRAY_COLOUR;
-				}
-			}
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-		}
-		y+=2;
-		if(y>=(GRAM_YPAGE_NUM*8))
-		{
-			break;
-		}
-	}
-	#endif
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-	send_lcd_spi_done();//等待SPI发送器空闲(发完)
-	LCD_CS_Set();
-	
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-
-//---------方式4:页缓存动态刷新----------
-#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	//每page做"sum+mini_crc组合"校验,若校验码没变,则不刷新该page
-	uint8_t ypage,y,i;
-	uint16_t x,ycount;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		//--------CRC算法校验--------
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-		for(x=0;x<(SCREEN_WIDTH*LCD_COLOUR_BIT);x++)
-		{
-			CRC->DR = lcd_driver.LCD_GRAM[ypage][0][x];
-		}
-		i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-		//---------------------------
-		if(crc[ypage][0] != i_crc)
-		{
-			ycount = 8* ypage;
-#if defined(GRAY_DRIVER_0DEG)
-			//----扫描方向1(不旋转)---
-			LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage*8+ycount,(SCREEN_WIDTH/2-1),(SCREEN_HIGH-1));
-			LCD_DC_Set();
-			LCD_CS_Clr();
-			
-			for(y=0;y<8;y++)
-			{
-				uint8_t mask;
-				ycount++;
-				if((ycount >= SCREEN_HIGH)||(y>=(GRAM_YPAGE_NUM*8))){break;}
-
-				mask=0x01<<(y%8);
-				for(x=0;x<SCREEN_WIDTH;)
-				{
-					//----第一个点----
-					i = 0x00;
-					if(lcd_driver.LCD_GRAM[ypage][x][0]&mask)
-					{
-						i = GRAY_COLOUR<<4;
-					}
-					//----第二个点----
-					x++;
-					if((lcd_driver.LCD_GRAM[ypage][x][0]&mask)&&(x<SCREEN_WIDTH))
-					{
-						i |= GRAY_COLOUR;
-					}
-					x++;
-					wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-					send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-				}
-			}
-
-#elif defined(GRAY_DRIVER_90DEG)
-			//---扫描方向2(90度旋转)----
-			LCD_Set_Addr(lcd_driver.lcd_refresh_ypage*4 + ycount/2,0,((SCREEN_HIGH+1)/2-1),(SCREEN_WIDTH-1));
-			LCD_DC_Set();
-			LCD_CS_Clr();
-			for(y=0;y<8;)
-			{
-				if(++ycount >= SCREEN_HIGH){break;}
-				for(x=0;x<SCREEN_WIDTH;x++)
-				{
-					//(4位一个点)
-					//----第一个点----
-					i = 0x00;
-					//j = y + lcd_driver.lcd_refresh_ypage*8;
-					//if((j+1)<=SCREEN_HIGH)
-					{
-						if(lcd_driver.LCD_GRAM[ypage][x][0]&(0x01<<y))
-						{
-							i = GRAY_COLOUR<<4;
-						}
-						//----第二个点----
-						//if((j+1)<SCREEN_HIGH)
-						{
-							if(lcd_driver.LCD_GRAM[ypage][x][0]&(0x01<<(y+1)))
-							{
-								i |= GRAY_COLOUR;
-							}
-						}
-					}
-					wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-					send_lcd_spi_dat(i);//向SPI发送缓冲器发送一个数据
-				}
-				y+=2;
-			}
-#endif
-			crc[ypage][0] = i_crc;
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_done();//等待SPI发送器空闲(发完)
-			LCD_CS_Set();
-		}
-	}
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-#endif
-//----------------------------RGB565屏幕刷屏接口-------------------------------------
 #elif (LCD_TYPE == LCD_RGB565)
-#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
-//---------方式1:全缓存全屏刷----------
+//----------------------------RGB565屏幕刷屏接口-------------------------------------
+/*--------------------------------------------------------------
+  * 名称: void rgb565_flush(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始坐标x
+	* 传入2:x1刷新起始坐标x
+  * 传入3:page刷新页
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: 从x,page位置开始刷屏 点阵数据转换成tft数据发送 
+  * 说明: 源代码为weak类型 改自lcd_driver.c
+----------------------------------------------------------------*/
 RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
+void lcd_rgb565_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
-	uint16_t x,y;
-	LCD_Set_Addr(0,0,SCREEN_WIDTH-1,SCREEN_HIGH-1);
+	uint8_t page_bit,*p,mask,c;
+	uint16_t x,y0,y1,x_len;
+	y0 = page * 8;
+	y1 = y0 + 8;//y1 = SCREEN_HIGH-1;
+	x_len = x1-x0;
 	
-	Set_SPI_DataSize_16b();
+	//--1.配置刷新窗口位置--
+	LCD_Set_Addr(x0,y0,x1,y1);
+	//----------------------
+	
+	//--2.准备发送屏幕数据--
 	LCD_DC_Set();
 	LCD_CS_Clr();
+	Set_SPI_DataSize_16b();
+	//----------------------
 	
-	for(y=0;y<SCREEN_HIGH;y++)
+	for(page_bit=0;page_bit<8;)
 	{
-		uint8_t ypage=y/8;
-		uint8_t mask=0x01<<(y%8);
-		uint8_t *gram=&lcd_driver.LCD_GRAM[ypage][0][0];
-		for(x=0;x<SCREEN_WIDTH;x++)
+		mask = 0x01<<page_bit++;
+		p = page_gram;
+		if(++y0 > SCREEN_HIGH){break;}
+		for(x=0;x<=x_len;x++)
 		{
-			uint8_t c=0;
-			#if (LCD_COLOUR_BIT>=1)//---1位色---
-				if(*gram++&mask){c+=1;}
+			#if (LCD_COLOUR_BIT==1)//---1位色---
+				c=0;if(*p++&mask){c=1;}
+			#elif (LCD_COLOUR_BIT==2)//---2位色---
+				c=0;if(*p++&mask){c=1;}if(*p++&mask){c+=2;}
+			#elif (LCD_COLOUR_BIT==3)//---3位色---
+				c=0;if(*p++&mask){c=1;}if(*p++&mask){c+=2;}if(*p++&mask){c+=4;}
 			#endif
-			#if (LCD_COLOUR_BIT>=2)//---2位色---
-				if(*gram++&mask){c+=2;}
-			#endif
-			#if (LCD_COLOUR_BIT>=3)//---3位色---
-				if(*gram++&mask){c+=4;}
-			#endif
+				
+			//--2.快速发送一个颜色--
 			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(lcd_driver.colour[c]>>8);//向SPI发送缓冲器发送一个数据
-			send_lcd_spi_dat(lcd_driver.colour[c]&0xff);//向SPI发送缓冲器发送一个数据
+			send_lcd_spi_dat(lcd_driver.colour[c]);//发送发送一个颜色
+			//----------------------	
 		}
 	}
+	//------3.结束发送------
 	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空 (某些芯片可以省略掉这一句)
 	send_lcd_spi_done();//等待SPI发送器空闲(发完)
 	LCD_CS_Set();
 	Set_SPI_DataSize_8b();
-	return 0;
+	//----------------------
 }
-
-#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
-//---------方式2:全缓存动态刷----------
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	//每page做校验,若校验码没变,则不刷新该page
-	uint8_t ypage;
-	uint16_t x,ycount;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		uint8_t i_dyna_count;//每页检测DYNA_CRC_NUM次
-		for(i_dyna_count=0;i_dyna_count<PAGE_CRC_NUM;i_dyna_count++)
-		{
-			uint16_t x_start = i_dyna_count * DYNA_CRC_ONCE_XNUM;
-			uint16_t x_end   = x_start + DYNA_CRC_ONCE_XNUM ;
-			uint8_t *i = &lcd_driver.LCD_GRAM[ypage][x_start][0];
-			if(x_end > (SCREEN_WIDTH-1)){x_end = SCREEN_WIDTH-1;}
-			//--------CRC算法校验--------
-			CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-			for(x=0;x<=(x_end-x_start)*LCD_COLOUR_BIT;x++) //从*i开始校验, 连续校验(x_end-x_start)*LCD_COLOUR_BIT次
-			{
-				CRC->DR = *i++;
-			}
-			i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-			//---------------------------
-		
-			if(crc[ypage][i_dyna_count] != i_crc)
-			{
-				uint8_t y=0;
-				
-				LCD_Set_Addr(x_start,(ypage)*8,x_end,SCREEN_HIGH-1);
-				LCD_DC_Set();
-				LCD_CS_Clr();
-				Set_SPI_DataSize_16b();
-				
-				ycount = 8* (ypage);
-				for(y=0;y<8;y++)
-				{
-					uint8_t mask;
-					if(++ycount > SCREEN_HIGH)
-					{
-						break;
-					}
-					mask=0x01<<(y%8);
-					uint8_t *gram=&lcd_driver.LCD_GRAM[ypage][x_start][0];
-					for(x=0;x<=(x_end-x_start);x++)
-					{
-						uint8_t c=0;
-						#if (LCD_COLOUR_BIT>=1)//---1位色---
-							if(*gram++&mask){c+=1;}
-						#endif
-						#if (LCD_COLOUR_BIT>=2)//---2位色---
-							if(*gram++&mask){c+=2;}
-						#endif
-						#if (LCD_COLOUR_BIT>=3)//---3位色---
-							if(*gram++&mask){c+=4;}
-						#endif
-						wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-						send_lcd_spi_dat(lcd_driver.colour[c]);//向SPI发送缓冲器发送一个数据
-					}
-				}
-				crc[ypage][i_dyna_count] = i_crc;
-				wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空 (某些芯片可以省略掉这一句)
-				send_lcd_spi_done();//等待SPI发送器空闲(发完)
-				LCD_CS_Set();
-				Set_SPI_DataSize_8b();
-			}
-		}
-	}
-	LCD_CS_Set();
-	Set_SPI_DataSize_8b();
-	return 0;
-}
-#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
-//---------方式3:页缓存全屏刷新----------
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	uint16_t x,y;
-	LCD_Set_Addr(0,lcd_driver.lcd_refresh_ypage*8,SCREEN_WIDTH-1,SCREEN_HIGH-1);
-	
-	Set_SPI_DataSize_16b();
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	
-	for(y=0;(y+lcd_driver.lcd_refresh_ypage*8)<SCREEN_HIGH;)
-	{
-		uint8_t mask=0x01<<(y%8);
-		uint8_t *gram=&lcd_driver.LCD_GRAM[y/8][0][0];
-		for(x=0;x<SCREEN_WIDTH;x++)
-		{
-			uint8_t c=0;
-			#if (LCD_COLOUR_BIT>=1)//---1位色---
-				if(*gram++&mask){c+=1;}
-			#endif
-			#if (LCD_COLOUR_BIT>=2)//---2位色---
-				if(*gram++&mask){c+=2;}
-			#endif
-			#if (LCD_COLOUR_BIT>=3)//---3位色---
-				if(*gram++&mask){c+=4;}
-			#endif
-			wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-			send_lcd_spi_dat(lcd_driver.colour[c]);//向SPI发送缓冲器发送一个数据
-		}
-		y++;
-		if(y>=(GRAM_YPAGE_NUM*8))
-		{
-			break;
-		}
-	}
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空 (某些芯片可以省略掉这一句)
-	send_lcd_spi_done();//等待SPI发送器空闲(发完)
-	LCD_CS_Set();
-	Set_SPI_DataSize_8b();
-	
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-
-
-#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
-//---------方式4:页缓存动态刷新----------
-RAM_SPEEDUP_FUNC_0 //代码加速宏定义
-uint8_t LCD_Refresh(void)
-{
-	uint8_t ypage;
-	uint16_t x,ycount;
-	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
-	{
-		uint16_t i_crc;
-		uint8_t i_dyna_count;//每页检测DYNA_CRC_NUM次
-		if((lcd_driver.lcd_refresh_ypage + ypage)>=((SCREEN_HIGH+7)/8))
-		{
-			break;
-		}
-		for(i_dyna_count=0;i_dyna_count<PAGE_CRC_NUM;i_dyna_count++)
-		{
-			uint16_t x_start = i_dyna_count * DYNA_CRC_ONCE_XNUM;
-			uint16_t x_end   = x_start + DYNA_CRC_ONCE_XNUM ;
-			uint8_t *i = &lcd_driver.LCD_GRAM[ypage][x_start][0];
-			if(x_end > (SCREEN_WIDTH-1)){x_end = SCREEN_WIDTH-1;}
-			//--------CRC算法校验--------
-			CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-			for(x=0;x<=(x_end-x_start)*LCD_COLOUR_BIT;x++) //从*i开始校验, 连续校验(x_end-x_start)*LCD_COLOUR_BIT次
-			{
-				CRC->DR = *i++;
-			}
-			i_crc = CRC->DR;//i_crc = CRC_GetCRC();//把校验值, 赋给i_crc
-			//---------------------------
-			if(crc[lcd_driver.lcd_refresh_ypage + ypage][i_dyna_count] != i_crc)
-			{
-				uint8_t y=0;
-				
-				LCD_Set_Addr(x_start,(lcd_driver.lcd_refresh_ypage+ypage)*8,x_end,SCREEN_HIGH-1);
-				LCD_DC_Set();
-				LCD_CS_Clr();
-				Set_SPI_DataSize_16b();
-		
-				
-				ycount = 8* (ypage + lcd_driver.lcd_refresh_ypage);
-				for(y=0;y<8;y++)
-				{
-					uint8_t mask;
-					uint8_t *gram;
-					if(++ycount > SCREEN_HIGH)
-					{
-						break;
-					}
-					mask=0x01<<(y%8);
-					gram=&lcd_driver.LCD_GRAM[ypage][x_start][0];
-					for(x=0;x<=(x_end-x_start);x++)
-					{
-						uint8_t c=0;
-						#if (LCD_COLOUR_BIT>=1)//---1位色---
-							if(*gram++&mask){c+=1;}
-						#endif
-						#if (LCD_COLOUR_BIT>=2)//---2位色---
-							if(*gram++&mask){c+=2;}
-						#endif
-						#if (LCD_COLOUR_BIT>=3)//---3位色---
-							if(*gram++&mask){c+=4;}
-						#endif
-						wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-						send_lcd_spi_dat(lcd_driver.colour[c]);//向SPI发送缓冲器发送一个数据
-					}
-				}
-				crc[lcd_driver.lcd_refresh_ypage + ypage][i_dyna_count] = i_crc;
-				wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空 (某些芯片可以省略掉这一句)
-				send_lcd_spi_done();//等待SPI发送器空闲(发完)
-				LCD_CS_Set();
-				Set_SPI_DataSize_8b();
-			}
-		}
-	}
-	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
-	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
-	{
-		lcd_driver.lcd_refresh_ypage = 0;
-	}
-	return lcd_driver.lcd_refresh_ypage;
-}
-#endif
 #endif
 
 #endif

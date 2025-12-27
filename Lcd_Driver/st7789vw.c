@@ -1200,10 +1200,10 @@ void ST7789VW_Clear()//清除IC显示缓存
 
 void ST7789VW_Init()
 {
-//	LCD_RES_Clr();
-//	LCD_delay_ms(100);
-//	LCD_RES_Set();
-//	LCD_delay_ms(100);
+	LCD_RES_Clr();
+	LCD_delay_ms(100);
+	LCD_RES_Set();
+	LCD_delay_ms(100);
 
 
 	ST7789VW_Sleep_Out();//11

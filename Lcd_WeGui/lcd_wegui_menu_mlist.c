@@ -27,11 +27,11 @@ void wegui_mList_Init()
 			max = lcd_driver.fonts_ASCII->high;
 		}
 	}
-	if(lcd_driver.fonts_UTF8_cut != 0x00)
+	if(lcd_driver.fonts_UTF8 != 0x00)
 	{
-		if(max<lcd_driver.fonts_UTF8_cut->high)
+		if(max<lcd_driver.fonts_UTF8->high)
 		{
-			max = lcd_driver.fonts_UTF8_cut->high;
+			max = lcd_driver.fonts_UTF8->high;
 		}
 	}
 	if(max == 0){max=12;}

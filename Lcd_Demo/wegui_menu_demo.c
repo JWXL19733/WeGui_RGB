@@ -23,7 +23,7 @@ limitations under the License.
 * Misc Contiols -> 填入"--no-multibyte-chars"
 *************************************************/
 #include "wegui_menu_demo.h"
-#include "lcd_wegui_tip.h"
+#include "flash_driver.h"
 #include "flash_img_demo.h"
 
 uint8_t demo_bool=1;
@@ -240,9 +240,9 @@ uint8_t Game_APP_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷新屏幕时
 //------------------------------------------flash视频播放器--------------------------------------------
 void m_App_VideoPleayer_Begin()//进入APP执行一次
 {
-	//--清屏--
-	lcd_clear_gram();
-	while(LCD_Refresh()!=0);
+//	//--清屏--
+//	lcd_clear_gram();
+//	while(LCD_Refresh()!=0);
 }
 void m_App_VideoPleayer_Loop()//相当于在主循环执行
 {
@@ -250,27 +250,38 @@ void m_App_VideoPleayer_Loop()//相当于在主循环执行
 }
 void m_App_VideoPleayer_Quit()//退出菜单执行一次
 {
-	#if((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
-		LCD_Reset_crc();//强制刷新一下crc动态刷新值, 确保能再全刷一遍, 保证颜色正确
-	#endif
-	lcd_clear_gram();
-	while(LCD_Refresh()!=0);
+//	#if((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
+//		lcd_reset_crc();//强制刷新一下crc动态刷新值, 确保能再全刷一遍, 保证颜色正确
+//	#endif
+//	lcd_clear_gram();
+//	while(LCD_Refresh()!=0);
 }
-//--no-multibyte-chars
+
 uint8_t m_App_VideoPleayer_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷新屏幕时执行,放绘图函数
 {
 	(void)ui_farmes;//防止警告
 	(void)time_count;//防止警告
 	static uint16_t id=0;
-	
+	/*
+		取模格式:[点阵]往下8位对齐,逐行扫描
+		增加信息头√
+	*/
+	//0.---等待发送完毕---
+	while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+	//1.---清空缓存---
+	lcd_clear_gram();
 	#if(FLASH_PORT != _F_NO_PORT)
-		flash_draw_img(0,0,flash_addr[id]) ;
-		if(++id >= (sizeof(flash_addr)/sizeof(flash_addr[0])))
+	//lcd_draw_flash_RLEbitmap(0,0,128,64,img_flash_addr[id]);
+	flash_draw_img(0,0,img_flash_addr[id]);
+	if(ui_farmes)
+	{
+		if(++id >= (sizeof(img_flash_addr)/sizeof(img_flash_addr[0])))
 		{
 			id=0;
 		}
+	}
 	#endif
-	return 0;//返回1正常刷屏 返回0不刷屏
+	return 1;//返回1正常刷屏 返回0不刷屏
 }
 
 //------------------------------------------控件演示Demo--------------------------------------------

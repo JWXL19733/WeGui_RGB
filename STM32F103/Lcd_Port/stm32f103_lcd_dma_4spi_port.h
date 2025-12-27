@@ -21,12 +21,37 @@ limitations under the License.
 #include "stm32f10x_spi.h"
 #include "stdint.h"
 
-typedef volatile enum LCD_dma_step
-{
-	DMA_FREE = 0,
-	DMA_NORMAL_CMD = 1,
-	DMA_REFLASH = 2,
-}lcd_dma_step_t;
+
+#define LCD_SPIx                   SPI1
+#define LCD_DMAx                   DMA1
+#define LCD_DMA_CHANNELx           DMA1_Channel3 //LCD_SPIx_TX
+#define LCD_DMA_COMPLETE_FLAG      DMA1_FLAG_TC3
+#define LCD_DMA_PeripheralBaseAddr (&SPI1->DR)
+#define RCC_APB2Periph_SPIx        RCC_APB2Periph_SPI1
+
+////---库函数版本---
+//DMA忙碌
+//#define LCD_is_Busy()              (DMA_GetFlagStatus(LCD_DMA_COMPLETE_FLAG) == (uint16_t)RESET)
+//等待DMA空闲
+//#define wait_lcd_dma_free()        do{while(LCD_is_Busy());}while(0)
+////等待SPI发送缓冲器为空
+//#define wait_lcd_spi_txtemp_free() do{while(SPI_I2S_GetFlagStatus(LCD_SPIx,SPI_I2S_FLAG_TXE)==RESET);}while(0)
+////向SPI发送缓冲器发送一个数据
+//#define send_lcd_spi_dat(dat)      do{SPI_I2S_SendData(LCD_SPIx, dat);}while(0)
+////等待SPI发送器空闲(发完)
+//#define send_lcd_spi_done()        do{while(SPI_I2S_GetFlagStatus(LCD_SPIx,SPI_I2S_FLAG_BSY));}while(0)
+
+//---寄存器版本---
+//DMA忙碌
+#define LCD_is_Busy()              (lcd_busy!=0)
+//等待DMA空闲
+#define wait_lcd_dma_free()        do{while(LCD_is_Busy());}while(0)
+//等待SPI发送缓冲器为空
+#define wait_lcd_spi_txtemp_free() do{while((LCD_SPIx->SR & SPI_I2S_FLAG_TXE) == (uint16_t)RESET);}while(0)
+//向SPI发送缓冲器发送一个数据
+#define send_lcd_spi_dat(dat)      do{LCD_SPIx->DR = dat;}while(0)
+//等待SPI发送器空闲(发完)
+#define send_lcd_spi_done()        do{while((LCD_SPIx->SR & SPI_I2S_FLAG_BSY) != (uint16_t)RESET);}while(0)
 
 
 //-----------------IO接口定义---------------- 
@@ -130,11 +155,8 @@ typedef volatile enum LCD_dma_step
 		GPIO_Init(GPIOA, &GPIO_InitStruct);\
 		LCD_CS_Set();\
 	}while(0)
-
-extern volatile lcd_dma_step_t DMA_State;
-extern uint8_t DMA_reflash_step;
-
-#define LCD_is_Busy() (DMA_State!=DMA_FREE)
+	
+	
 void LCD_Port_Init(void);//接口初始化	
 void LCD_delay_ms(volatile uint32_t ms);
 void LCD_Send_1Cmd(uint8_t dat);//向屏幕发送1个命令
@@ -142,6 +164,7 @@ void LCD_Send_1Dat(uint8_t dat);//向屏幕发送1个数据
 //static void LCD_Send_nDat(uint8_t *p,uint16_t num);//向屏幕发送num个数据
 void LCD_Send_nCmd(uint8_t *p,uint16_t num);//向屏幕发送num个命令
 void LCD_DMA_SPIx_ISR(void);//需要移植到DMA完毕中断里
-uint8_t LCD_Refresh(void);
+
+extern volatile uint8_t lcd_busy;
 
 #endif

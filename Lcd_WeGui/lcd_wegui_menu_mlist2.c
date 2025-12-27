@@ -27,11 +27,11 @@ void wegui_mList_Init()
 			max = lcd_driver.fonts_ASCII->high;
 		}
 	}
-	if(lcd_driver.fonts_UTF8_cut != 0x00)
+	if(lcd_driver.fonts_UTF8 != 0x00)
 	{
-		if(max<lcd_driver.fonts_UTF8_cut->high)
+		if(max<lcd_driver.fonts_UTF8->high)
 		{
-			max = lcd_driver.fonts_UTF8_cut->high;
+			max = lcd_driver.fonts_UTF8->high;
 		}
 	}
 	if(max == 0){max=12;}
@@ -414,7 +414,7 @@ void wegui_show_mList(uint16_t farmes)
 		//居中对齐
 		string=wegui_get_string(wegui.menu->titel,wegui.setting.language);
 		int16_t x = (SCREEN_WIDTH - lcd_get_utf8_string_xlen(string))/2;//左右
-		int16_t y = (TOP_SCAPE - lcd_driver.fonts_UTF8_cut->high)/2;//上下居中
+		int16_t y = (TOP_SCAPE - lcd_driver.fonts_UTF8->high)/2;//上下居中
 		
 		//显示标题
 		lcd_draw_utf8_string(x,y,string); 
@@ -438,7 +438,7 @@ void wegui_show_mList(uint16_t farmes)
 			
 			//屏幕左对齐
 			string=wegui_get_string(*mlist_button_string,wegui.setting.language);
-			lcd_draw_utf8_string(0,SCREEN_HIGH-lcd_driver.fonts_UTF8_cut->high,string);
+			lcd_draw_utf8_string(0,SCREEN_HIGH-lcd_driver.fonts_UTF8->high,string);
 		#endif
 }
 

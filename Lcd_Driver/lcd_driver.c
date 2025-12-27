@@ -19,9 +19,216 @@ limitations under the License.
 lcd_driver_t lcd_driver;
 
 //---------快速计算用---------
-const static uint8_t cal_1[] = {0x00,0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xFF,0x57,0x65,0x47,0x75,0x69,0x20,0x52,0x47,0x42};//用于快速计算
+const static uint8_t cal_1[] = {0x00,0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xFF,0x57,0x65,0x47,0x75,0x69,0x20,0x52,0x47,0x42};
 
-//--------------------------------------------------------------驱动接口--------------------------------------------------------------
+/*--------------------------------------------------------------
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: weak类型 需要移植,否则无法使用动态刷新
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+{
+	while(1)//需要移植 参考stm32f103例程
+	{
+		;
+	}
+}
+
+/*--------------------------------------------------------------
+  * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: OLED屏幕从x,page位置开始刷屏
+  * 说明: OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+	while(1)//需要移植 参考stm32f103例程
+	{
+		;
+	}
+}
+/*--------------------------------------------------------------
+  * 名称: void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: 灰度OLED屏幕从x,page位置开始刷屏
+  * 说明: 灰度OLED屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+	while(1)//需要移植 参考stm32f103例程
+	{
+		;
+	}
+}
+
+/*--------------------------------------------------------------
+  * 名称: void rgb565_flush(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: TFT_RGB565屏幕从x,page位置开始刷屏
+  * 说明: RGB565屏幕移植接口例程 weak类型 需要改写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) void lcd_rgb565_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+	while(1)//需要移植 参考stm32f103例程
+	{
+		;
+	}
+}
+
+//------------------------------------------------------------内部驱动接口------------------------------------------------------------
+
+/*--------------------------------------------------------------
+  * 名称: LCD_Refresh(void)
+  * 功能: 驱动接口,将显存LCD_GRAM全部内容发送至屏幕
+  * 说明: weak类型 允许重写
+----------------------------------------------------------------*/
+RAM_SPEEDUP_FUNC_0
+__attribute__((weak)) uint8_t LCD_Refresh(void)
+{
+	//-------------方式1:全缓存全屏刷--------------
+	#if (LCD_MODE == _FULL_BUFF_FULL_UPDATE)
+	uint16_t ypage;
+	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
+	{
+		//--------屏幕发送--------
+		#if (LCD_TYPE == LCD_OLED)     //OLED屏幕
+			lcd_oled_port(0,SCREEN_WIDTH-1,ypage,&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#elif (LCD_TYPE == LCD_GRAY)   //灰度屏幕
+			lcd_gray_port(0,SCREEN_WIDTH-1,ypage,&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#elif (LCD_TYPE == LCD_RGB565) //彩色屏幕RGB565
+			lcd_rgb565_port(0,SCREEN_WIDTH-1,ypage,&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#endif
+	}
+	return 0;
+
+	//-------------方式2:全缓存动态刷--------------
+	#elif (LCD_MODE == _FULL_BUFF_DYNA_UPDATE)
+	uint8_t ypage;
+	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
+	{
+		uint16_t i_crc;
+		uint8_t i_dyna_count;//每页检测DYNA_CRC_NUM次
+		for(i_dyna_count=0;i_dyna_count<PAGE_CRC_NUM;i_dyna_count++)
+		{
+			uint16_t x_start = i_dyna_count * DYNA_CRC_ONCE_XNUM;
+			uint16_t x_end   = x_start + DYNA_CRC_ONCE_XNUM ;
+			if(x_end > (SCREEN_WIDTH-1)){x_end = SCREEN_WIDTH-1;}
+			//--------CRC动态刷新校验--------
+			i_crc = lcd_gram_crc_port(&lcd_driver.LCD_GRAM[ypage][x_start][0],(x_end-x_start)*LCD_COLOUR_BIT);
+			//---------------------------
+			if(lcd_driver.crc[ypage][i_dyna_count] != i_crc)
+			{
+				lcd_driver.crc[ypage][i_dyna_count] = i_crc;
+				//--------屏幕发送--------
+				#if (LCD_TYPE == LCD_OLED)     //OLED屏幕
+					lcd_oled_port(x_start,x_end,ypage,&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#elif (LCD_TYPE == LCD_GRAY)   //灰度屏幕
+					lcd_gray_port(x_start,x_end,ypage,&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#elif (LCD_TYPE == LCD_RGB565) //彩色屏幕RGB565
+					lcd_rgb565_port(x_start,x_end,ypage,&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#endif
+				//------------------------
+			}
+		}
+	}
+	return 0;
+
+	//-------------方式3:页缓存全屏刷新--------------
+	#elif (LCD_MODE == _PAGE_BUFF_FULL_UPDATE)
+	uint16_t ypage;
+	for(ypage=0;((ypage+lcd_driver.lcd_refresh_ypage)*8) < SCREEN_HIGH;)
+	{
+		//--------屏幕发送--------
+		#if (LCD_TYPE == LCD_OLED)     //OLED屏幕
+			lcd_oled_port(0,SCREEN_WIDTH-1,(lcd_driver.lcd_refresh_ypage+ypage),&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#elif (LCD_TYPE == LCD_GRAY)   //灰度屏幕
+			lcd_gray_port(0,SCREEN_WIDTH-1,ypage,&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#elif (LCD_TYPE == LCD_RGB565) //彩色屏幕RGB565
+			lcd_rgb565_port(0,SCREEN_WIDTH-1,(lcd_driver.lcd_refresh_ypage+ypage),&lcd_driver.LCD_GRAM[ypage][0][0]);
+		#endif
+		if(++ypage>=GRAM_YPAGE_NUM){break;}
+	}
+	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
+	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
+	{
+		lcd_driver.lcd_refresh_ypage = 0;
+	}
+	return lcd_driver.lcd_refresh_ypage;
+
+	//-------------方式4:页缓存动态刷新--------------
+	#elif (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE)
+	uint8_t ypage;
+	for(ypage=0;ypage<GRAM_YPAGE_NUM;ypage++)
+	{
+		uint16_t i_crc;
+		uint8_t i_dyna_count;//每页检测DYNA_CRC_NUM次
+		if((lcd_driver.lcd_refresh_ypage + ypage)>=((SCREEN_HIGH+7)/8)){break;}
+		for(i_dyna_count=0;i_dyna_count<PAGE_CRC_NUM;i_dyna_count++)
+		{
+			uint16_t x_start = i_dyna_count * DYNA_CRC_ONCE_XNUM;
+			uint16_t x_end   = x_start + DYNA_CRC_ONCE_XNUM ;
+			if(x_end > (SCREEN_WIDTH-1)){x_end = SCREEN_WIDTH-1;}
+			//--------CRC动态刷新校验--------
+			i_crc = lcd_gram_crc_port(&lcd_driver.LCD_GRAM[ypage][x_start][0],(x_end-x_start)*LCD_COLOUR_BIT);
+			//---------------------------
+			if(lcd_driver.crc[lcd_driver.lcd_refresh_ypage + ypage][i_dyna_count] != i_crc)
+			{
+				lcd_driver.crc[lcd_driver.lcd_refresh_ypage + ypage][i_dyna_count] = i_crc;
+				//--------屏幕发送--------
+				#if (LCD_TYPE == LCD_OLED)     //OLED屏幕
+					lcd_oled_port(x_start,x_end,(lcd_driver.lcd_refresh_ypage+ypage),&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#elif (LCD_TYPE == LCD_GRAY)   //灰度屏幕
+					lcd_gray_port(x_start,x_end,(lcd_driver.lcd_refresh_ypage+ypage),&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#elif (LCD_TYPE == LCD_RGB565) //彩色屏幕RGB565
+					lcd_rgb565_port(x_start,x_end,(lcd_driver.lcd_refresh_ypage+ypage),&lcd_driver.LCD_GRAM[ypage][x_start][0]);
+				#endif
+				//------------------------
+			}
+		}
+	}
+	lcd_driver.lcd_refresh_ypage += GRAM_YPAGE_NUM;
+	if(lcd_driver.lcd_refresh_ypage >= ((SCREEN_HIGH+7)/8))
+	{
+		lcd_driver.lcd_refresh_ypage = 0;
+	}
+	return lcd_driver.lcd_refresh_ypage;
+	#endif
+}
+
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//动态刷新
+
+/*--------------------------------------------------------------
+  * 名称: lcd_reset_crc()
+  * 功能: 刷新一次crc值(动态刷新专用)
+  * 说明: 用于强制刷新屏幕,防止动态刷新出现区域不刷新
+----------------------------------------------------------------*/
+void lcd_reset_crc()
+{
+	uint16_t i=0;
+	uint16_t *p=&lcd_driver.crc[0][0];
+	while(i < ((SCREEN_HIGH+7)/8)*PAGE_CRC_NUM)
+	{
+		p[i]=0xff;//随机值,不是0x0就ok
+		i++;
+	}
+}
+#endif
+
 #if (LCD_TYPE == LCD_RGB565)
 /*--------------------------------------------------------------
   * 名称: rgb_set_driver_colour(uint8_t num,uint16_t colour)
@@ -47,7 +254,7 @@ void rgb_set_driver_colour(uint8_t num,uint16_t colour)
 		lcd_driver.colour[num] = colour_lastime[num] = colour;
 		#if((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
 		//动态刷新才有crc
-		LCD_Reset_crc();//色彩已改变,强制刷新一下crc动态刷新值, 保证颜色正确
+		lcd_reset_crc();//色彩已改变,强制刷新一下crc动态刷新值, 保证颜色正确
 		#endif
 	}
 }
@@ -993,14 +1200,14 @@ void lcd_set_driver_box(uint16_t x_min ,uint16_t y_min ,uint16_t x_max,uint16_t 
 }
 
 /*--------------------------------------------------------------
-  * 名称: Lcd_Draw_One_Byte(uint16_t x,int16_t y,uint8_t u8_value)
+  * 名称: gram_draw_one_byte(uint16_t x,int16_t y,uint8_t u8_value)
   * 传入1: (x,y)坐标
   * 传入2: u8_page 一字节点阵数据
   * 功能: 将u8_page值以对其坐标的方式写到显存
   * 说明: 坐标点x,y支持负数
 ----------------------------------------------------------------*/
 RAM_SPEEDUP_FUNC_1 //代码加速宏定义
-static void Lcd_Draw_One_Byte(int16_t x,int16_t y,uint8_t u8_page)
+void gram_draw_one_byte(int16_t x,int16_t y,uint8_t u8_page)
 {
 	//---------全屏缓存-----------
 	#if ((LCD_MODE == _FULL_BUFF_FULL_UPDATE) || ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE)))//全屏缓存
@@ -1043,7 +1250,7 @@ static void Lcd_Draw_One_Byte(int16_t x,int16_t y,uint8_t u8_page)
 ----------------------------------------------------------------*/
 inline void lcd_draw_pixl(int16_t x,int16_t y)
 {
-	Lcd_Draw_One_Byte(x,y,0x01);
+	gram_draw_one_byte(x,y,0x01);
 }
 
 //高效率画垂直线, 输入x点 Y起点,Y终点
@@ -1379,7 +1586,7 @@ void lcd_fill_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
 {
 	uint8_t ypage;
 	uint8_t offset;
-	uint16_t x,max;
+	uint16_t x;
 
 	if(y_max < y_min)
 	{
@@ -1393,7 +1600,7 @@ void lcd_fill_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
 	if(y_max > (SCREEN_HIGH-1)){y_max = (SCREEN_HIGH-1);}
 	//---------单页缓存-----------
 	#elif ((LCD_MODE == _PAGE_BUFF_FULL_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//页缓存
-	max = (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8;
+	uint16_t max = (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8;
 	if(y_max > max){y_max = max;}
 	if((y_min >= max)||(y_max < (lcd_driver.lcd_refresh_ypage*8)))
 	{
@@ -1497,13 +1704,19 @@ void lcd_draw_box(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max)
   * 说明: 坐标点支持负数
 ----------------------------------------------------------------*/
 //__attribute__ ((section ("RAMCODE"))) //将该代码搬运到RAM运行, 能实现零等待高速运行
-void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t BMP[])
+void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,const uint8_t BMP[])
 {
-	uint32_t i;
 	uint16_t xi;
-	uint16_t yi;
+	int16_t ymax;
+
+	if((x0+sizex<0)||(x0>(SCREEN_WIDTH-1)))
+	{
+		return;
+	}
+
 	//---------全屏缓存-----------
 	#if ((LCD_MODE == _FULL_BUFF_FULL_UPDATE) || ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE)))//全屏缓存
+	ymax = y0 + sizey;
 	//此处可优化
 	//---------单页缓存-----------
 	#elif ((LCD_MODE == _PAGE_BUFF_FULL_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//页缓存
@@ -1511,32 +1724,96 @@ void lcd_draw_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint8_t
 	{
 		return;
 	}
+	ymax = (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8;
+	if(y0 + sizey < ymax)
+	{
+		ymax = y0 + sizey;
+	}
+	while(y0/8+1 < lcd_driver.lcd_refresh_ypage)
+	{
+		BMP += sizex;
+		y0 +=8;
+	}
+	#endif
+
+	while(y0<ymax)
+	{
+		for(xi=0;xi<sizex;xi++)
+		{
+			int16_t x=x0+xi;
+			if(x<SCREEN_WIDTH)
+			{
+				gram_draw_one_byte(x,y0,*BMP);
+			}
+			BMP++;
+		}
+		y0+=8;
+	}
+}
+
+/*--------------------------------------------------------------
+  * 名称: lcd_draw_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint8_t sizey,uint8_t BMP[])
+  * 传入1: x0 坐标左上角横坐标点
+	* 传入2: y0 坐标左上角纵坐标点
+  * 传入3: sizex 点阵图形x宽度
+  * 传入4: sizey 点阵图形y高度
+  * 传入5: BMP[] 点阵图形数组地址
+  * 功能: 将压缩点阵图形摆放到任意坐标点上
+  * 说明: 坐标点支持负数
+----------------------------------------------------------------*/
+//__attribute__ ((section ("RAMCODE"))) //将该代码搬运到RAM运行, 能实现零等待高速运行
+void lcd_draw_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,const uint8_t RLEBMP[])
+{
+	uint8_t rle_num;
+	uint8_t rle_dat;
+	uint16_t xmax;
+	//---------全屏缓存-----------
+	#if ((LCD_MODE == _FULL_BUFF_FULL_UPDATE) || ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE)))//全屏缓存
+	//此处可优化
+	//---------单页缓存-----------
+	#elif ((LCD_MODE == _PAGE_BUFF_FULL_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//页缓存
+	uint16_t ymax;
+	if((y0 >= ((lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8))||(y0+sizey < (lcd_driver.lcd_refresh_ypage*8)))
+	{
+		return;
+	}
+	ymax = (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8;
 	#endif
 
 	if((x0+sizex<0)||(x0>(SCREEN_WIDTH-1)))
 	{
 		return;
 	}
-
-	i=0;
-	for(yi=0;yi<sizey;yi+=8)
-	{
-		int16_t y=y0+yi;
-		if(y>=SCREEN_HIGH)
-		{
-			break;
-		}
-		for(xi=0;xi<sizex;xi++)
-		{
-			int16_t x=x0+xi;
-			if(x<SCREEN_WIDTH)
-			{
-				Lcd_Draw_One_Byte(x,y,BMP[i]);
+	xmax = x0 + sizex;
+	int16_t y=y0;
+	int16_t x=x0;
+	while(1)
+  {
+      rle_num = *RLEBMP++;
+      if(rle_num==0x00)
+      {
+          break;//结束
+      }
+      rle_dat = *RLEBMP++;
+      while(rle_num--)
+      {
+					if(x >= xmax)
+					{
+						x=x0;
+						y+=8;
+						#if ((LCD_MODE == _PAGE_BUFF_FULL_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//页缓存
+						if(y >= ymax)
+						{
+							return;
+						}
+						#endif
+					}
+					gram_draw_one_byte(x,y,rle_dat);
+					x++;
 			}
-			i++;
-		}
-	}
+  }
 }
+
 
 
 /*--------------------------------------------------------------
@@ -1701,12 +1978,19 @@ void lcd_draw_ascii(int16_t x,int16_t y,char chr)
 	{
 		return;
 	}
-	lcd_draw_bitmap(
-	x,//左上角坐标x
-	y,//左上角坐标y
-	lcd_driver.fonts_ASCII->width,//字体宽度
-	lcd_driver.fonts_ASCII->high ,//字体高度
-	(uint8_t*)(lcd_driver.fonts_ASCII->font + lcd_driver.fonts_ASCII->byte_size * (chr-0x20)));
+	switch(lcd_driver.fonts_ASCII->store_type)
+	{
+		case ASCII_IN_MCU:
+		{
+			lcd_draw_bitmap(
+			x,//左上角坐标x
+			y,//左上角坐标y
+			lcd_driver.fonts_ASCII->width,//字体宽度
+			lcd_driver.fonts_ASCII->high ,//字体高度
+			(uint8_t*)lcd_driver.fonts_ASCII->store_par.IN_MCU_par.font + lcd_driver.fonts_ASCII->store_par.IN_MCU_par.byte_size * (chr-0x20));
+		}break;
+		case ASCII_IN_EX_FLASH :return;
+	}
 }
 
 /*--------------------------------------------------------------
@@ -1731,18 +2015,18 @@ void lcd_draw_int32(int16_t x,int16_t y,int32_t num)
 	sum=1;
 	if(num < 0)
 	{
-		lcd_draw_bitmap(x,y,lcd_driver.fonts_ASCII->width,lcd_driver.fonts_ASCII->high,(uint8_t*)(lcd_driver.fonts_ASCII->font + lcd_driver.fonts_ASCII->byte_size * ('-'-0x20)));
+		lcd_draw_ascii(x,y,'-');
 		x += lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape;
 		num = -num;
 	}
 	else if(num == 0)
 	{
-		lcd_draw_bitmap(x,y,lcd_driver.fonts_ASCII->width,lcd_driver.fonts_ASCII->high,(uint8_t*)(lcd_driver.fonts_ASCII->font + lcd_driver.fonts_ASCII->byte_size * ('0'-0x20)));
+		lcd_draw_ascii(x,y,'0');
 		return;
 	}
 	else if(num == 1)
 	{
-		lcd_draw_bitmap(x,y,lcd_driver.fonts_ASCII->width,lcd_driver.fonts_ASCII->high,(uint8_t*)(lcd_driver.fonts_ASCII->font + lcd_driver.fonts_ASCII->byte_size * ('1'-0x20)));
+		lcd_draw_ascii(x,y,'1');
 		return;
 	}
 	while(sum <= (uint16_t)num)
@@ -1752,7 +2036,7 @@ void lcd_draw_int32(int16_t x,int16_t y,int32_t num)
 	while(sum>1)
 	{
 		sum=sum/10;
-		lcd_draw_bitmap(x,y,lcd_driver.fonts_ASCII->width,lcd_driver.fonts_ASCII->high,(uint8_t*)(lcd_driver.fonts_ASCII->font + lcd_driver.fonts_ASCII->byte_size * (num/sum + '0'-0x20)));
+		lcd_draw_ascii(x,y,+ '0'+num/sum);
 		x += lcd_driver.fonts_ASCII->width + lcd_driver.fonts_ASCII->scape;
 		num = (uint16_t)num % sum;
 	}
@@ -1767,45 +2051,58 @@ void lcd_draw_int32(int16_t x,int16_t y,int32_t num)
 ----------------------------------------------------------------*/
 void lcd_draw_unicode(int16_t x,int16_t y,unicode_t unicode_id)
 {
-	uint16_t i=0;
+	uint16_t i;
+	uint8_t* p;
 	//---------全屏缓存-----------
 	#if ((LCD_MODE == _FULL_BUFF_FULL_UPDATE) || ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE)))//全屏缓存
 
 	//---------单页缓存-----------
 	#elif ((LCD_MODE == _PAGE_BUFF_FULL_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//页缓存
-	if((y > (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8)|| ((y + lcd_driver.fonts_UTF8_cut->high) < (lcd_driver.lcd_refresh_ypage*8)))
+	if((y > (lcd_driver.lcd_refresh_ypage+GRAM_YPAGE_NUM)*8) || ((y + lcd_driver.fonts_UTF8->high) < (lcd_driver.lcd_refresh_ypage*8)))
 	{
 		return;
 	}
 	#endif
 
-	while((lcd_driver.fonts_UTF8_cut->unicode_index[i]!=0x00)/*&&(lcd_driver.fonts_UTF8_cut->unicode_index[i+1]!=0x00)*/)
+	switch(lcd_driver.fonts_UTF8->store_type)
 	{
-		//-----------------A方式大小端读取方式根据MCU储存方式选择-------------------
-		//if(((uint8_t*)lcd_driver.fonts_UTF8_cut->unicode_index)[i] == unicode_id.u8[1])
-		//{
-		//	if(lcd_driver.fonts_UTF8_cut->unicode_index[i+1] == unicode_id.u8[0])
-		//	break;
-		//}
-
-		//-----------------B方式大小端读取方式根据MCU储存方式选择-------------------
-		if(((uint8_t*)lcd_driver.fonts_UTF8_cut->unicode_index)[i] == unicode_id.u8[0])
+		case UTF8_IN_MCU_INDEX:
 		{
-			if(lcd_driver.fonts_UTF8_cut->unicode_index[i+1] == unicode_id.u8[1])
-			break;
-		}
-		i+=2;
+			i = 0;
+			p = lcd_driver.fonts_UTF8->store_par.IN_MCU_INDEX_par.unicode_index;
+			while((p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
+			{
+				//-----------------A方式大小端读取方式根据MCU储存方式选择-------------------
+				//if((*p == unicode_id.u8[1]) && (*(p+1) == unicode_id.u8[0]))
+				//{
+				//	break;
+				//}
+
+				//-----------------B方式大小端读取方式根据MCU储存方式选择-------------------
+				if((*p == unicode_id.u8[0]) && (*(p+1) == unicode_id.u8[1]))
+				{
+					break;
+				}
+
+				p+=2;
+				i++;
+			}
+
+			if((p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
+			{
+				lcd_draw_bitmap(
+				x,
+				y,
+				lcd_driver.fonts_UTF8->width,
+				lcd_driver.fonts_UTF8->high,
+				lcd_driver.fonts_UTF8->store_par.IN_MCU_INDEX_par.font + lcd_driver.fonts_UTF8->store_par.IN_MCU_INDEX_par.byte_size*i);
+			}
+		}break;
+		case UTF8_IN_EX_FLASH_INDEX:
+		case UTF8_IN_EX_FLASH_CONTINUOUS:
+		default: break;
 	}
 
-	if((lcd_driver.fonts_UTF8_cut->unicode_index[i]!=0x00)/*&&(lcd_driver.fonts_UTF8_cut->unicode_index[i+1]!=0x00)*/)
-	{
-		lcd_draw_bitmap(
-		x,
-		y,
-		lcd_driver.fonts_UTF8_cut->width,
-		lcd_driver.fonts_UTF8_cut->high,
-		(uint8_t*)lcd_driver.fonts_UTF8_cut->font + lcd_driver.fonts_UTF8_cut->byte_size*(i>>1));
-	}
 }
 
 
@@ -1879,7 +2176,7 @@ void lcd_draw_utf8_string(int16_t x,int16_t y,char *p)
 			unicode_id.u8[0]=(*p<<4)|((*(p+1)>>2)&0x0F);
 			unicode_id.u8[1]=(*(p+1)<<6)|((*(p+2))&0x3F);
 			lcd_draw_unicode(x,y,unicode_id);
-			x += lcd_driver.fonts_UTF8_cut->width + lcd_driver.fonts_UTF8_cut->scape;
+			x += lcd_driver.fonts_UTF8->width + lcd_driver.fonts_UTF8->scape;
 			p+=3;
 		}
 		else//四字节
@@ -1958,8 +2255,8 @@ uint16_t lcd_get_utf8_string_xlen(char *p)
 		else if(temp < 0xF0)//三字节(都是中文)
 		{
 			//三字节都是中文
-			temp_len += lcd_driver.fonts_UTF8_cut->width + lcd_driver.fonts_UTF8_cut->scape;
-			endscape=lcd_driver.fonts_UTF8_cut->scape;
+			temp_len += lcd_driver.fonts_UTF8->width + lcd_driver.fonts_UTF8->scape;
+			endscape=lcd_driver.fonts_UTF8->scape;
 			p+=3;
 		}
 		else//四字节
@@ -2022,26 +2319,13 @@ uint16_t lcd_get_utf8_yline(char *p)
 	return line;
 }
 
-
-
-
 /*--------------------------------------------------------------
   * 名称: lcd_clear_gram(void)
 	* 功能: 清显存,全部清为0x00
 ----------------------------------------------------------------*/
 void lcd_clear_gram(void)
 {
-	unsigned int i,j,k;
-	for (k=0;k<LCD_COLOUR_BIT;k++)
-	{
-		for(i=0;i<GRAM_YPAGE_NUM;i++)
-		{
-				for(j=0;j<SCREEN_WIDTH;j++)
-				{
-					lcd_driver.LCD_GRAM[i][j][k]=0x00;
-				}
-		}
-	}
+	memset(lcd_driver.LCD_GRAM, 0, sizeof(lcd_driver.LCD_GRAM));
 }
 
 /*--------------------------------------------------------------
@@ -2100,9 +2384,9 @@ void lcd_driver_Init(void)
 
 	//------driver配置默认字体---------
 	//---中英文字体high高度建议一致----
-	lcd_driver.fonts_ASCII = &STARTUP_FONTS_ASCII;//默认ASCII字体
-	lcd_driver.fonts_UTF8_cut = &STARTUP_FONTS_UTF8;//默认UTF8字体(裁切)
-	lcd_driver.newline_high = lcd_driver.fonts_UTF8_cut->high;//文本换行距离(选择ASCII字体和UTF8字体最大的一个)
+	lcd_driver.fonts_ASCII = STARTUP_FONTS_ASCII;//默认ASCII字体
+	lcd_driver.fonts_UTF8 = STARTUP_FONTS_UTF8;//默认UTF8字体(裁切)
+	lcd_driver.newline_high = lcd_driver.fonts_UTF8->high;//文本换行距离(选择ASCII字体和UTF8字体最大的一个)
 
 #	if(LCD_TYPE == LCD_RGB565)
 	//设置默认笔刷颜色 RGB屏幕在程序运行过程中允许修改笔刷颜色
@@ -2154,7 +2438,7 @@ void lcd_driver_Init(void)
 	#endif
 	#if((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
 		//动态刷新才有crc
-		LCD_Reset_crc();//强制刷新一下crc动态刷新值, 保证下次会全刷一遍, 保证颜色正确
+		lcd_reset_crc();//强制刷新一下crc动态刷新值, 保证下次会全刷一遍, 保证颜色正确
 	#endif
 
 	//-----------刷新屏幕------------
