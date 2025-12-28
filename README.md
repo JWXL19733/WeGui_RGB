@@ -1,5 +1,5 @@
-[最新上位机及其工具下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.7.1)  
-[STM32F103C8最新V0.5.7下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.7.1)  
+[最新上位机及其工具下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/v0.5.7.1)  
+[STM32F103C8最新V0.5.7下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/v0.5.7.1)  
 [GD32E230C8最新V0.5.4下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.4)  
 [CW32L012C8最新V0.5.4下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.4)  
 
