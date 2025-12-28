@@ -23,91 +23,91 @@ void ST7735_Set_Addr(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
 	uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
 	uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
 	const uint8_t k[]={0x2c};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
-	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
-	LCD_Send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
 }
 
 void ST7735_Soft_Reset()
 {
 	const uint8_t i[]={0x01};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Sleep_In()
 {
 	const uint8_t i[]={0x10};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Sleep_Out()
 {
 	const uint8_t i[]={0x11};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Partial_Mode_On()
 {
 	const uint8_t i[]={0x12};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Partial_Mode_Off()
 {
 	const uint8_t i[]={0x13};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Inversion_Off()
 {
 	const uint8_t i[]={0x20};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Inversion_On()
 {
 	const uint8_t i[]={0x21};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Display_Off()
 {
 	const uint8_t i[]={0x28};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Display_On()
 {
 	const uint8_t i[]={0x29};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_TE_Line_Off()
 {
 	const uint8_t i[]={0x34};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_TE_Line_On()
 {
 	#define TELOM 0//[0:1]When TELOM =’0’: The Tearing Efonly
 	const uint8_t i[]={0x35,TELOM};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Idle_Off()
 {
 	const uint8_t i[]={0x38};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Idle_On()
 {
 	const uint8_t i[]={0x39};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Set_RGB565_Mode()
 {
 	uint8_t i[]={0x3A,0x05};//65k(RGB565)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Set_RGB444_Mode()
 {
 	uint8_t i[]={0x3A,0x03};//4k(RGB444)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7735_Set_RGB666_Mode()
 {
 	uint8_t i[]={0x3A,0x06};//262k(RGB666)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7735_Clear()//清除IC显示缓存
@@ -116,8 +116,8 @@ void ST7735_Clear()//清除IC显示缓存
 	ST7735_Set_Addr(0,0,162-1,162-1);
 	while(i++<162*162)
 	{
-		LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
-		//LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
+		lcd_send_1Dat(0x33);lcd_send_1Dat(0x33);//测试
+		//lcd_send_1Dat(0x00);lcd_send_1Dat(0x00);
 	}
 }
 
@@ -132,15 +132,15 @@ void ST7735_Init()
 {
 	//ST7735_Soft_Reset();
 	//LCD_RES_Clr();
-	//LCD_delay_ms(100);
+	//lcd_delay_ms(100);
 	//LCD_RES_Set();
-	//LCD_delay_ms(100);
+	//lcd_delay_ms(100);
 	
-	#define LCD_WR_REG(x)   LCD_Send_1Cmd(x)
-	#define LCD_WR_DATA8(x) LCD_Send_1Dat(x); 
+	#define LCD_WR_REG(x)   lcd_send_1Cmd(x)
+	#define LCD_WR_DATA8(x) lcd_send_1Dat(x); 
 	//************* Start Initial Sequence **********//
 	LCD_WR_REG(0x11); //Sleep out 
-	LCD_delay_ms(120);              //Delay 120ms 
+	lcd_delay_ms(120);              //Delay 120ms 
 	//------------------------------------ST7735S Frame Rate-----------------------------------------// 
 	LCD_WR_REG(0xB1); 
 	LCD_WR_DATA8(0x05); 

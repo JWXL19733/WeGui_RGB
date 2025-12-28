@@ -26,9 +26,9 @@ uint16_t flash_id;
 ----------------------------------------------------------------*/
 static void w25qxx_write_enable(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x06);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -37,9 +37,9 @@ static void w25qxx_write_enable(void)
 ----------------------------------------------------------------*/
 static void w25qxx_volatile_sr_write_enable(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x50);//Volatile SR Write Enable
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -48,9 +48,9 @@ static void w25qxx_volatile_sr_write_enable(void)
 ----------------------------------------------------------------*/
 void w25qxx_write_disable(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x04);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -70,10 +70,10 @@ void w25qxx_write_disable(void)
 uint8_t w25qxx_read_status1(void)
 {
 	uint8_t i;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x05);
 	i = flash_read_1Byte();
-	FLASH_CS_Set();
+	flash_cs_set();
 	return i;
 }
 
@@ -94,10 +94,10 @@ uint8_t w25qxx_read_status1(void)
 void w25qxx_write_status1(uint8_t i)
 {
 	w25qxx_volatile_sr_write_enable();
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x01);
 	flash_send_1Byte(i);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -117,10 +117,10 @@ void w25qxx_write_status1(uint8_t i)
 uint8_t w25qxx_read_status2(void)
 {
 	uint8_t i;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x35);
 	i = flash_read_1Byte();
-	FLASH_CS_Set();
+	flash_cs_set();
 	return i;
 }
 
@@ -141,10 +141,10 @@ uint8_t w25qxx_read_status2(void)
 void w25qxx_write_status2(uint8_t i)
 {
 	w25qxx_volatile_sr_write_enable();
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x31);
 	flash_send_1Byte(i);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -164,10 +164,10 @@ void w25qxx_write_status2(uint8_t i)
 uint8_t w25qxx_read_status3(void)
 {
 	uint8_t i;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x15);
 	i = flash_read_1Byte();
-	FLASH_CS_Set();
+	flash_cs_set();
 	return i;
 }
 
@@ -188,10 +188,10 @@ uint8_t w25qxx_read_status3(void)
 void w25qxx_write_status3(uint8_t i)
 {
 	w25qxx_volatile_sr_write_enable();
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x11);
 	flash_send_1Byte(i);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -202,9 +202,9 @@ void w25qxx_write_status3(uint8_t i)
 void w25qxx_chip_erase(void)
 {
 	w25qxx_write_enable();
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0xC7);//或60h
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -215,9 +215,9 @@ void w25qxx_chip_erase(void)
 void w25qxx_erase_program_suspend(void)
 {
 	//未测试
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x75);//Erase / Program Suspend 
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -228,9 +228,9 @@ void w25qxx_erase_program_suspend(void)
 void w25qxx_erase_program_resume(void)
 {
 	//未测试
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x7A);//Erase / Program Resume
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -239,9 +239,9 @@ void w25qxx_erase_program_resume(void)
 ----------------------------------------------------------------*/
 void w25qxx_powerdown(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0xB9);
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -252,13 +252,13 @@ void w25qxx_powerdown(void)
 uint8_t w25qxx_release_powerdown(void)
 {
 	uint8_t i;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0xAB);
 	flash_read_1Byte();//Dummy
 	flash_read_1Byte();//Dummy
 	flash_read_1Byte();//Dummy
 	i=flash_read_1Byte();//返回设备id
-	FLASH_CS_Set();
+	flash_cs_set();
 	return i;
 }
 
@@ -271,14 +271,14 @@ uint8_t w25qxx_release_powerdown(void)
 uint16_t w25qxx_read_manufacturer_device_id(void)
 {
 	static uint16_t id;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x90);//获取ID
 	flash_send_1Byte(0xFF);//任意
 	flash_send_1Byte(0xFF);//任意
 	flash_send_1Byte(0x00);//固定发到0x00;
 	id=flash_read_1Byte()<<8;//获取制造商id
 	id|=flash_read_1Byte();//获取设备id
-	FLASH_CS_Set();
+	flash_cs_set();
 	return id;
 }
 
@@ -291,12 +291,12 @@ uint16_t w25qxx_read_manufacturer_device_id(void)
 uint32_t w25qxx_read_jedec_id(void)
 {
 	static uint32_t id;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x9F);//获取ID
 	id=flash_read_1Byte()<<16;//获取制造商Manufacturer ID
 	id|=flash_read_1Byte()<<8;//Memory Type ID15-8
 	id|=flash_read_1Byte();//Capacity ID7-0
-	FLASH_CS_Set();
+	flash_cs_set();
 	return id;
 }
 
@@ -308,9 +308,9 @@ uint32_t w25qxx_read_jedec_id(void)
 ----------------------------------------------------------------*/
 void w25qxx_global_block_lock(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x7E);//Global Block Lock
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -321,9 +321,9 @@ void w25qxx_global_block_lock(void)
 ----------------------------------------------------------------*/
 void w25qxx_global_block_unlock(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x98);//Global Block Unlock
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 /*--------------------------------------------------------------
   * 名称: w25qxx_enter_qspi_mode(void)
@@ -333,9 +333,9 @@ void w25qxx_global_block_unlock(void)
 ----------------------------------------------------------------*/
 void w25qxx_enter_qspi_mode(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x38);//Enter QPI Mode
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -346,9 +346,9 @@ void w25qxx_enter_qspi_mode(void)
 ----------------------------------------------------------------*/
 void w25qxx_exit_qspi_mode(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0xFF);//Exit QPI Mode
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -359,10 +359,10 @@ void w25qxx_exit_qspi_mode(void)
 ----------------------------------------------------------------*/
 void w25qxx_reset(void)
 {
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x66);//Enable Reset
 	flash_send_1Byte(0x99);//Reset Devic
-	FLASH_CS_Set();
+	flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -374,7 +374,7 @@ void w25qxx_reset(void)
 uint8_t* w25qxx_read_unique_id(void)
 {
 	static uint8_t uniqueid[8];
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x4B);//Read Unique ID
 	flash_read_1Byte();//Dummy
 	flash_read_1Byte();//Dummy
@@ -388,7 +388,7 @@ uint8_t* w25qxx_read_unique_id(void)
 	uniqueid[5]=(uint32_t)flash_read_1Byte();
 	uniqueid[6]=(uint32_t)flash_read_1Byte();
 	uniqueid[7]=(uint32_t)flash_read_1Byte();
-	FLASH_CS_Set();
+	flash_cs_set();
 	return uniqueid;
 }
 
@@ -401,14 +401,14 @@ uint8_t* w25qxx_read_unique_id(void)
 static void w25qxx_1page_program(uint32_t addr,uint8_t *pbuf,uint16_t lenth)
 {
 		w25qxx_write_enable();
-		FLASH_CS_Clr();
+		flash_cs_clr();
 		
 		flash_send_1Byte(0x02);//Page Program
 		flash_send_1Byte((addr>>16)&0xFF);//地址
 		flash_send_1Byte((addr>>8)&0xFF);//地址
 		flash_send_1Byte((addr>>0)&0xFF);//地址
 		flash_send_nByte(pbuf,lenth);//连续发送数据
-		FLASH_CS_Set();
+		flash_cs_set();
 		w25qxx_wait_free();//等待写完
 }
 
@@ -460,12 +460,12 @@ void w25qxx_write(uint32_t addr,uint8_t *pbuf,uint32_t lenth)
 void w25qxx_sector_erase(uint32_t addr)
 {
 	w25qxx_write_enable();
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x20);//Sector Erase
 	flash_send_1Byte((addr>>16)&0xFF);//地址
 	flash_send_1Byte((addr>>8)&0xFF);//地址
 	flash_send_1Byte((addr>>0)&0xFF);//地址
-	FLASH_CS_Set();
+	flash_cs_set();
 	w25qxx_wait_free();//等待擦完
 }
 
@@ -477,13 +477,13 @@ void w25qxx_sector_erase(uint32_t addr)
 ----------------------------------------------------------------*/
 void w25qxx_read_data(uint32_t addr,uint8_t p[],uint32_t lenth)
 {
-		FLASH_CS_Clr();
+		flash_cs_clr();
 		flash_send_1Byte(0x03);//Read Data
 		flash_send_1Byte((addr>>16)&0xFF);//地址
 		flash_send_1Byte((addr>>8)&0xFF);//地址
 		flash_send_1Byte((addr>>0)&0xFF);//地址
 		flash_read_nByte(p,lenth);//连续读取
-		FLASH_CS_Set();
+		flash_cs_set();
 }
 
 /*--------------------------------------------------------------
@@ -495,10 +495,10 @@ void w25qxx_read_data(uint32_t addr,uint8_t p[],uint32_t lenth)
 uint8_t w25qxx_is_busy(void)
 {
 	uint8_t i;
-	FLASH_CS_Clr();
+	flash_cs_clr();
 	flash_send_1Byte(0x05);
 	i = flash_read_1Byte()&0x01;
-	FLASH_CS_Set();
+	flash_cs_set();
 	return i;
 }
 

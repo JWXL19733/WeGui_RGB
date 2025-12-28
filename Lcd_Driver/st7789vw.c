@@ -23,67 +23,67 @@ void ST7789VW_Set_Addr(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2)
 	uint8_t i[]={0x2a,x1>>8,x1&0xff,x2>>8,x2&0xff};
 	uint8_t j[]={0x2b,y1>>8,y1&0xff,y2>>8,y2&0xff};
 	const uint8_t k[]={0x2c};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
-	LCD_Send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
-	LCD_Send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)j,sizeof(j)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)k,sizeof(k)/sizeof(uint8_t));
 }
 
 void ST7789VW_Soft_Reset()//01
 {
 	const uint8_t i[]={0x01};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Sleep_In()//10
 {
 	const uint8_t i[]={0x10};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Sleep_Out()//11
 {
 	const uint8_t i[]={0x11};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Partial_Mode_On()//12
 {
 	const uint8_t i[]={0x12};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Partial_Mode_Off()//13
 {
 	const uint8_t i[]={0x13};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Inversion_Off()//20
 {
 	const uint8_t i[]={0x20};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Inversion_On()//21
 {
 	const uint8_t i[]={0x21};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Gamma_Set_Init()//26
 {
 	const uint8_t i[]={0x26,0x01};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Display_Off()//28
 {
 	const uint8_t i[]={0x28};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Display_On()//29
 {
 	const uint8_t i[]={0x29};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Partial_Area_Set()//30
 {
 	#define PARTAREA_PSL (0U)//起始x列
 	#define PARTAREA_PEL (0U+240U)//结束x列
 	const uint8_t i[5]={0x30,(PARTAREA_PSL>>8),(PARTAREA_PSL&0xff),(PARTAREA_PEL>>8),(PARTAREA_PEL&0xff)};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Vertical_Scrolling_Definition_Set()//33
@@ -93,7 +93,7 @@ void ST7789VW_Vertical_Scrolling_Definition_Set()//33
 	#define ST7789VW_VSA 0//结束行
 	#define ST7789VW_BFA 0//结束行
 	const uint8_t i[5]={0x33,(ST7789VW_TFA>>8),(ST7789VW_TFA&0xff),(ST7789VW_VSA>>8),(ST7789VW_VSA&0xff),(ST7789VW_BFA>>8),(ST7789VW_BFA&0xff)};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 */
 }
 
@@ -101,13 +101,13 @@ void ST7789VW_Vertical_Scrolling_Definition_Set()//33
 void ST7789VW_TE_Line_Off()//34
 {
 	const uint8_t i[]={0x34};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_TE_Line_On()//35
 {
 	#define TELOM 0//[0:1]When TELOM =’0’: The Tearing Effect output line consists of V-Blanking information only
 	const uint8_t i[]={0x35,TELOM};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Memory_Data_Access_Ctrl_Init()//36
 {
@@ -136,57 +136,57 @@ void ST7789VW_Memory_Data_Access_Ctrl_Init()//36
 	#define MADCTL_MH 1
 
 	const uint8_t i[]={0x36,(MADCTL_MY<<7)|(MADCTL_MX<<6)|(MADCTL_MV<<5)|(MADCTL_ML<<4)|(MADCTL_RGB<<3)|(MADCTL_MH<<2)};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Vertical_Scroll_Start_Address_of_RAM(uint16_t vsp)//37
 {
 	uint8_t i[3]={0x37,vsp>>8,vsp&0xff};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Idle_Off()//38
 {
 	const uint8_t i[]={0x38};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Idle_On()//39
 {
 	const uint8_t i[]={0x39};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Set_RGB444_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x03};//4k(RGB444)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 
 }
 void ST7789VW_Set_RGB565_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x05};//65k(RGB565)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 
 }
 void ST7789VW_Set_RGB666_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x06};//262k(RGB666)
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Set_RGB888_Mode()//3A
 {
 	const uint8_t i[]={0x3A,0x07};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Set_Tear_Scanline()//44
 {
 	#define TEAR_SCANLINE 0
 	const uint8_t i[]={0x44,TEAR_SCANLINE>>8U,TEAR_SCANLINE&0XFF};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Write_Display_Brightness(uint8_t bri)//51
 {
 	uint8_t i[]={0x51,bri};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Write_CTRL_Display()//53
@@ -211,19 +211,19 @@ void ST7789VW_Write_CTRL_Display()//53
 	//even if dimming-on (DD=1) are selected.
 
 	const uint8_t i[]={0x53,(CTRL_BCTRL<<5)|(CTRL_DD<<3)|(CTRL_BL<<2)};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Write_Content_daptive_Brightness_Control_and_Color_Enhancement()//55
 {
 	const uint8_t i[]={0x55,0x00};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Write_CABC_Minimum_Brightness()//5E
 {
 	const uint8_t i[]={0x5E,0x00};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_RAM_Control()//B0
 {
@@ -260,7 +260,7 @@ void ST7789VW_RAM_Control()//B0
 	#define RAMCTRL_EPF 0
 
 	const uint8_t i[]={0xB0,(RAMCTRL_RM<<4)|RAMCTRL_DM,(RAMCTRL_EPF<<4)|(RAMCTRL_ENDIAN<<3)|(RAMCTRL_RIM<<2)|(RAMCTRL_MDT)};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_RGB_Interface_Control()//B1
 {
@@ -303,7 +303,7 @@ void ST7789VW_RGB_Interface_Control()//B1
 	#define RGBINTF_HBP 0x12
 
 	const uint8_t i[]={0xB1,(RGBINTF_WO<<7)|(RGBINTF_RCM<<5)|(RGBINTF_VSPL<<3)|(RGBINTF_HSPL<<2)|(RGBINTF_DPL<<1)|(RGBINTF_EPL),RGBINTF_VBP,RGBINTF_HBP};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Porch_Setting_Init()//B2
 {
@@ -335,7 +335,7 @@ void ST7789VW_Porch_Setting_Init()//B2
 #else
 	const uint8_t i[]={0xB2,PORCH_BPA,PORCH_FPA,PORCH_PSEN,(PORCH_BPB<<4)|PORCH_FPB,(PORCH_BPC<<4)|PORCH_FPC};
 #endif
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Frame_Rate_Control_1_Init()//B3
@@ -408,7 +408,7 @@ void ST7789VW_Frame_Rate_Control_1_Init()//B3
 	#define FRC1_RTNC 0x00
 
 	const uint8_t i[]={0xB3,(FRC1_FRSEN<<4)|FRC1_DIV, (FRC1_NLB<<5)|FRC1_RTNB,(FRC1_NLC<<5)|FRC1_RTNC};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Partial_Control_Init()//B5
 {
@@ -436,7 +436,7 @@ void ST7789VW_Partial_Control_Init()//B5
 	#define PARTCTRL_ISC 0x00
 
 	const uint8_t i[]={0xB5,(PARTCTRL_NDL<<7)|(PARTCTRL_PTGISC<<4)|PARTCTRL_ISC};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_GCTRL_Gate_Control_Init()//B7
@@ -472,7 +472,7 @@ void ST7789VW_GCTRL_Gate_Control_Init()//B7
 	const uint8_t i[]={0xB7,(GATECTRL_VGHS<<4)|GATECTRL_VGLS};
 #endif
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Gate_On_Timing_Adjustment_Init()//B8
@@ -499,14 +499,14 @@ void ST7789VW_Gate_On_Timing_Adjustment_Init()//B8
 	#define GATEONTIMINGADJ_GOF 0x5
 
 	const uint8_t i[]={0xB8,0x2A,0x2B,GATEONTIMINGADJ_GTA,(GATEONTIMINGADJ_GOFR<<4)|GATEONTIMINGADJ_GOF};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 
 void ST7789VW_Digital_Gamma_Enable()//BA
 {
 	const uint8_t i[]={0xBA,1<<2};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_VCOM_Setting_Init()//BB
@@ -584,7 +584,7 @@ void ST7789VW_VCOM_Setting_Init()//BB
 	const uint8_t i[]={0xBB,0x20};
 #endif
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Power_Saving_Mode_Init()//BC
@@ -598,7 +598,7 @@ void ST7789VW_Power_Saving_Mode_Init()//BC
 	#define POWERSAV_IS 0
 
 	const uint8_t i[]={0xBC,0xEC|(POWERSAV_NS<<1)|POWERSAV_IS};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Display_off_power_save_Init()//BD
 {
@@ -607,7 +607,7 @@ void ST7789VW_Display_off_power_save_Init()//BD
 	#define DISPOFF_POWERSAVE_DOFSAVE 0
 
 	const uint8_t i[]={0xBD,0xFE|DISPOFF_POWERSAVE_DOFSAVE};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_LCM_Control_Init()//C0
 {
@@ -628,7 +628,7 @@ void ST7789VW_LCM_Control_Init()//C0
 
 	const uint8_t i[]={0xC0,(LCM_XMY<<6)|(LCM_XBGR<<5)|(LCM_XREV<<4)|(LCM_XMX<<3)|(LCM_XMH<<2)|(LCM_XMV<<1)|LCM_XGS};
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VDV_and_VRH_Cmd_Enable_Init()//C2
 {
@@ -643,7 +643,7 @@ void ST7789VW_VDV_and_VRH_Cmd_Enable_Init()//C2
 	const uint8_t i[]={0xC2,VDV_VRH_CMDEN,0xFF};
 #endif
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VRH_Set_Init()//C3
 {
@@ -742,7 +742,7 @@ void ST7789VW_VRH_Set_Init()//C3
 	const uint8_t i[]={0xC3,VRH_VRHS};
 #endif
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_VDV_Set_Init()//C4
 {
@@ -784,7 +784,7 @@ void ST7789VW_VDV_Set_Init()//C4
 	#define VDV_VDVS 0x20
 
 	const uint8_t i[]={0xC4,VDV_VDVS};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_VCOM_Offset_Set_Init()//C5
@@ -826,7 +826,7 @@ void ST7789VW_VCOM_Offset_Set_Init()//C5
 
 	#define VCOM_VCMOFS 0x20
 	const uint8_t i[]={0xC5,VCOM_VCMOFS};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 
@@ -866,7 +866,7 @@ void ST7789VW_Frame_Rate_Control_in_Normal_Mode_Init()//C6
 #endif
 
 
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_CABC_Control_Init()//C7
@@ -893,7 +893,7 @@ void ST7789VW_CABC_Control_Init()//C7
 	#define CABC_PWMPOL 0
 
 	const uint8_t i[]={0xC7,(CABC_LEDONREV<<3)|(CABC_DPOFPWM<<2)|(CABC_PWMFIX<<1)|CABC_PWMPOL};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_PWM_Frequency_Selection_Init()//CC
@@ -918,7 +918,7 @@ void ST7789VW_PWM_Frequency_Selection_Init()//CC
 	#define PWM_Fr_CS  0x02
 
 	const uint8_t i[]={0xCC,(PWM_Fr_CLK<<3)|PWM_Fr_CS};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_Power_Control_1_Init()//D0
@@ -950,13 +950,13 @@ void ST7789VW_Power_Control_1_Init()//D0
 #else
 	const uint8_t i[]={0xD0,0xA4,(POWER_CTRL_1_AVDD<<6)|(POWER_CTRL_1_AVCL<<4)|POWER_CTRL_1_VDDS};
 #endif
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 
 void ST7789VW_VAP_VAN_signal_output_Enable()//D2
 {
 	const uint8_t i[]={0xD2,0x4C};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Command_2_Enable_Init()//DF
 {
@@ -965,7 +965,7 @@ void ST7789VW_Command_2_Enable_Init()//DF
 	//“1”: Commands in command table 2 can be executed when EXTC level is “Low”.
 	#define CMD2_EN 0
 	const uint8_t i[]={0xDF,0x5A,0x69,0x02,CMD2_EN};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Positive_Voltage_Gamma_Control_Init()//E0
  {
@@ -975,7 +975,7 @@ void ST7789VW_Positive_Voltage_Gamma_Control_Init()//E0
 #else
 	const uint8_t i[]={0xE0,0xF0,0x04,0x08,0x0A,0x25,0x33,0x3C,0x0E,0x0F,0x27,0x2F};
 #endif
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Negative_Voltage_Gamma_Control_Init()//E1
 {
@@ -985,59 +985,59 @@ void ST7789VW_Negative_Voltage_Gamma_Control_Init()//E1
 #else
 	const uint8_t i[]={0xE0,0xF0,0x02,0x06,0x04,0x22,0x25,0x32,0x3B,0x3A,0x15,0x17,0x2D,0x37};
 #endif
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Digital_Gamma_Lookup_Table_for_Red_Init()//E2
 {
 	//Please refer to 8.20.
 	//const uint8_t i[]={0xE2,};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Digital_Gamma_Lookup_Table_for_Blue_Init()//E3
 {
 	//Please refer to 8.20.
 	//const uint8_t i[]={0xE3,};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_GATECTRL_Gate_Control_Init()//E4
 {
 	//const uint8_t i[]={0xE4,0x27,0x00,00x10};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_SPI2_Enable_Init()//E7
 {
 	//const uint8_t i[]={0xE7,0x00};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Power_Control_2_Init()//E8
 {
 	const uint8_t i[]={0xE8,0x93};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Equalize_time_control_Init()//E9
 {
 	//const uint8_t i[]={0xE9,0x11,0x11,0x08};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Program_Mode_Control()//EC
 {
 	const uint8_t i[]={0xE9,0x01};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Program_Mode_Enable()//FA
 {
 	const uint8_t i[]={0xFA,0x5A,0x69,0xEE,0x04};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Program_Mode_Disable()//FA
 {
 	const uint8_t i[]={0xFA,0x5A,0x69,0xEE,0x00};
-	LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_NVM_Setting_Init()//FC
 {
 	//const uint8_t i[]={0xFC,0x00,0x00};
-	//LCD_Send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
+	//lcd_send_nCmd((uint8_t*)i,sizeof(i)/sizeof(uint8_t));
 }
 void ST7789VW_Clear()//清除IC显示缓存
 {
@@ -1047,8 +1047,8 @@ void ST7789VW_Clear()//清除IC显示缓存
 //	i=0;
 //	while(i++<240*320)
 //	{
-//		//LCD_Send_1Dat(0x33);LCD_Send_1Dat(0x33);//测试
-//		LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
+//		//lcd_send_1Dat(0x33);lcd_send_1Dat(0x33);//测试
+//		lcd_send_1Dat(0x00);lcd_send_1Dat(0x00);
 //	}
 //
 
@@ -1056,8 +1056,8 @@ void ST7789VW_Clear()//清除IC显示缓存
 	i=0;
 	while(i++<320*320)
 	{
-		LCD_Send_1Dat(0x78);LCD_Send_1Dat(0x78);//测试
-		//LCD_Send_1Dat(0x00);LCD_Send_1Dat(0x00);
+		lcd_send_1Dat(0x78);lcd_send_1Dat(0x78);//测试
+		//lcd_send_1Dat(0x00);lcd_send_1Dat(0x00);
 	}
 
 }
@@ -1081,133 +1081,133 @@ void ST7789VW_Clear()//清除IC显示缓存
 //	LCD_RES_Set();
 //	LCD_Delay(100);
 //
-//  LCD_delay_ms(100);
+//  lcd_delay_ms(100);
 //
-//	LCD_Send_1Cmd(0x11);//Sleep exit
-//	LCD_delay_ms(120);
+//	lcd_send_1Cmd(0x11);//Sleep exit
+//	lcd_delay_ms(120);
 //
 //	//ST7735R Frame Rate
-//	LCD_Send_1Cmd(0xB1);
-//	LCD_Send_1Dat(0x01);
-//	LCD_Send_1Dat(0x2C);
-//	LCD_Send_1Dat(0x2D);
+//	lcd_send_1Cmd(0xB1);
+//	lcd_send_1Dat(0x01);
+//	lcd_send_1Dat(0x2C);
+//	lcd_send_1Dat(0x2D);
 
-//	LCD_Send_1Cmd(0xB2);
-//	LCD_Send_1Dat(0x01);
-//	LCD_Send_1Dat(0x2C);
-//	LCD_Send_1Dat(0x2D);
+//	lcd_send_1Cmd(0xB2);
+//	lcd_send_1Dat(0x01);
+//	lcd_send_1Dat(0x2C);
+//	lcd_send_1Dat(0x2D);
 
-//	LCD_Send_1Cmd(0xB3);
-//	LCD_Send_1Dat(0x01);
-//	LCD_Send_1Dat(0x2C);
-//	LCD_Send_1Dat(0x2D);
-//	LCD_Send_1Dat(0x01);
-//	LCD_Send_1Dat(0x2C);
-//	LCD_Send_1Dat(0x2D);
+//	lcd_send_1Cmd(0xB3);
+//	lcd_send_1Dat(0x01);
+//	lcd_send_1Dat(0x2C);
+//	lcd_send_1Dat(0x2D);
+//	lcd_send_1Dat(0x01);
+//	lcd_send_1Dat(0x2C);
+//	lcd_send_1Dat(0x2D);
 //
-//	LCD_Send_1Cmd(0xB4); //Column inversion
-//	LCD_Send_1Dat(0x07);
+//	lcd_send_1Cmd(0xB4); //Column inversion
+//	lcd_send_1Dat(0x07);
 //
 //	//ST7735R Power Sequence
-//	LCD_Send_1Cmd(0xC0);
-//	LCD_Send_1Dat(0xA2);
-//	LCD_Send_1Dat(0x02);
-//	LCD_Send_1Dat(0x84);
-//	LCD_Send_1Cmd(0xC1);
-//	LCD_Send_1Dat(0xC5);
+//	lcd_send_1Cmd(0xC0);
+//	lcd_send_1Dat(0xA2);
+//	lcd_send_1Dat(0x02);
+//	lcd_send_1Dat(0x84);
+//	lcd_send_1Cmd(0xC1);
+//	lcd_send_1Dat(0xC5);
 
-//	LCD_Send_1Cmd(0xC2);
-//	LCD_Send_1Dat(0x0A);
-//	LCD_Send_1Dat(0x00);
+//	lcd_send_1Cmd(0xC2);
+//	lcd_send_1Dat(0x0A);
+//	lcd_send_1Dat(0x00);
 
-//	LCD_Send_1Cmd(0xC3);
-//	LCD_Send_1Dat(0x8A);
-//	LCD_Send_1Dat(0x2A);
-//	LCD_Send_1Cmd(0xC4);
-//	LCD_Send_1Dat(0x8A);
-//	LCD_Send_1Dat(0xEE);
+//	lcd_send_1Cmd(0xC3);
+//	lcd_send_1Dat(0x8A);
+//	lcd_send_1Dat(0x2A);
+//	lcd_send_1Cmd(0xC4);
+//	lcd_send_1Dat(0x8A);
+//	lcd_send_1Dat(0xEE);
 //
-//	LCD_Send_1Cmd(0xC5); //VCOM
-//	LCD_Send_1Dat(0x0E);
+//	lcd_send_1Cmd(0xC5); //VCOM
+//	lcd_send_1Dat(0x0E);
 //
 //	//方向选择其一
-//	LCD_Send_1Cmd(0x36);
-//	LCD_Send_1Dat(0xC8);//方向1
-//	//LCD_Send_1Dat(0x08);//方向2
-//	//LCD_Send_1Dat(0x78);//方向3
-//	//LCD_Send_1Dat(0xA8);//方向4
+//	lcd_send_1Cmd(0x36);
+//	lcd_send_1Dat(0xC8);//方向1
+//	//lcd_send_1Dat(0x08);//方向2
+//	//lcd_send_1Dat(0x78);//方向3
+//	//lcd_send_1Dat(0xA8);//方向4
 //
 //	//ST7735R Gamma Sequence
-//	LCD_Send_1Cmd(0xe0);
-//	LCD_Send_1Dat(0x0f);
-//	LCD_Send_1Dat(0x1a);
-//	LCD_Send_1Dat(0x0f);
-//	LCD_Send_1Dat(0x18);
-//	LCD_Send_1Dat(0x2f);
-//	LCD_Send_1Dat(0x28);
-//	LCD_Send_1Dat(0x20);
-//	LCD_Send_1Dat(0x22);
-//	LCD_Send_1Dat(0x1f);
-//	LCD_Send_1Dat(0x1b);
-//	LCD_Send_1Dat(0x23);
-//	LCD_Send_1Dat(0x37);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x07);
-//	LCD_Send_1Dat(0x02);
-//	LCD_Send_1Dat(0x10);
+//	lcd_send_1Cmd(0xe0);
+//	lcd_send_1Dat(0x0f);
+//	lcd_send_1Dat(0x1a);
+//	lcd_send_1Dat(0x0f);
+//	lcd_send_1Dat(0x18);
+//	lcd_send_1Dat(0x2f);
+//	lcd_send_1Dat(0x28);
+//	lcd_send_1Dat(0x20);
+//	lcd_send_1Dat(0x22);
+//	lcd_send_1Dat(0x1f);
+//	lcd_send_1Dat(0x1b);
+//	lcd_send_1Dat(0x23);
+//	lcd_send_1Dat(0x37);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x07);
+//	lcd_send_1Dat(0x02);
+//	lcd_send_1Dat(0x10);
 
-//	LCD_Send_1Cmd(0xe1);
-//	LCD_Send_1Dat(0x0f);
-//	LCD_Send_1Dat(0x1b);
-//	LCD_Send_1Dat(0x0f);
-//	LCD_Send_1Dat(0x17);
-//	LCD_Send_1Dat(0x33);
-//	LCD_Send_1Dat(0x2c);
-//	LCD_Send_1Dat(0x29);
-//	LCD_Send_1Dat(0x2e);
-//	LCD_Send_1Dat(0x30);
-//	LCD_Send_1Dat(0x30);
-//	LCD_Send_1Dat(0x39);
-//	LCD_Send_1Dat(0x3f);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x07);
-//	LCD_Send_1Dat(0x03);
-//	LCD_Send_1Dat(0x10);
+//	lcd_send_1Cmd(0xe1);
+//	lcd_send_1Dat(0x0f);
+//	lcd_send_1Dat(0x1b);
+//	lcd_send_1Dat(0x0f);
+//	lcd_send_1Dat(0x17);
+//	lcd_send_1Dat(0x33);
+//	lcd_send_1Dat(0x2c);
+//	lcd_send_1Dat(0x29);
+//	lcd_send_1Dat(0x2e);
+//	lcd_send_1Dat(0x30);
+//	lcd_send_1Dat(0x30);
+//	lcd_send_1Dat(0x39);
+//	lcd_send_1Dat(0x3f);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x07);
+//	lcd_send_1Dat(0x03);
+//	lcd_send_1Dat(0x10);
 //
-//	LCD_Send_1Cmd(0x2a);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x7f);
+//	lcd_send_1Cmd(0x2a);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x7f);
 
-//	LCD_Send_1Cmd(0x2b);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x00);
-//	LCD_Send_1Dat(0x9f);
+//	lcd_send_1Cmd(0x2b);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x00);
+//	lcd_send_1Dat(0x9f);
 //
-//	LCD_Send_1Cmd(0xF0); //Enable test command
-//	LCD_Send_1Dat(0x01);
-//	LCD_Send_1Cmd(0xF6); //Disable ram power save mode
-//	LCD_Send_1Dat(0x00);
+//	lcd_send_1Cmd(0xF0); //Enable test command
+//	lcd_send_1Dat(0x01);
+//	lcd_send_1Cmd(0xF6); //Disable ram power save mode
+//	lcd_send_1Dat(0x00);
 //
-//	LCD_Send_1Cmd(0x3A); //65k mode
-//	LCD_Send_1Dat(0x05);
+//	lcd_send_1Cmd(0x3A); //65k mode
+//	lcd_send_1Dat(0x05);
 
 //	ST7735_Clear();//清除IC显示缓存
-//	LCD_Send_1Cmd(0x29);//Display on
+//	lcd_send_1Cmd(0x29);//Display on
 //}
 
 void ST7789VW_Init()
 {
 	LCD_RES_Clr();
-	LCD_delay_ms(100);
+	lcd_delay_ms(100);
 	LCD_RES_Set();
-	LCD_delay_ms(100);
+	lcd_delay_ms(100);
 
 
 	ST7789VW_Sleep_Out();//11
-	LCD_delay_ms(120);
+	lcd_delay_ms(120);
 	//----设置显示方向和RGB顺序和反色----
 	ST7789VW_Memory_Data_Access_Ctrl_Init();//36
 	//注意：一般芯片不支持c0设置,为了程序兼容其他款芯片,设置反色和RGB顺序时,建议优先设置C0,而36保持默认

@@ -15,8 +15,9 @@ limitations under the License.
 */
 
 #include "flash_driver.h"
-#if (FLASH_PORT != _F_NO_PORT)
+#include "flash_port_template.h"//flash驱动例程
 
+#if (FLASH_PORT != _F_NO_PORT)
 /*--------------------------------------------------------------
   * 名称: lcd_draw_flash_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,uint32_t flash_addr)
   * 传入1: x0 坐标左上角横坐标点
@@ -55,7 +56,6 @@ void lcd_draw_flash_bitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,u
 		flash_addr += sizex;
 		y0 +=8;
 	}
-
 	#endif
 	if((x0+sizex<0)||(x0>(SCREEN_WIDTH-1)))
 	{
@@ -134,7 +134,6 @@ void lcd_draw_flash_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t size
 		y0 +=8;
 	}
 	#endif
-
 	if((x0+sizex<0)||(x0>(SCREEN_WIDTH-1)))
 	{
 		return;
@@ -248,17 +247,17 @@ __attribute__((weak)) void flash_draw_IMG_RGB565(uint16_t x, uint16_t y, uint16_
 		uint32_t aligned_size = total_size / IMG_FLASH_SIZE;//falsh缓冲区对齐的部分
 		uint16_t remaining    = total_size % IMG_FLASH_SIZE;//不对齐剩余的部分
 	
-		LCD_Set_Addr(x, y, x + sizex - 1, y + sizey - 1);
+		lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
 		while (aligned_size--) 
 		{
 				flash_read_addr_ndat(flash_addr, flash_dat_buff, IMG_FLASH_SIZE);
-				LCD_Send_nDat(flash_dat_buff, IMG_FLASH_SIZE);
+				lcd_send_nDat(flash_dat_buff, IMG_FLASH_SIZE);
 				flash_addr += IMG_FLASH_SIZE;
 		}
 		if (remaining > 0) 
 		{
 				flash_read_addr_ndat(flash_addr, flash_dat_buff, remaining);
-				LCD_Send_nDat(flash_dat_buff, remaining);
+				lcd_send_nDat(flash_dat_buff, remaining);
 		}
 		#undef IMG_FLASH_SIZE
 }
@@ -280,7 +279,7 @@ __attribute__((weak)) void flash_draw_IMG_RGB332(uint16_t x, uint16_t y, uint16_
 		uint32_t aligned_size = total_size / IMG_FLASH_SIZE;//falsh缓冲区对齐的部分
 		uint16_t remaining    = total_size % IMG_FLASH_SIZE;//不对齐剩余的部分
 		
-		LCD_Set_Addr(x, y, x + sizex - 1, y + sizey - 1);
+		lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
 		while (aligned_size--) 
 		{
 				uint16_t i;
@@ -290,8 +289,8 @@ __attribute__((weak)) void flash_draw_IMG_RGB332(uint16_t x, uint16_t y, uint16_
 				for (i = 0; i < IMG_FLASH_SIZE; i++) 
 				{
 						uint8_t rgb332 = * p++;
-						LCD_Send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
-						LCD_Send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
+						lcd_send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
+						lcd_send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
 				}
 		}
 		if (remaining > 0) 
@@ -302,8 +301,8 @@ __attribute__((weak)) void flash_draw_IMG_RGB332(uint16_t x, uint16_t y, uint16_
 				for (i = 0; i < remaining; i++) 
 				{
 						uint8_t rgb332 = * p++;
-						LCD_Send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
-						LCD_Send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
+						lcd_send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
+						lcd_send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
 				}
 		}
 		#undef IMG_FLASH_SIZE
@@ -325,7 +324,7 @@ __attribute__((weak)) void flash_draw_IMG_RGB565_ZIP_ORLE2(uint16_t x, uint16_t 
 		uint16_t i = 0;
 		uint8_t *p;
 		uint8_t dat[3];
-		LCD_Set_Addr(x, y, x + sizex - 1, y + sizey - 1);
+		lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
 		while (1) 
 		{
 				if (i <= 0) 
@@ -342,8 +341,8 @@ __attribute__((weak)) void flash_draw_IMG_RGB565_ZIP_ORLE2(uint16_t x, uint16_t 
 				dat[2] = * p++;
 				while (dat[0]--) 
 				{
-						LCD_Send_1Dat(dat[1]); 
-						LCD_Send_1Dat(dat[2]); 
+						lcd_send_1Dat(dat[1]); 
+						lcd_send_1Dat(dat[2]); 
 				}
 		}
 		#undef IMG_FLASH_SIZE
@@ -365,7 +364,7 @@ __attribute__((weak)) void flash_draw_IMG_RGB332_ZIP_ORLE1(uint16_t x, uint16_t 
 		uint16_t i = 0;
     uint8_t * p;
 		uint8_t num,rgb332;
-		LCD_Set_Addr(x, y, x + sizex - 1, y + sizey - 1);
+		lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
     while (1) 
 		{
         if (i <= 0) 
@@ -384,8 +383,8 @@ __attribute__((weak)) void flash_draw_IMG_RGB332_ZIP_ORLE1(uint16_t x, uint16_t 
         rgb332 = * p++;
         while (num--) 
 				{
-            LCD_Send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
-            LCD_Send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
+            lcd_send_1Dat(((rgb332 & 0xE0) | ((rgb332 >> 2) & 0x1F))); 
+            lcd_send_1Dat(((rgb332 << 3) & 0xF8) | ((rgb332 << 2) & 0x04) | (rgb332 & 0x03)); 
         }
     }
 		#undef IMG_FLASH_SIZE

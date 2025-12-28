@@ -96,7 +96,7 @@ limitations under the License.
 		GPIO_Init(GPIOB, &GPIO_InitStruct);\
 	}while(0)
 
-//-----CS-----(可选)
+//-----CS-----
 //#define FLASH_CS_Clr()  do{GPIO_ResetBits(GPIOB,GPIO_Pin_12);}while(0)//库函数操作IO
 //#define FLASH_CS_Set()  do{GPIO_SetBits(GPIOB,GPIO_Pin_12);}while(0)//库函数操作IO
 #define FLASH_CS_Clr() do{GPIOB->BRR = GPIO_Pin_12;}while(0)//寄存器操作,节省函数调用时间
@@ -111,6 +111,19 @@ limitations under the License.
 		GPIO_Init(GPIOB, &GPIO_InitStruct);\
 		FLASH_CS_Set();\
 	}while(0)
+	
+	
+/*--------------------------------------------------------------
+  * 名称: flash_cs_clr(void)
+  * 功能: FLASH片选使能
+----------------------------------------------------------------*/
+void flash_cs_clr(void);
+
+/*--------------------------------------------------------------
+  * 名称: flash_cs_set(void)
+  * 功能: FLASH片选失能
+----------------------------------------------------------------*/
+void flash_cs_set(void);
 	
 /*--------------------------------------------------------------
   * 名称: flash_send_1Byte(uint8_t dat)
@@ -147,6 +160,10 @@ uint8_t flash_read_1Byte(void);
 ----------------------------------------------------------------*/
 void flash_read_nByte(uint8_t *p,uint32_t num);
 	
+/*--------------------------------------------------------------
+  * 名称: flash_port_init()
+  * 功能: flash接口初始化
+----------------------------------------------------------------*/
 void flash_port_init(void);
 	
 #endif

@@ -1,9 +1,3 @@
-/*
-	Copyright 2025 Lu Zhihao
-	本程序仅供学习用途, 暂不公开对其他用途的授权
-*/
-
-
 #include "main.h"
 #include "wegui_menu_demo.h"
 #include "lcd_wegui_tip.h"
@@ -14,12 +8,10 @@ uint32_t sys1ms_stick;
 
 Uint32 sdl_1ms_stick(Uint32 interval, void *param);
 
-
 void startup_init()
 {
     //创建定时器,模拟1ms中断
 	SDL_AddTimer(1, sdl_1ms_stick, NULL);
-
 }
 
 
@@ -47,17 +39,17 @@ int main( int argc, char * argv[])
 	startup_init();
 
 	//本框架"Driver"部分为高效率点阵OLED/RGB驱动,可单独移植使用移植
-	lcd_driver_Init();
+	lcd_driver_Init();//例程driver_demo();
 
 	//本框架Wegui部分为多级菜单图形动画ui,处理多级菜单,过度动画等
-	lcd_wegui_init();
+	lcd_wegui_init();//例程wegui_loop_func();
 
 	sys1ms_stick = 0;
-
-
 	while (1)
 	{
-		//------------1.多级菜单DEMO-------------
+	    //------------1.直驱DEMO-------------
+	    //driver_demo();
+		//------------2.多级菜单DEMO-------------
 		wegui_loop_func();//Wegui循环驱动
 
 		//--------------主循环-----------------

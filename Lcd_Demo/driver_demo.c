@@ -57,7 +57,7 @@ void driver_demo_colour()
 {
 	do
 	{
-		while(LCD_is_Busy()!=0);
+		while(lcd_is_busy()!=0);
 		//1.---清空缓存---
 		lcd_clear_gram();
 		//2.-----绘图-----
@@ -176,7 +176,7 @@ void driver_demo_inBox()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				//1.---清空缓存---
 				lcd_clear_gram();
 				//2.-----绘图-----
@@ -216,7 +216,7 @@ void driver_demo_picture()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				
 				//1.---清空缓存---
 				lcd_clear_gram();
@@ -250,7 +250,7 @@ void driver_demo_RLEpicture()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				
 				//1.---清空缓存---
 				lcd_clear_gram();
@@ -280,7 +280,7 @@ void driver_demo_inv()
 	{
 		do
 		{
-			while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+			while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 			lcd_set_driver_mode(write_1);//写1模式
 			lcd_clear_gram();
 			lcd_draw_utf8_string(0,1,"write_inverse\nABC\n123456789");
@@ -305,7 +305,7 @@ void driver_demo_num()
 		{
 			do
 			{
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				lcd_clear_gram();
 				lcd_draw_int32(0,0,r);//十进制带符号
 				lcd_draw_int32(0,12,(r+7)*32);//十进制带符号
@@ -329,7 +329,7 @@ void driver_demo_rbox()
 		{
 			do
 			{
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				lcd_clear_gram();
 				lcd_draw_rbox(0,0,SCREEN_WIDTH-1, SCREEN_HIGH-1,r);
 			}while(LCD_Refresh());
@@ -343,7 +343,7 @@ void driver_demo_rbox()
 		{
 			do
 			{
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				lcd_clear_gram();
 				lcd_fill_rbox(0,0,SCREEN_WIDTH-1, SCREEN_HIGH-1,r);
 			}while(LCD_Refresh());
@@ -368,7 +368,7 @@ void driver_demo_box()
 			if(i < SCREEN_HIGH){y=i;}else{y=SCREEN_HIGH-1;}
 			do
 			{
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				lcd_clear_gram();
 				lcd_draw_box(0,0, x, y);
 			}while(LCD_Refresh());
@@ -385,7 +385,7 @@ void driver_demo_box()
 			if(i < SCREEN_HIGH){y=i;}else{y=SCREEN_HIGH-1;}
 			do
 			{
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				lcd_clear_gram();
 				lcd_fill_box(0,0, x, y);
 			}while(LCD_Refresh());
@@ -435,7 +435,7 @@ void driver_demo_arc()
 	{
 		do
 		{
-			while(LCD_is_Busy()!=0);
+			while(lcd_is_busy()!=0);
 			lcd_clear_gram();
 			lcd_draw_circel_part(32,SCREEN_HIGH/2,16,(circle_part_t)C[i]);
 			lcd_fill_circel_part(SCREEN_WIDTH-32,SCREEN_HIGH/2,16,(circle_part_t)C[i]);
@@ -455,7 +455,7 @@ void driver_demo_line()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();
 		//2.-----绘图-----
@@ -466,7 +466,7 @@ void driver_demo_line()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();
 		//2.-----绘图-----
@@ -476,7 +476,7 @@ void driver_demo_line()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();
 		//2.-----绘图-----
@@ -486,7 +486,7 @@ void driver_demo_line()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();
 		//2.-----绘图-----
@@ -510,7 +510,7 @@ void driver_demo_line_anim()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				//1.---清空缓存---
 				lcd_clear_gram();
 				//2.-----绘图-----
@@ -527,7 +527,7 @@ void driver_demo_line_anim()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				//1.---清空缓存---
 				lcd_clear_gram();
 				//2.-----绘图-----
@@ -547,7 +547,7 @@ void driver_demo_line_anim()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				//1.---清空缓存---
 				lcd_clear_gram();
 				//2.-----绘图-----
@@ -581,7 +581,7 @@ void driver_demo_line_anim()
 			do
 			{
 				//0.---等待发送完毕---
-				while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+				while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 				//1.---清空缓存---
 				lcd_clear_gram();
 				//2.-----绘图-----
@@ -611,7 +611,7 @@ void driver_demo_fill_screen()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---填充缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0
 		//2.-----绘图-----
@@ -623,7 +623,7 @@ void driver_demo_fill_screen()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---填充缓存---
 		lcd_fill_gram(1);//全屏刷为LCD_COLOUR_1
 		//2.-----绘图-----
@@ -636,7 +636,7 @@ void driver_demo_fill_screen()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---填充缓存---
 		lcd_fill_gram(2);//全屏刷为LCD_COLOUR_2
 		//2.-----绘图-----
@@ -648,7 +648,7 @@ void driver_demo_fill_screen()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---填充缓存---
 		lcd_fill_gram(3);//全屏刷为LCD_COLOUR_3
 		//2.-----绘图-----
@@ -672,7 +672,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -685,7 +685,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -696,7 +696,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -714,7 +714,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -726,7 +726,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -740,7 +740,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -756,7 +756,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -773,7 +773,7 @@ void driver_demo_text_fonts()
 	do
 	{
 		//0.---等待发送完毕---
-		while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+		while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 		//1.---清空缓存---
 		lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 		//2.-----绘图-----
@@ -814,7 +814,7 @@ void driver_demo_geme()
 		do
 		{
 			//0.---等待发送完毕---
-			while(LCD_is_Busy()!=0);//DMA方式专用,其他模式可省略
+			while(lcd_is_busy()!=0);//DMA方式专用,其他模式可省略
 			//1.---清空缓存---
 			lcd_clear_gram();//全屏刷为LCD_COLOUR_0(快速)
 			//2.-----绘图-----
@@ -896,13 +896,13 @@ void driver_demo()
 //		//--8.数字--
 		driver_demo_num();
 //		//--9.反写模式--
-//		driver_demo_inv();
+		driver_demo_inv();
 //		//--10.画图片--
-//		driver_demo_picture();
+		driver_demo_picture();
 //		//--12.画压缩图片--
-//		driver_demo_RLEpicture();
+		driver_demo_RLEpicture();
 //		//--11.框内绘图(高级笔刷)--
-//		driver_demo_inBox();
+		driver_demo_inBox();
 //		//--12.所有颜色显示--
 //		driver_demo_colour();
 //		//--13.更改笔刷颜色--

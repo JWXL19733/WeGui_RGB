@@ -22,17 +22,60 @@ limitations under the License.
 #include "lcd_driver.h"
 
 volatile uint8_t lcd_busy;
-
-#if((LCD_TYPE == LCD_OLED) || (LCD_TYPE == LCD_GRAY))
-//-------------------------------------------以下是OLED屏幕专用驱动接口----------------------------------------------
 /*--------------------------------------------------------------
-  * 名称: LCD_Port_Init()
+  * 名称: lcd_delay_ms(volatile uint32_t ms)
+  * 传入1: ms
+  * 返回: 无
+  * 功能: 软件延时
+  * 说明: 非精准
+----------------------------------------------------------------*/
+void lcd_delay_ms(volatile uint32_t ms)
+{
+		volatile uint16_t i;
+		while (ms--) 
+		{
+			i = 10000; //根据实际情况调整
+			while (i--);
+		}
+}
+
+/*--------------------------------------------------------------
+  * 名称: lcd_bl_on()
+  * 说明: 打开屏幕背光 weak类型 改自lcd_port_template.c
+----------------------------------------------------------------*/
+void lcd_bl_on(void)
+{
+	LCD_BL_Set();
+} 
+
+/*--------------------------------------------------------------
+  * 名称: lcd_bl_off()
+  * 说明: 关闭屏幕背光 weak类型 改自lcd_port_template.c
+----------------------------------------------------------------*/
+void lcd_bl_off(void)
+{
+	LCD_BL_Clr();
+}
+
+/*--------------------------------------------------------------
+  * 名称: lcd_is_busy()
+  * 传入: 无
+  * 返回: 0屏幕接口空闲 1屏幕接口忙碌
+  * 说明: DMA使用空闲标志位判断
+----------------------------------------------------------------*/
+inline uint8_t lcd_is_busy(void)
+{
+	return lcd_busy;
+}
+
+/*--------------------------------------------------------------
+  * 名称: lcd_port_init()
   * 传入: 无
   * 返回: 无
   * 功能: 屏幕接口初始化
   * 说明: 
 ----------------------------------------------------------------*/
-void LCD_Port_Init(void)
+void lcd_port_init(void)
 {
 	//OELD SPI SCL默认常高,第二个跳变数据沿有效
 	SPI_InitTypeDef SPI_InitStructure;
@@ -45,10 +88,8 @@ void LCD_Port_Init(void)
   SPI_InitStructure.SPI_BaudRatePrescaler = LCD_SPI_BaudRatePrescaler_2;//分频(最快:SPI_BaudRatePrescaler_2)
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
   SPI_InitStructure.SPI_CRCPolynomial = 7;
-
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPIx, ENABLE);
 	RCC_PCLK2Config(RCC_HCLK_Divx);//分频RCC_HCLK_Div1 RCC_HCLK_Div2 RCC_HCLK_Div4...
-	
 	SPI_Init(LCD_SPIx, &SPI_InitStructure);
 	
 	DMA_InitTypeDef DMA_InitStructure;
@@ -66,11 +107,8 @@ void LCD_Port_Init(void)
   DMA_InitStructure.DMA_BufferSize = 1;
   DMA_DeInit(DMA1_Channel6);
   DMA_Init(LCD_DMA_CHANNELx, &DMA_InitStructure);
-	
 	SPI_I2S_DMACmd(LCD_SPIx,SPI_I2S_DMAReq_Tx,ENABLE);
-	
 	SPI_Cmd(LCD_SPIx, ENABLE);
-	
 	DMA_ITConfig(LCD_DMA_CHANNELx, DMA_IT_TC, ENABLE);
 	
 	NVIC_InitTypeDef NVIC_InitStruct;
@@ -83,8 +121,7 @@ void LCD_Port_Init(void)
 	#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE ==_PAGE_BUFF_DYNA_UPDATE))
 	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC, ENABLE);//动态刷新CRC校验用
 	#endif
-	
-	
+
 	LCD_SCL_IO_Init();
 	LCD_SDA_IO_Init();
 	LCD_RES_IO_Init();
@@ -92,39 +129,22 @@ void LCD_Port_Init(void)
 	LCD_CS_IO_Init();
 	
 	LCD_RES_Clr();
-	LCD_delay_ms(100);
+	lcd_delay_ms(100);
 	LCD_RES_Set();
-	LCD_delay_ms(100);
+	lcd_delay_ms(100);
 	
 	lcd_busy = 0;
-}
-
-
-/*--------------------------------------------------------------
-  * 名称: LCD_delay_ms(volatile uint32_t ms)
-  * 传入1: ms
-  * 返回: 无
-  * 功能: 软件延时
-  * 说明: 非精准
-----------------------------------------------------------------*/
-void LCD_delay_ms(volatile uint32_t ms)
-{
-		volatile uint16_t i;
-		while (ms--) 
-		{
-			i = 10000; //根据实际情况调整
-			while (i--);
-		}
+	lcd_ic_init();
 }
 
 /*--------------------------------------------------------------
-  * 名称: LCD_Send_1Cmd(uint8_t dat)
+  * 名称: lcd_send_1Cmd(uint8_t dat)
   * 传入1: dat
   * 返回: 无
   * 功能: 向屏幕发送1个命令(DC=0时发1字节spi)
   * 说明: 
 ----------------------------------------------------------------*/
-void LCD_Send_1Cmd(uint8_t dat)
+void lcd_send_1Cmd(uint8_t dat)
 {
 	wait_lcd_dma_free();//等待dma空闲
 	send_lcd_spi_done();//等待SPI发送器空闲(发完)
@@ -139,57 +159,14 @@ void LCD_Send_1Cmd(uint8_t dat)
 }
 
 /*--------------------------------------------------------------
-  * 名称: LCD_Send_1Dat(uint8_t dat)
-  * 传入1: dat
-  * 返回: 无
-  * 功能: 向屏幕发送1个数据(DC=1时发1字节spi)
-  * 说明: 
-----------------------------------------------------------------*/
-void LCD_Send_1Dat(uint8_t dat)
-{
-	wait_lcd_dma_free();//等待dma空闲
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	{
-		send_lcd_spi_dat(dat);//向SPI发送缓冲器发送一个数据
-	}
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-	send_lcd_spi_done();//等待SPI发送器空闲(发完)
-	LCD_CS_Set();
-}
-
-/*--------------------------------------------------------------
-  * 名称: LCD_Send_nDat(uint8_t *p,uint16_t num)
-  * 传入1: *p数组指针
-  * 传入2: num发送数量
-  * 返回: 无
-  * 功能: 向屏幕发送num个数据
-  * 说明: 
-----------------------------------------------------------------*/
-void LCD_Send_nDat(uint8_t *p,uint16_t num)
-{
-	wait_lcd_dma_free();//等待dma空闲
-	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-	LCD_DC_Set();
-	LCD_CS_Clr();
-	
-	lcd_busy = 1;
-	LCD_DMA_CHANNELx->CMAR = (uint32_t)p;
-	LCD_DMA_CHANNELx->CNDTR = (uint32_t)num; 
-	DMA_Cmd(LCD_DMA_CHANNELx, ENABLE);
-}
-
-
-/*--------------------------------------------------------------
-  * 名称: LCD_Send_nCmd(uint8_t *p,uint16_t num)
+  * 名称: lcd_send_nCmd(uint8_t *p,uint16_t num)
   * 传入1: *p数组指针
   * 传入2: num发送数量
   * 返回: 无
   * 功能: 向屏幕发送num个命令
   * 说明: 
 ----------------------------------------------------------------*/
-void LCD_Send_nCmd(uint8_t *p,uint16_t num)
+void lcd_send_nCmd(uint8_t *p,uint16_t num)
 {
 	wait_lcd_dma_free();//等待dma空闲
 	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
@@ -206,31 +183,50 @@ void LCD_Send_nCmd(uint8_t *p,uint16_t num)
 	LCD_CS_Set();
 }
 
-#endif
-
-#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
 /*--------------------------------------------------------------
-  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
-  * 传入1:*gram待校验数组指针
-	* 传入2:len待校验数组长度
-	* 返回: crc校验值
-  * 说明: 原函数为weak,改写自lcd_Driver.c
+  * 名称: lcd_send_1Dat(uint8_t dat)
+  * 传入1: dat
+  * 返回: 无
+  * 功能: 向屏幕发送1个数据(DC=1时发1字节spi)
+  * 说明: 
 ----------------------------------------------------------------*/
-RAM_SPEEDUP_FUNC_0
-uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+void lcd_send_1Dat(uint8_t dat)
 {
-		uint16_t i;
-		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
-		for(i=0;i<=len;i++)
-		{
-			CRC->DR = *gram++;//CRC_CalcCRC(*gram++);//计算校验
-		}
-		return CRC->DR;//return CRC_GetCRC();
+	wait_lcd_dma_free();//等待dma空闲
+	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
+	LCD_DC_Set();
+	LCD_CS_Clr();
+	{
+		send_lcd_spi_dat(dat);//向SPI发送缓冲器发送一个数据
+	}
+	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
+	send_lcd_spi_done();//等待SPI发送器空闲(发完)
+	LCD_CS_Set();
 }
-#endif
+
+/*--------------------------------------------------------------
+  * 名称: lcd_send_nDat(uint8_t *p,uint16_t num)
+  * 传入1: *p数组指针
+  * 传入2: num发送数量
+  * 返回: 无
+  * 功能: 向屏幕发送num个数据
+  * 说明: 
+----------------------------------------------------------------*/
+void lcd_send_nDat(uint8_t *p,uint16_t num)
+{
+	wait_lcd_dma_free();//等待dma空闲
+	wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
+	LCD_DC_Set();
+	LCD_CS_Clr();
+	
+	lcd_busy = 1;
+	LCD_DMA_CHANNELx->CMAR = (uint32_t)p;
+	LCD_DMA_CHANNELx->CNDTR = (uint32_t)num; 
+	DMA_Cmd(LCD_DMA_CHANNELx, ENABLE);
+}
 
 //----------------------------普通OLED屏幕刷屏接口-------------------------------------
-#if(LCD_TYPE == LCD_OLED)
+
 /*--------------------------------------------------------------
   * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
   * 传入1:x0刷新起始横坐标
@@ -240,15 +236,18 @@ uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
   * 功能: OLED屏幕从x,page位置开始刷屏
   * 说明: OLED屏幕移植接口例程 weak类型 需要改写
 ----------------------------------------------------------------*/
+#if(LCD_TYPE == LCD_OLED)
 void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
 {
 	//--1.等待DMA和spi空闲--
 	wait_lcd_dma_free();
 	wait_lcd_spi_txtemp_free();
 	//--2.配置刷新窗口位置--
-	LCD_Set_Addr(x0,page);
+	lcd_set_addr(x0,page);
 	//--3.快速发送点阵数据--
-	LCD_Send_nDat(page_gram,(x1-x0));
+	lcd_send_nDat(page_gram,(x1-x0));
+	
+	//wait_lcd_dma_free();
 }
 
 /*--------------------------------------------------------------
@@ -261,24 +260,43 @@ void DMA1_Channel3_IRQHandler()
 		DMA_ClearFlag(LCD_DMA_COMPLETE_FLAG);
 	
 		//等待SPI发完(DMA完毕不代表SPI完毕)
-		while((LCD_SPIx->SR & SPI_I2S_FLAG_BSY) != (uint16_t)RESET){;}
+		wait_lcd_spi_txtemp_free();
+		send_lcd_spi_done();//等待SPI发送器空闲(发完)
 		LCD_CS_Set();
 		lcd_busy = 0;
 }
-
-//----------------------------灰度OLED屏幕刷屏接口-------------------------------------
-#elif(LCD_TYPE == LCD_GRAY)
-	//灰度OLED屏不支持dma4spi方式驱动 请更改屏幕驱动方式
-	#error ("Gray OLED not support dma4spi driver yet!Use 4spi_driver please!")
-
-//----------------------------RGB565屏幕刷屏接口-------------------------------------
-#elif (LCD_TYPE == LCD_RGB565)
-	//彩屏TFT屏不支持dma4spi方式驱动 请更改屏幕驱动方式
-	#error ("TFT not support dma4spi driver yet!");
-#else
-	#error ("Not support LCD!");
 #endif
 
+//----------------------------灰度OLED屏幕刷屏接口-------------------------------------
+#if(LCD_TYPE == LCD_GRAY)
+	//灰度OLED屏不支持dma4spi方式驱动 请更改屏幕驱动方式
+	#error ("Gray OLED not support dma4spi driver yet!Use 4spi_driver please!")
+#endif
+//----------------------------RGB565屏幕刷屏接口-------------------------------------
+#if (LCD_TYPE == LCD_RGB565)
+	//彩屏TFT屏不支持dma4spi方式驱动 请更改屏幕驱动方式
+	#error ("TFT not support dma4spi driver yet!");
+#endif
 
+//------------------------------动态刷新CRC接口---------------------------------------
+/*--------------------------------------------------------------
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: weak类型 改自lcd_port_template.c
+----------------------------------------------------------------*/
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))
+uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+{
+		uint16_t i;
+		CRC->CR = CRC_CR_RESET;//CRC_ResetDR();//清空CRC计算值
+		for(i=0;i<=len;i++)
+		{
+			CRC->DR = *gram++;//CRC_CalcCRC(*gram++);//计算校验
+		}
+		return CRC->DR;//return CRC_GetCRC();
+}
+#endif
 
 #endif

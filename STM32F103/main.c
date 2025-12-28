@@ -90,7 +90,7 @@ void wegui_hello_word()
 //			uint16_t i = 0;
 //			uint8_t *p;
 //			uint8_t dat[3];
-//			LCD_Set_Addr(x, y, x + sizex - 1, y + sizey - 1);
+//			lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
 //			while (1) 
 //			{
 //					if (i <= 0) 
@@ -128,23 +128,20 @@ void wegui_hello_word()
 //}
 //#endif
 
-
-
 /*--------------------------------------------------------------
-  * 软件iic暂不支持使用ARMV6编译,请使用ARMV5编译器
   * 修改lcd_driver_config.h和lcd_wegui_config.h即可快速上手点屏
 ----------------------------------------------------------------*/
 int main(void)
 {
 	startup_init();
 	
-	//本框架"driver"部分为高效率点阵OLED/RGB驱动,可单独移植使用移植,demo程序driver_demo();
+	//本框架"driver"部分为高效率点阵OLED/RGB驱动,可单独移植使用移植
 	lcd_driver_Init();//demo程序driver_demo();
 	
 	//本框架wegui部分为多级菜单图形动画ui,处理多级菜单,过度动画等,
 	//lcd_wegui_init();//demo程序wegui_loop_func();
 	
-	//wegui_hello_word();//开机欢迎弹窗
+	//wegui_hello_word();//开机欢迎弹窗(菜单demo)
 	sys1ms_stick = 0;
 	while (1)
 	{
@@ -155,19 +152,19 @@ int main(void)
 		//wegui_loop_func();//wegui主循环
 
 		//-----------3.自定义测试----------
-		if(sys1ms_stick>=1)//1ms动作
-		{
-			//debug();
-			//1.闪灯 若程序阻塞,灯会闪变慢
-			led_func();
-			//2.demo_bool使能演示,在demo菜单里修改
-			if(demo_bool)
-			{
-				//demo_value自增,在demo菜单里显示
-				if(demo_value < 4095){demo_value++;}
-				else{demo_value = 0;}
-			}
-			sys1ms_stick-=1;
-		}
+		//if(sys1ms_stick>=100)//1ms动作
+		//{
+		//	//debug();
+		//	//1.闪灯 若程序阻塞,灯会闪变慢
+		//	led_func();
+		//	//2.demo_bool使能演示,在demo菜单里修改
+		//	if(demo_bool)
+		//	{
+		//		//demo_value自增,在demo菜单里显示
+		//		if(demo_value < 4095){demo_value++;}
+		//		else{demo_value = 0;}
+		//	}
+		//	sys1ms_stick-=100;
+		//}
 	}
 }

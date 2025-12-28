@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #include "lcd_driver.h"
+#include "lcd_port_template.h"//lcd驱动例程
 
 //---------驱动结构体---------
 lcd_driver_t lcd_driver;
@@ -21,74 +22,6 @@ lcd_driver_t lcd_driver;
 //---------快速计算用---------
 const static uint8_t cal_1[] = {0x00,0x01,0x03,0x07,0x0F,0x1F,0x3F,0x7F,0xFF,0x57,0x65,0x47,0x75,0x69,0x20,0x52,0x47,0x42};
 
-/*--------------------------------------------------------------
-  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
-  * 传入1:*gram待校验数组指针
-	* 传入2:len待校验数组长度
-	* 返回: crc校验值
-  * 说明: weak类型 需要移植,否则无法使用动态刷新
-----------------------------------------------------------------*/
-RAM_SPEEDUP_FUNC_0
-__attribute__((weak)) uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
-{
-	while(1)//需要移植 参考stm32f103例程
-	{
-		;
-	}
-}
-
-/*--------------------------------------------------------------
-  * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
-  * 传入1:x0刷新起始横坐标
-	* 传入2:x1刷新结束横坐标
-  * 传入3:page当前刷新的页坐标
-  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
-  * 功能: OLED屏幕从x,page位置开始刷屏
-  * 说明: OLED屏幕移植接口例程 weak类型 需要改写
-----------------------------------------------------------------*/
-RAM_SPEEDUP_FUNC_0
-__attribute__((weak)) void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
-{
-	while(1)//需要移植 参考stm32f103例程
-	{
-		;
-	}
-}
-/*--------------------------------------------------------------
-  * 名称: void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
-  * 传入1:x0刷新起始横坐标
-	* 传入2:x1刷新结束横坐标
-  * 传入3:page当前刷新的页坐标
-  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
-  * 功能: 灰度OLED屏幕从x,page位置开始刷屏
-  * 说明: 灰度OLED屏幕移植接口例程 weak类型 需要改写
-----------------------------------------------------------------*/
-RAM_SPEEDUP_FUNC_0
-__attribute__((weak)) void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
-{
-	while(1)//需要移植 参考stm32f103例程
-	{
-		;
-	}
-}
-
-/*--------------------------------------------------------------
-  * 名称: void rgb565_flush(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
-  * 传入1:x0刷新起始横坐标
-	* 传入2:x1刷新结束横坐标
-  * 传入3:page当前刷新的页坐标
-  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
-  * 功能: TFT_RGB565屏幕从x,page位置开始刷屏
-  * 说明: RGB565屏幕移植接口例程 weak类型 需要改写
-----------------------------------------------------------------*/
-RAM_SPEEDUP_FUNC_0
-__attribute__((weak)) void lcd_rgb565_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
-{
-	while(1)//需要移植 参考stm32f103例程
-	{
-		;
-	}
-}
 
 //------------------------------------------------------------内部驱动接口------------------------------------------------------------
 
@@ -1814,8 +1747,6 @@ void lcd_draw_RLEbitmap(int16_t x0,int16_t y0,uint16_t sizex,uint16_t sizey,cons
   }
 }
 
-
-
 /*--------------------------------------------------------------
   * 名称: lcd_fill_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, int8_t r)
   * 传入: (x_min,y_min)起点 (x_max,y_max)终点 r:半径
@@ -1953,7 +1884,6 @@ void lcd_draw_rbox(int16_t x_min,int16_t y_min, int16_t x_max, int16_t y_max, ui
 		lcd_draw_pixl(x_max,y_min_add_r);
 		lcd_draw_pixl(x_max,y_max_dec_r);
 	}
-
 }
 
 /*--------------------------------------------------------------
@@ -2376,11 +2306,8 @@ void lcd_fill_gram(uint8_t n)
 void lcd_driver_Init(void)
 {
 	//-------------初始化-------------
-	LCD_Port_Init();
-	LCD_IC_Init();
-
-	flash_port_init();
-	flash_ic_init();
+	lcd_port_init();//屏幕
+	flash_port_init();//外挂flash
 
 	//------driver配置默认字体---------
 	//---中英文字体high高度建议一致----
@@ -2444,9 +2371,7 @@ void lcd_driver_Init(void)
 	//-----------刷新屏幕------------
 	while(LCD_Refresh()!=0){}
 
-	#if(LCD_TYPE == LCD_RGB565)
-		LCD_BL_On();
-	#endif
+	lcd_bl_on();
 }
 
 

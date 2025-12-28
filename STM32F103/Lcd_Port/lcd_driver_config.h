@@ -32,15 +32,13 @@ limitations under the License.
 ----------------------------------------------------------------*/
 
 /*--------------------------------------------------------------
-  * 若keil版本过高,请自行安装v5版本编译器
   * 本程序使用了大量的"UTF8"支持多国语言的编码
-  * 需要进行两步设置
   * 1.Edit->Configuration->Encoding->"Encod in UTF8"
+	* 若使用v5版本编译器需要增加编译设置 v6请关闭
   * 2.Project -> Oprions for Target-> C/C++ -> 
   * Misc Contiols -> 填入"--no-multibyte-chars"
 ----------------------------------------------------------------*/
 //提示: 
-//IIC相关功能暂不支持使用ARMV6编译,请使用ARMV5编译器!!
 //软件IIC默认使用适中的延迟速率,需要更快的刷新速度,需要到对应port文件里修改, 查找I2C_SCL_Rise_Delay等并进行修改延迟值
 //使用模拟IIC可精确控制上升和下降时间,调整合适的延迟时间,刷新率可以比硬件IIC更快
 
@@ -66,13 +64,14 @@ limitations under the License.
 -------------------------------------------------------------------------------------*/
 
 //-------------------------1.选择一个屏幕通讯接口-----------------------------
-#define _SOFT_3SPI  (1)//软件三线SPI驱动   对应文件stm32f103_lcd_soft_3spi_port.c
-#define _SOFT_4SPI  (2)//软件四线SPI驱动   对应文件stm32f103_lcd_soft_4spi_port.c
-#define _HARD_4SPI  (3)//硬件四线SPI驱动   对应文件stm32f103_lcd_hard_4spi_port.c
-#define _DMA_4SPI   (4)//DMA四线SPI驱动   对应文件stm32f103_lcd_dma_4spi_port.c
-#define _SOFT_IIC   (5)//软件IIC驱动(推荐) 对应文件stm32f103_lcd_soft_iic_port.c 
-//#define _HARD_IIC   (6)//硬件IIC驱动(不推荐) 对应文件stm32f103_lcd_hard_iic_port.c (有硬件bug不建议使用)
-#define LCD_PORT    _HARD_4SPI //选择一个接口
+//通用移植文件参考lcd_port_template.c
+#define _SOFT_3SPI     (1)//软件三线SPI驱动   对应文件stm32f103_lcd_soft_3spi_port.c
+#define _SOFT_4SPI     (2)//软件四线SPI驱动   对应文件stm32f103_lcd_soft_4spi_port.c
+#define _HARD_4SPI     (3)//硬件四线SPI驱动   对应文件stm32f103_lcd_hard_4spi_port.c
+#define _DMA_4SPI      (4)//DMA四线SPI驱动   对应文件stm32f103_lcd_dma_4spi_port.c
+#define _SOFT_IIC      (5)//软件IIC驱动(推荐) 对应文件stm32f103_lcd_soft_iic_port.c 
+#define _HARD_IIC      (6)//硬件IIC驱动(不推荐) 对应文件stm32f103_lcd_hard_iic_port.c (有硬件bug不建议使用)
+#define LCD_PORT       _HARD_4SPI //选择一个接口
 
 //----------------------------2.1.设定屏幕分辨率--------------------------------
 #define SCREEN_WIDTH 128  //建议取8的倍数
@@ -143,11 +142,12 @@ limitations under the License.
 
 //-------------------------6.1.选择一个外挂FLASH接口--------------------------------
 //请勿与LCD接口冲突(LCD使用DMA驱动时可能会有冲突)
-#define _F_NO_PORT      (0)//没有外挂FLASH接口 
-#define _F_SOFT_STDSPI  (1)//软件标准SPI
-#define _F_HARD_STDSPI  (2)//硬件标准SPI
-#define _F_DMA_STDSPI   (3)//DMA标准SPI
-#define FLASH_PORT      _F_DMA_STDSPI//选择一个外挂FLASH接口
+#define _F_NO_PORT        (0)//没有FLASH接口
+#define _F_SOFT_STDSPI    (1)//软件标准SPI
+#define _F_HARD_STDSPI    (2)//硬件标准SPI
+#define _F_DMA_STDSPI     (3)//DMA标准SPI
+#define _FLASH_PORT_DEMO  (4)//移植文件 对应flash_port_template.c
+#define FLASH_PORT        _F_DMA_STDSPI//选择一个外挂FLASH接口
 
 //-------------------------6.2.选择一个外挂FLASH型号--------------------------------
 #define _FLASH_NONE    (0)//没有FLASH
@@ -157,7 +157,6 @@ limitations under the License.
 //-------------------------6.3.配置硬件FLASH参数--------------------------------
 //#define RCC_HCLK_Divx    RCC_HCLK_Div2 //HCLK时钟分频1,2,4,8,16 (与LCD共用)
 #define FLASH_SPI_BaudRatePrescaler_x SPI_BaudRatePrescaler_2 //SPI分频2,4,8,16,32,64,128,256
-
 
 //-------------------------7.1设置单片机内部字体--------------------------------
 //&mcu_fonts_ascii_songti_6X12;
@@ -186,10 +185,7 @@ limitations under the License.
 
 
 //------------编译-----------
-
-
-
-#if (LCD_PORT == _SOFT_3SPI)    //软件三线SPI
+#if (LCD_PORT == _SOFT_3SPI)    //软件三线SPI 
 	#include "stm32f103_lcd_soft_3spi_port.h"
 #elif (LCD_PORT == _SOFT_4SPI) //软件四线SPI 
 	#include "stm32f103_lcd_soft_4spi_port.h"
@@ -201,15 +197,12 @@ limitations under the License.
 	#include "stm32f103_lcd_soft_iic_port.h"
 #elif (LCD_PORT == _HARD_IIC)  //硬件IIC(不推荐)  
 	#include "stm32f103_lcd_hard_iic_port.h"
-#elif (LCD_PORT == _DMA_IIC)  //DMA_IIC驱动 (暂不支持)
-	//#include "stm32f103_oled_dma_iic_port.h"
-	#error ("stm32f103 dma iic driver is not supported!")
 #else
-	#error ("no lcd driver.h")
+	
 #endif
 
 #if (FLASH_PORT == _F_NO_PORT)
-	//没有flash接口
+	
 #elif (FLASH_PORT == _F_SOFT_STDSPI)
 	#include "stm32f103_flash_soft_stdspi_port.h"
 #elif (FLASH_PORT == _F_HARD_STDSPI)
@@ -217,14 +210,15 @@ limitations under the License.
 #elif (FLASH_PORT == _F_DMA_STDSPI)
 	#include "stm32f103_flash_dma_stdspi_port.h"
 #else
-	#error ("no flash.h")
+	#include "flash_port_template.h"//默认移植例程
 #endif
 
-#if ((FLASH_PORT == _F_NO_PORT) && (FLASH_MODEL == _FLASH_NONE))
+
+
+#if ((FLASH_PORT == _F_NO_PORT) || (FLASH_MODEL == _FLASH_NONE))
 	//没有flash
 	#define flash_ic_init()                  do{}while(0)
 	#define flash_read_addr_ndat(addr,p,len) do{}while(0)
-	#define flash_port_init()                do{}while(0)
 #elif (FLASH_MODEL == _FLASH_W25Qxx)
 	#include "w25qxx.h"
 	#define flash_ic_init()                  do{w25qxx_init();}while(0)
@@ -243,109 +237,109 @@ limitations under the License.
 
 #if (LCD_IC == _SH1106)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SH1106_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SH1106_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SH1106_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SH1106_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{SH1106_Set_Contrast(x);}while(0)
+	#define lcd_ic_init() do{SH1106_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SH1106_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SH1106_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SH1106_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{SH1106_Set_Contrast(x);}while(0)
 	#include "sh1106.h"
 #elif (LCD_IC == _SH1108)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SH1108_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SH1108_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SH1108_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SH1108_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{SH1108_Set_Contrast(x);}while(0)
+	#define lcd_ic_init() do{SH1108_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SH1108_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SH1108_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SH1108_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{SH1108_Set_Contrast(x);}while(0)
 	#include "sh1108.h"
 #elif (LCD_IC == _SH1107)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SH1107_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SH1107_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SH1107_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SH1107_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{LCD_Send_1Cmd(0x81);LCD_Send_1Cmd(x);}while(0)
+	#define lcd_ic_init() do{SH1107_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SH1107_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SH1107_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SH1107_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{lcd_send_1Cmd(0x81);lcd_send_1Cmd(x);}while(0)
 	#include "SH1107.h"
 #elif (LCD_IC == _SH1115)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SH1115_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SH1115_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SH1115_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SH1115_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{SH1115_The_Contrast_Control_Mode_Set(x);}while(0)
+	#define lcd_ic_init() do{SH1115_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SH1115_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SH1115_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SH1115_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{SH1115_The_Contrast_Control_Mode_Set(x);}while(0)
 	#include "sh1115.h"
 #elif (LCD_IC == _SSD1306)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SSD1306_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SSD1306_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SSD1306_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SSD1306_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{LCD_Send_1Cmd(0x81);LCD_Send_1Cmd(x);}while(0)
+	#define lcd_ic_init() do{SSD1306_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SSD1306_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SSD1306_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SSD1306_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{lcd_send_1Cmd(0x81);lcd_send_1Cmd(x);}while(0)
 	#include "ssd1306.h"
 #elif (LCD_IC == _SSD1309)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SSD1309_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SSD1309_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SSD1309_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SSD1309_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{LCD_Send_1Cmd(0x81);LCD_Send_1Cmd(x);}while(0)
+	#define lcd_ic_init() do{SSD1309_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SSD1309_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SSD1309_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SSD1309_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{lcd_send_1Cmd(0x81);lcd_send_1Cmd(x);}while(0)
 	#include "ssd1309.h"
 #elif (LCD_IC == _SSD1312)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SSD1312_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SSD1312_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SSD1312_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SSD1312_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{LCD_Send_1Cmd(0x81);LCD_Send_1Cmd(x);}while(0)
+	#define lcd_ic_init() do{SSD1312_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SSD1312_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SSD1312_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SSD1312_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{lcd_send_1Cmd(0x81);lcd_send_1Cmd(x);}while(0)
 	#include "ssd1312.h"
 #elif (LCD_IC == _SSD1315)
 	#define LCD_TYPE  LCD_OLED//使用OLED屏幕
-	#define LCD_IC_Init() do{SSD1315_Init();}while(0)
-	#define LCD_Set_Addr_x(x) do{SSD1315_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_ypage(page) do{SSD1315_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
-	#define LCD_Set_Addr(x,page) do{SSD1315_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
-	#define LCD_Set_Bright(x) do{SSD1315_Set_Contrast_Control(x);}while(0)
+	#define lcd_ic_init() do{SSD1315_Init();}while(0)
+	#define lcd_set_addr_x(x) do{SSD1315_Set_Address_x(x+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_ypage(page) do{SSD1315_Set_Address_ypage(page+SCREEN_Y_OFFSET/8);}while(0)
+	#define lcd_set_addr(x,page) do{SSD1315_Set_Address_x_ypage((x+SCREEN_X_OFFSET),(page+SCREEN_Y_OFFSET/8));}while(0)
+	#define lcd_set_bright(x) do{SSD1315_Set_Contrast_Control(x);}while(0)
 	#include "ssd1315.h"
 #elif (LCD_IC == _SSD1327)
 	#define LCD_TYPE  LCD_GRAY//使用灰度屏幕
-	#define LCD_IC_Init() do{SSD1327_Init();}while(0)
-	#define LCD_Set_Addr_x(x0,x1) do{SSD1327_Set_Addr_x(x0+SCREEN_X_OFFSET,x1+SCREEN_X_OFFSET);}while(0)
-	#define LCD_Set_Addr_y(y0,y1) do{SSD1327_Set_Addr_y(y0+SCREEN_Y_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{SSD1327_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{/*SSD1327_Set_Contrast_Control(x);*/}while(0)
+	#define lcd_ic_init() do{SSD1327_Init();}while(0)
+	#define lcd_set_addr_x(x0,x1) do{SSD1327_Set_Addr_x(x0+SCREEN_X_OFFSET,x1+SCREEN_X_OFFSET);}while(0)
+	#define lcd_set_addr_y(y0,y1) do{SSD1327_Set_Addr_y(y0+SCREEN_Y_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{SSD1327_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{/*SSD1327_Set_Contrast_Control(x);*/}while(0)
 	#include "ssd1327.h"
 #elif (LCD_IC == _ST7735)
 	#define LCD_TYPE  LCD_RGB565//使用RGB屏幕565色域
-	#define LCD_IC_Init() do{ST7735_Init();}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{ST7735_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{}while(0)
+	#define lcd_ic_init() do{ST7735_Init();}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{ST7735_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{}while(0)
 	#include "st7735.h"
 	#include "TFT_Color.h"
 #elif (LCD_IC == _ST7789V3)
 	#define LCD_TYPE  LCD_RGB565//使用RGB屏幕565色域
-	#define LCD_IC_Init() do{ST7789V3_Init();}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{ST7789V3_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{}while(0)
+	#define lcd_ic_init() do{ST7789V3_Init();}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{ST7789V3_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{}while(0)
 	#include "st7789v3.h"
 	#include "TFT_Color.h"
 #elif (LCD_IC == _ST7789VW)
 	#define LCD_TYPE  LCD_RGB565//使用RGB屏幕565色域
-	#define LCD_IC_Init() do{ST7789VW_Init();}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{ST7789VW_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{}while(0)
+	#define lcd_ic_init() do{ST7789VW_Init();}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{ST7789VW_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{}while(0)
 	#include "st7789vw.h"
 	#include "TFT_Color.h"
 #elif (LCD_IC == _ST7796S)
 	#define LCD_TYPE  LCD_RGB565//使用RGB屏幕565色域
-	#define LCD_IC_Init() do{ST7796S_Init();}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{ST7796S_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{}while(0)
+	#define lcd_ic_init() do{ST7796S_Init();}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{ST7796S_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{}while(0)
 	#include "st7796s.h"
 	#include "TFT_Color.h"
 #elif (LCD_IC == _GC9A01)
 	#define LCD_TYPE  LCD_RGB565//使用RGB屏幕565色域
-	#define LCD_IC_Init() do{GC9A01_Init();}while(0)
-	#define LCD_Set_Addr(x0,y0,x1,y1) do{GC9A01_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
-	#define LCD_Set_Bright(x) do{}while(0)
+	#define lcd_ic_init() do{GC9A01_Init();}while(0)
+	#define lcd_set_addr(x0,y0,x1,y1) do{GC9A01_Set_Addr(x0+SCREEN_X_OFFSET,y0+SCREEN_Y_OFFSET,x1+SCREEN_X_OFFSET,y1+SCREEN_Y_OFFSET);}while(0)
+	#define lcd_set_bright(x) do{}while(0)
 	#include "gc9a01.h"
 	#include "TFT_Color.h"
 #else

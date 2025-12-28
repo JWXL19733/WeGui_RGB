@@ -26,8 +26,8 @@ limitations under the License.
 ----------------------------------------------------------------*/
 void SH1107_Set_Address_x(unsigned char x)
 {
-	LCD_Send_1Cmd(0x10|(x>>4));//高3字节
-	LCD_Send_1Cmd(x&0x0f);//低4字节
+	lcd_send_1Cmd(0x10|(x>>4));//高3字节
+	lcd_send_1Cmd(x&0x0f);//低4字节
 }
 
 /*--------------------------------------------------------------
@@ -39,7 +39,7 @@ void SH1107_Set_Address_x(unsigned char x)
 ----------------------------------------------------------------*/
 void SH1107_Set_Address_ypage(unsigned char page)
 {
-		LCD_Send_1Cmd(0xb0+page);
+		lcd_send_1Cmd(0xb0+page);
 }
 
 /*--------------------------------------------------------------
@@ -57,7 +57,7 @@ void SH1107_Set_Address_x_ypage(unsigned char x,unsigned char page)
 	
 	//方式2:连续发送
 	uint8_t i[]={((x>>4) | 0x10),(x&0x0f),0xb0+page};
-	LCD_Send_nCmd(i,3);
+	lcd_send_nCmd(i,3);
 }
 
 
@@ -77,8 +77,8 @@ void SH1107_Clear()
 		SH1107_Set_Address_x(0);
 		for(x=0;x<128;x++)
 		{
-			LCD_Send_1Dat(0x00);
-			//LCD_Send_1Dat(0xff);//测试
+			lcd_send_1Dat(0x00);
+			//lcd_send_1Dat(0xff);//测试
 		}
 	}
 }
@@ -92,50 +92,50 @@ void SH1107_Clear()
 ----------------------------------------------------------------*/
 void SH1107_Init(void)
 {
-	LCD_Send_1Cmd(0xAE);//--turn off oled panel
+	lcd_send_1Cmd(0xAE);//--turn off oled panel
 	
-	LCD_Send_1Cmd(0x00); /*set lower column address*/ 
-	LCD_Send_1Cmd(0x10); /*set higher column address*/ 
+	lcd_send_1Cmd(0x00); /*set lower column address*/ 
+	lcd_send_1Cmd(0x10); /*set higher column address*/ 
 	
-	LCD_Send_1Cmd(0xB0); /*set page address*/
+	lcd_send_1Cmd(0xB0); /*set page address*/
 
-	LCD_Send_1Cmd(0xdc); /*set display start line*/
-	LCD_Send_1Cmd(0x00); 
+	lcd_send_1Cmd(0xdc); /*set display start line*/
+	lcd_send_1Cmd(0x00); 
 
-	LCD_Send_1Cmd(0x81); /*contract control*/
-	LCD_Send_1Cmd(0x6f); /*128*/
-	LCD_Send_1Cmd(0x20); /* Set Memory addressing mode (0x20/0x21) */
+	lcd_send_1Cmd(0x81); /*contract control*/
+	lcd_send_1Cmd(0x6f); /*128*/
+	lcd_send_1Cmd(0x20); /* Set Memory addressing mode (0x20/0x21) */
 
-	LCD_Send_1Cmd(0xA4); /*Disable Entire Display On (0xA4/0xA5)*/ 
+	lcd_send_1Cmd(0xA4); /*Disable Entire Display On (0xA4/0xA5)*/ 
 
-	LCD_Send_1Cmd(0xA6); /*normal / reverse*/
-	LCD_Send_1Cmd(0xA8); /*multiplex ratio*/
-	LCD_Send_1Cmd(0x7F); /*duty = 1/64*/
+	lcd_send_1Cmd(0xA6); /*normal / reverse*/
+	lcd_send_1Cmd(0xA8); /*multiplex ratio*/
+	lcd_send_1Cmd(0x7F); /*duty = 1/64*/
 	
-	LCD_Send_1Cmd(0xD3); /*set display offset*/ 
-	LCD_Send_1Cmd(0x00); 
+	lcd_send_1Cmd(0xD3); /*set display offset*/ 
+	lcd_send_1Cmd(0x00); 
 	
   //方向控制1
-	LCD_Send_1Cmd(0xC0);//C0或C8
-	LCD_Send_1Cmd(0xA0);//A0或A1
+	lcd_send_1Cmd(0xC0);//C0或C8
+	lcd_send_1Cmd(0xA0);//A0或A1
 	
 	//方向控制2
-	//LCD_Send_1Cmd(0xC8);//C0或C8
-	//LCD_Send_1Cmd(0xA1);//A0或A1
+	//lcd_send_1Cmd(0xC8);//C0或C8
+	//lcd_send_1Cmd(0xA1);//A0或A1
 	
-	LCD_Send_1Cmd(0xD5); /*set osc division*/
-	LCD_Send_1Cmd(0x80); 
+	lcd_send_1Cmd(0xD5); /*set osc division*/
+	lcd_send_1Cmd(0x80); 
 
-	LCD_Send_1Cmd(0xD9); /*set pre-charge period*/
-	LCD_Send_1Cmd(0x1D); 
+	lcd_send_1Cmd(0xD9); /*set pre-charge period*/
+	lcd_send_1Cmd(0x1D); 
 
-	LCD_Send_1Cmd(0xdb); /*set vcomh*/
-	LCD_Send_1Cmd(0x35); 
+	lcd_send_1Cmd(0xdb); /*set vcomh*/
+	lcd_send_1Cmd(0x35); 
 
-	LCD_Send_1Cmd(0xad); /*set charge pump enable*/ 
-	LCD_Send_1Cmd(0x80); /*Set DC-DC enable (a=0:disable; a=1:enable) */
+	lcd_send_1Cmd(0xad); /*set charge pump enable*/ 
+	lcd_send_1Cmd(0x80); /*Set DC-DC enable (a=0:disable; a=1:enable) */
 	SH1107_Clear();
-	LCD_Send_1Cmd(0xAF);
+	lcd_send_1Cmd(0xAF);
 	
 }
 #endif

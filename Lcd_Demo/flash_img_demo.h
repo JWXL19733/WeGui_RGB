@@ -1,7 +1,6 @@
 #ifndef _FLASH_IMG_DEMO_H_
 #define _FLASH_IMG_DEMO_H_
 
-
 const unsigned long img_flash_addr[796] = { //flash地址
   0x0,//img_RGB000_128x64
   0xDD,//img_RGB001_128x64
@@ -799,7 +798,6 @@ const unsigned long img_flash_addr[796] = { //flash地址
   0x599F1,//img_RGB793_128x64
   0x59B80,//img_RGB794_128x64
   0x59D11,//img_RGB795_128x64
-
 };
 
 

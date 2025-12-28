@@ -27,12 +27,12 @@ limitations under the License.
 void SH1108_Set_Address_x(unsigned char x)
 {
 	//方式1:单字节发送
-	//LCD_Send_1Cmd((x>>4) | 0x10);//高4字节
-	//LCD_Send_1Cmd(x&0x0f);//低4字节
+	//lcd_send_1Cmd((x>>4) | 0x10);//高4字节
+	//lcd_send_1Cmd(x&0x0f);//低4字节
 	
 	//方式2:连续发送
 	uint8_t i[]={(x>>4),(x&0x0f)};
-	LCD_Send_nCmd(i,2);
+	lcd_send_nCmd(i,2);
 }
 
 /*--------------------------------------------------------------
@@ -45,12 +45,12 @@ void SH1108_Set_Address_x(unsigned char x)
 void SH1108_Set_Address_ypage(unsigned char page)
 {
 	//方式1:单字节发送
-	//LCD_Send_1Cmd(0xb0);
-	//LCD_Send_1Cmd(page);
+	//lcd_send_1Cmd(0xb0);
+	//lcd_send_1Cmd(page);
 	
 	//方式2:连续发送
 	uint8_t i[]={0xb0,page};
-	LCD_Send_nCmd(i,2);
+	lcd_send_nCmd(i,2);
 }
 
 /*--------------------------------------------------------------
@@ -68,7 +68,7 @@ void SH1108_Set_Address_x_ypage(unsigned char x,unsigned char page)
 	
 	//方式2:连续发送
 	uint8_t i[]={((x>>4) | 0x10),(x&0x0f),0xb0,page};
-	LCD_Send_nCmd(i,4);
+	lcd_send_nCmd(i,4);
 }
 
 
@@ -88,8 +88,8 @@ void SH1108_Clear()
 		SH1108_Set_Address_x(0);
 		for(x=0;x<160;x++)
 		{
-			LCD_Send_1Dat(0x00);
-			//LCD_Send_1Dat(0xff);
+			lcd_send_1Dat(0x00);
+			//lcd_send_1Dat(0xff);
 		}
 	}
 }
@@ -103,35 +103,35 @@ void SH1108_Clear()
 ----------------------------------------------------------------*/
 //void SH1108_Init(void)
 //{
-//  LCD_Send_1Cmd(0xAE); /*display off*/ 
-//  LCD_Send_1Cmd(0x00); /*set lower column address*/ 
-//  LCD_Send_1Cmd(0x10); /*set higher column address*/
-//	LCD_Send_1Cmd(0xB0); /*set page address*/ 
-//	LCD_Send_1Cmd(0x40); /*set display start lines*/ 
-//	LCD_Send_1Cmd(0x81); /*contract control*/ 
-//	LCD_Send_1Cmd(0x88); /*4d*/ 
-//	LCD_Send_1Cmd(0x82); /* iref resistor set and adjust ISEG*/ 
-//	LCD_Send_1Cmd(0x00); 
-//	LCD_Send_1Cmd(0xA1); /*set segment remap 0xA0*/ 
-//	LCD_Send_1Cmd(0xA2); /*set seg pads hardware configuration*/ 
-//	LCD_Send_1Cmd(0xA4); /*Disable Entire Display On (0xA4/0xA5)*/ 
-//	LCD_Send_1Cmd(0xA6); /*normal / reverse*/ 
-//	LCD_Send_1Cmd(0xA8); /*multiplex ratio*/ 
-//	LCD_Send_1Cmd(0x3F); /*duty = 1/64*/ 
-//	LCD_Send_1Cmd(0xC8); /*Com scan direction 0XC0*/ 
-//	LCD_Send_1Cmd(0xD3); /*set display offset*/ 
-//	LCD_Send_1Cmd(0x00); /* */ 
-//	LCD_Send_1Cmd(0xD5); /*set osc division*/ 
-//	LCD_Send_1Cmd(0xa0); 
-//	LCD_Send_1Cmd(0xD9); /*set pre-charge period*/ 
-//	LCD_Send_1Cmd(0x22); 
-//	LCD_Send_1Cmd(0xdb); /*set vcomh*/ 
-//	LCD_Send_1Cmd(0x40); 
-//	LCD_Send_1Cmd(0x31); /* Set pump 7.4v */ 
-//	LCD_Send_1Cmd(0xad); /*set charge pump enable*/ 
-//	LCD_Send_1Cmd(0x8b); /*Set DC-DC enable (0x8a=disable; 0x8b=enable) */ 
+//  lcd_send_1Cmd(0xAE); /*display off*/ 
+//  lcd_send_1Cmd(0x00); /*set lower column address*/ 
+//  lcd_send_1Cmd(0x10); /*set higher column address*/
+//	lcd_send_1Cmd(0xB0); /*set page address*/ 
+//	lcd_send_1Cmd(0x40); /*set display start lines*/ 
+//	lcd_send_1Cmd(0x81); /*contract control*/ 
+//	lcd_send_1Cmd(0x88); /*4d*/ 
+//	lcd_send_1Cmd(0x82); /* iref resistor set and adjust ISEG*/ 
+//	lcd_send_1Cmd(0x00); 
+//	lcd_send_1Cmd(0xA1); /*set segment remap 0xA0*/ 
+//	lcd_send_1Cmd(0xA2); /*set seg pads hardware configuration*/ 
+//	lcd_send_1Cmd(0xA4); /*Disable Entire Display On (0xA4/0xA5)*/ 
+//	lcd_send_1Cmd(0xA6); /*normal / reverse*/ 
+//	lcd_send_1Cmd(0xA8); /*multiplex ratio*/ 
+//	lcd_send_1Cmd(0x3F); /*duty = 1/64*/ 
+//	lcd_send_1Cmd(0xC8); /*Com scan direction 0XC0*/ 
+//	lcd_send_1Cmd(0xD3); /*set display offset*/ 
+//	lcd_send_1Cmd(0x00); /* */ 
+//	lcd_send_1Cmd(0xD5); /*set osc division*/ 
+//	lcd_send_1Cmd(0xa0); 
+//	lcd_send_1Cmd(0xD9); /*set pre-charge period*/ 
+//	lcd_send_1Cmd(0x22); 
+//	lcd_send_1Cmd(0xdb); /*set vcomh*/ 
+//	lcd_send_1Cmd(0x40); 
+//	lcd_send_1Cmd(0x31); /* Set pump 7.4v */ 
+//	lcd_send_1Cmd(0xad); /*set charge pump enable*/ 
+//	lcd_send_1Cmd(0x8b); /*Set DC-DC enable (0x8a=disable; 0x8b=enable) */ 
 //	SH1108_Clear();
-//	LCD_Send_1Cmd(0xAF);
+//	lcd_send_1Cmd(0xAF);
 //}
 
 void SH1108_Init(void)
@@ -200,7 +200,7 @@ void SH1108_Init(void)
 			//清屏
 			SH1108_Clear();
 				
-				LCD_delay_ms(200);
+				lcd_delay_ms(200);
 			SH1108_Display_On();	
 }
 #endif

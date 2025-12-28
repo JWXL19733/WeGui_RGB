@@ -15,9 +15,7 @@ limitations under the License.
 */
 #include "lcd_driver_config.h"
 #include "lcd_wegui_config.h"
-
 #include "lcd_wegui_driver.h"
-
 
 wegui_t wegui=
 {
@@ -28,7 +26,6 @@ wegui_t wegui=
 		.setting.brightness=127,//默认点阵屏彩屏亮度
 	#endif
 };
-
 
 /*--------------------------------------------------------------
   * 名称: *my_itoa(int16_t num,uint8_t *str,uint8_t radix)
@@ -306,7 +303,6 @@ static void reflash_cpuLoad(uint16_t stick)
 	static uint16_t sum=0;//总数
 	display_count += stick;
 	sum += wegui.sysInfo.cpu_time;
-
 	sum_count++;
 	if(display_count > 151)//更新时间ms
 	{
@@ -336,8 +332,8 @@ static void wegui_update_info()
 		uint8_t y=0;
 
 	//--调整体字---
-	const fonts_ascii_t *i  = lcd_driver.fonts_ASCII;
-	lcd_driver.fonts_ASCII = &mcu_fonts_ascii_songti_6X12;
+	//const fonts_ascii_t *i  = lcd_driver.fonts_ASCII;
+	//lcd_driver.fonts_ASCII = &mcu_fonts_ascii_songti_6X12;
 
 	//---1.边框---
 	lcd_set_driver_mode((lcd_driver_mode_t)COLOUR_DEBUG_BAR_BORDER);
@@ -383,11 +379,8 @@ static void wegui_update_info()
 														str);
 
 	//--恢复体字---
-	lcd_driver.fonts_ASCII = i;
-
+	//lcd_driver.fonts_ASCII = i;
 }
-
-
 
 void wegui_loop_func()
 {
@@ -427,10 +420,10 @@ void wegui_loop_func()
 	fps_farmes = fps_time_count / SCREEN_REFRESH_TIME_MS;
 
 	#if (0) //ui没刷新,禁止屏幕刷新
-	if((LCD_is_Busy()==0)&&(fps_farmes > 0)&&(ui_farmes > 0))
+	if((lcd_is_busy()==0)&&(fps_farmes > 0)&&(ui_farmes > 0))
 	{
 	#else  //就算ui没刷新,屏幕也会重新刷一遍(浪费资源)
-	if((LCD_is_Busy()==0)&&(fps_farmes > 0))
+	if((lcd_is_busy()==0)&&(fps_farmes > 0))
 	{
 	#endif
 		{
@@ -439,6 +432,7 @@ void wegui_loop_func()
 			//------------------------开始刷屏--------------------------
 			do
 			{
+				while(lcd_is_busy()!=0);
 				//--------------------绘制对应菜单------------------------
 				switch (wegui.menu->menuType)
 				{
@@ -551,8 +545,8 @@ void wegui_1ms_stick()
 	#if (LCD_TYPE == LCD_RGB565)
 	{
 		static uint8_t count=0;
-		if(count<wegui.bl_pwmd){LCD_BL_On();}
-		else{LCD_BL_Off();}
+		if(count<wegui.bl_pwmd){lcd_bl_on();}
+		else{lcd_bl_off();}
 		if(++count>=BL_PWM_MAX){count=0;}
 	}
 	#endif

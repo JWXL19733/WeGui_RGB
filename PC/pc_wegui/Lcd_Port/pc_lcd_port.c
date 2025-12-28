@@ -20,7 +20,34 @@ SDL_Window* window;
 SDL_Renderer* renderer;
 uint8_t sdl_quit=0;
 
-void PC_SDL2_Init()
+/*--------------------------------------------------------------
+  * 名称: lcd_bl_on()
+  * 说明: 打开屏幕背光
+----------------------------------------------------------------*/
+void lcd_bl_on(void)
+{
+}
+
+/*--------------------------------------------------------------
+  * 名称: lcd_bl_off()
+  * 说明: 关闭屏幕背光
+----------------------------------------------------------------*/
+void lcd_bl_off(void)
+{
+}
+
+/*--------------------------------------------------------------
+  * 名称: uint8_t()
+  * 传入: 无
+  * 返回: 0屏幕接口空闲 1屏幕接口忙碌
+  * 说明: DMA或SPI忙碌
+----------------------------------------------------------------*/
+uint8_t lcd_is_busy()
+{
+    return 0;
+}
+
+void lcd_port_init()
 {
     sdl_quit = 0;
 
@@ -49,6 +76,68 @@ void PC_SDL2_Init()
     SDL_RenderPresent(renderer);
 
 }
+
+
+
+/*--------------------------------------------------------------
+  * 名称: void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: OLED屏幕从x,page位置开始刷屏
+  * 说明: OLED屏幕移植接口 默认weak类型 需要移植改写
+----------------------------------------------------------------*/
+#if (LCD_TYPE == LCD_OLED)
+void lcd_oled_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+}
+#endif
+
+/*--------------------------------------------------------------
+  * 名称: void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: 灰度OLED屏幕从x,page位置开始刷屏
+  * 说明: 灰度OLED屏幕移植接口 默认weak类型 需要移植改写
+----------------------------------------------------------------*/
+#if (LCD_TYPE == LCD_GRAY)
+void lcd_gray_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+}
+#endif
+
+/*--------------------------------------------------------------
+  * 名称: void rgb565_flush(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *gram)
+  * 传入1:x0刷新起始横坐标
+	* 传入2:x1刷新结束横坐标
+  * 传入3:page当前刷新的页坐标
+  * 传入4:*gram点阵数据指针 往下8点对齐逐行扫描
+  * 功能: TFT_RGB565屏幕从x,page位置开始刷屏
+  * 说明: RGB565屏幕移植接口 默认weak类型 需要移植改写
+----------------------------------------------------------------*/
+#if (LCD_TYPE == LCD_RGB565)
+void lcd_rgb565_port(uint16_t x0,uint16_t x1,uint16_t page,uint8_t *page_gram)
+{
+}
+#endif
+
+/*--------------------------------------------------------------
+  * 名称: uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+  * 传入1:*gram待校验数组指针
+	* 传入2:len待校验数组长度
+	* 返回: crc校验值
+  * 说明: weak类型 需要移植,否则无法使用动态刷新
+----------------------------------------------------------------*/
+#if ((LCD_MODE == _FULL_BUFF_DYNA_UPDATE) || (LCD_MODE == _PAGE_BUFF_DYNA_UPDATE))//动态刷新相关
+uint16_t lcd_gram_crc_port(uint8_t *gram,uint16_t len)
+{
+    static uint16_t i;
+    return i++;
+}
+#endif
 
 
 uint8_t LCD_Refresh(void)

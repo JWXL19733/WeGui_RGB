@@ -26,8 +26,8 @@ limitations under the License.
 ----------------------------------------------------------------*/
 void SH1106_Set_Address_x(unsigned char x)
 {
-	LCD_Send_1Cmd(x>>4);//高3字节
-	LCD_Send_1Cmd(x&0x0f);//低4字节
+	lcd_send_1Cmd(x>>4);//高3字节
+	lcd_send_1Cmd(x&0x0f);//低4字节
 }
 
 /*--------------------------------------------------------------
@@ -39,7 +39,7 @@ void SH1106_Set_Address_x(unsigned char x)
 ----------------------------------------------------------------*/
 void SH1106_Set_Address_ypage(unsigned char page)
 {
-		LCD_Send_1Cmd(0xb0+page);
+		lcd_send_1Cmd(0xb0+page);
 }
 
 /*--------------------------------------------------------------
@@ -57,7 +57,7 @@ void SH1106_Set_Address_x_ypage(unsigned char x,unsigned char page)
 	
 	//方式2:连续发送
 	uint8_t i[]={((x>>4) | 0x10),(x&0x0f),0xb0+page};
-	LCD_Send_nCmd(i,3);
+	lcd_send_nCmd(i,3);
 }
 
 /*--------------------------------------------------------------
@@ -76,8 +76,8 @@ void SH1106_Clear()
 		SH1106_Set_Address_x(0);
 		for(x=0;x<128;x++)
 		{
-			LCD_Send_1Dat(0x00);
-			//LCD_Send_1Dat(0xff);
+			lcd_send_1Dat(0x00);
+			//lcd_send_1Dat(0xff);
 		}
 	}
 }
@@ -91,33 +91,33 @@ void SH1106_Clear()
 ----------------------------------------------------------------*/
 //void SH1106_Init(void)
 //{
-//	LCD_Send_1Cmd(0xAE); /*display off*/ 
-//	LCD_Send_1Cmd(0x02); /*set lower column address*/ 
-//	LCD_Send_1Cmd(0x10); /*set higher column address*/ 
-//	LCD_Send_1Cmd(0x40); /*set display start line*/ 
-//	LCD_Send_1Cmd(0xB0); /*set page address*/
-//	LCD_Send_1Cmd(0x81); /*contract control*/ 
-//	LCD_Send_1Cmd(0xcf); /*128*/ 
-//	LCD_Send_1Cmd(0xA1); /*set segment remap*/ 
-//	LCD_Send_1Cmd(0xA6); /*normal / reverse*/ 
-//	LCD_Send_1Cmd(0xA8); /*multiplex ratio*/ 
-//	LCD_Send_1Cmd(0x3F); /*duty = 1/64*/ 
-//	LCD_Send_1Cmd(0xad); /*set charge pump enable*/ 
-//	LCD_Send_1Cmd(0x8b); /* 0x8B 内供 VCC */ 
-//	LCD_Send_1Cmd(0x33); /*0X30---0X33 set VPP 9V */ 
-//	LCD_Send_1Cmd(0xC8); /*Com scan direction!!!!!!!!!!!!!!!!*/ 
-//	LCD_Send_1Cmd(0xD3); /*set display offset*/ 
-//	LCD_Send_1Cmd(0x00); /* 0x20 */ 
-//	LCD_Send_1Cmd(0xD5); /*set osc division*/ 
-//	LCD_Send_1Cmd(0x80); 
-//	LCD_Send_1Cmd(0xD9); /*set pre-charge period*/ 
-//	LCD_Send_1Cmd(0x1f); /*0x22*/ 
-//	LCD_Send_1Cmd(0xDA); /*set COM pins*/ 
-//	LCD_Send_1Cmd(0x12); 
-//	LCD_Send_1Cmd(0xdb); /*set vcomh*/ 
-//	LCD_Send_1Cmd(0x40);
+//	lcd_send_1Cmd(0xAE); /*display off*/ 
+//	lcd_send_1Cmd(0x02); /*set lower column address*/ 
+//	lcd_send_1Cmd(0x10); /*set higher column address*/ 
+//	lcd_send_1Cmd(0x40); /*set display start line*/ 
+//	lcd_send_1Cmd(0xB0); /*set page address*/
+//	lcd_send_1Cmd(0x81); /*contract control*/ 
+//	lcd_send_1Cmd(0xcf); /*128*/ 
+//	lcd_send_1Cmd(0xA1); /*set segment remap*/ 
+//	lcd_send_1Cmd(0xA6); /*normal / reverse*/ 
+//	lcd_send_1Cmd(0xA8); /*multiplex ratio*/ 
+//	lcd_send_1Cmd(0x3F); /*duty = 1/64*/ 
+//	lcd_send_1Cmd(0xad); /*set charge pump enable*/ 
+//	lcd_send_1Cmd(0x8b); /* 0x8B 内供 VCC */ 
+//	lcd_send_1Cmd(0x33); /*0X30---0X33 set VPP 9V */ 
+//	lcd_send_1Cmd(0xC8); /*Com scan direction!!!!!!!!!!!!!!!!*/ 
+//	lcd_send_1Cmd(0xD3); /*set display offset*/ 
+//	lcd_send_1Cmd(0x00); /* 0x20 */ 
+//	lcd_send_1Cmd(0xD5); /*set osc division*/ 
+//	lcd_send_1Cmd(0x80); 
+//	lcd_send_1Cmd(0xD9); /*set pre-charge period*/ 
+//	lcd_send_1Cmd(0x1f); /*0x22*/ 
+//	lcd_send_1Cmd(0xDA); /*set COM pins*/ 
+//	lcd_send_1Cmd(0x12); 
+//	lcd_send_1Cmd(0xdb); /*set vcomh*/ 
+//	lcd_send_1Cmd(0x40);
 //	SH1106_Clear();
-//	LCD_Send_1Cmd(0xAF); /*display ON*/
+//	lcd_send_1Cmd(0xAF); /*display ON*/
 //}
 
 
@@ -164,7 +164,7 @@ void SH1106_Init(void)
 	//SH1106_Set_Entire_Display_ON();//A5 全亮测试开启
 	
 	SH1106_Clear();
-	LCD_delay_ms(200);
+	lcd_delay_ms(200);
 	SH1106_Display_ON();//AF
 }
 #endif

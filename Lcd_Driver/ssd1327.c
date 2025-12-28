@@ -26,9 +26,9 @@ limitations under the License.
 ----------------------------------------------------------------*/
 void SSD1327_Set_Addr_x(unsigned char x0,unsigned char x1)
 {
-	LCD_Send_1Cmd(0x15);//CMD
-	LCD_Send_1Cmd(x0);//START
-	LCD_Send_1Cmd(x1);//END
+	lcd_send_1Cmd(0x15);//CMD
+	lcd_send_1Cmd(x0);//START
+	lcd_send_1Cmd(x1);//END
 	//SSD1327_Set_Column_Address(0,127);//15h start[0:127]默认0,end[0:127]默认127
 }
 
@@ -41,9 +41,9 @@ void SSD1327_Set_Addr_x(unsigned char x0,unsigned char x1)
 ----------------------------------------------------------------*/
 void SSD1327_Set_Addr_y(unsigned char y0,unsigned char y1)
 {
-	LCD_Send_1Cmd(0x75);//CMD
-	LCD_Send_1Cmd(y0);//START
-	LCD_Send_1Cmd(y1);//END
+	lcd_send_1Cmd(0x75);//CMD
+	lcd_send_1Cmd(y0);//START
+	lcd_send_1Cmd(y1);//END
 }
 
 void SSD1327_Set_Addr(unsigned char x0,unsigned char y0,unsigned char x1,unsigned char y1)
@@ -54,7 +54,7 @@ void SSD1327_Set_Addr(unsigned char x0,unsigned char y0,unsigned char x1,unsigne
 	
 	//方式2:连续发送(优化等级开高了可能有问题)
 	uint8_t i[]={0x15,x0,x1,0x75,y0,y1};
-	LCD_Send_nCmd(i,6);
+	lcd_send_nCmd(i,6);
 }
 
 /*--------------------------------------------------------------
@@ -70,7 +70,7 @@ void SSD1327_Clear()
 	SSD1327_Set_Addr(0,0,127,127);
 	for(i=0;i<128*128/2;i++)
 	{
-			LCD_Send_1Dat(0x00);
+			lcd_send_1Dat(0x00);
 	}
 }
 
@@ -83,7 +83,7 @@ void SSD1327_Clear()
 ----------------------------------------------------------------*/
 void SSD1327_Init(void)
 {
-	LCD_Send_1Cmd(0xae);//Set display off
+	lcd_send_1Cmd(0xae);//Set display off
 	
 	//控制刷屏方向1
 	#define A0_Bit0_SEG_REMAPPING      1
@@ -97,36 +97,36 @@ void SSD1327_Init(void)
 	//#define A0_Bit2_INC_MODE           0 //90度旋转(连点不转,因此需要与驱动匹配)
 	//#define A0_Bit4_COM_REMAPPING      1 //COM镜像
 	//#define A0_Bit6_SPLITTING_COM_MODE 1 //根据屏幕制造商设置
-	LCD_Send_1Cmd(0xa0);//Set re-map
-	LCD_Send_1Cmd((A0_Bit6_SPLITTING_COM_MODE<<6)|(A0_Bit4_COM_REMAPPING<<4)|(A0_Bit2_INC_MODE<<2)|(A0_Bit1_NIBBLE_REMAPPING<<1)|A0_Bit0_SEG_REMAPPING);//
+	lcd_send_1Cmd(0xa0);//Set re-map
+	lcd_send_1Cmd((A0_Bit6_SPLITTING_COM_MODE<<6)|(A0_Bit4_COM_REMAPPING<<4)|(A0_Bit2_INC_MODE<<2)|(A0_Bit1_NIBBLE_REMAPPING<<1)|A0_Bit0_SEG_REMAPPING);//
 	
-	LCD_Send_1Cmd(0xa1);//Set display start line
-	LCD_Send_1Cmd(0x00);
-	LCD_Send_1Cmd(0xa2);//Set display offset
-	LCD_Send_1Cmd(0x00);
-	LCD_Send_1Cmd(0xa4);//Normal Display
-	LCD_Send_1Cmd(0xa8);//Set multiplex ratio
-	LCD_Send_1Cmd(0x7f);
-	LCD_Send_1Cmd(0xab);//Function Selection A
-	LCD_Send_1Cmd(0x01);//Enable internal VDD regulator
-	LCD_Send_1Cmd(0x81);//Set contrast
-	LCD_Send_1Cmd(0x77);
-	LCD_Send_1Cmd(0xb1);//Set Phase Length
-	LCD_Send_1Cmd(0x31);
-	LCD_Send_1Cmd(0xb3);//Set Front Clock Divider /Oscillator Frequency
-	LCD_Send_1Cmd(0xb1);
-  LCD_Send_1Cmd(0xb5);//
-  LCD_Send_1Cmd(0x03);//0X03 enable
-	LCD_Send_1Cmd(0xb6);//Set Second pre-charge Period
-	LCD_Send_1Cmd(0x0d);
-	LCD_Send_1Cmd(0xbc);//Set Pre-charge voltage
-	LCD_Send_1Cmd(0x07);
-	LCD_Send_1Cmd(0xbe);//Set VCOMH
-	LCD_Send_1Cmd(0x07);
-	LCD_Send_1Cmd(0xd5);//Function Selection B
-	LCD_Send_1Cmd(0x02);//Enable second pre-charge
+	lcd_send_1Cmd(0xa1);//Set display start line
+	lcd_send_1Cmd(0x00);
+	lcd_send_1Cmd(0xa2);//Set display offset
+	lcd_send_1Cmd(0x00);
+	lcd_send_1Cmd(0xa4);//Normal Display
+	lcd_send_1Cmd(0xa8);//Set multiplex ratio
+	lcd_send_1Cmd(0x7f);
+	lcd_send_1Cmd(0xab);//Function Selection A
+	lcd_send_1Cmd(0x01);//Enable internal VDD regulator
+	lcd_send_1Cmd(0x81);//Set contrast
+	lcd_send_1Cmd(0x77);
+	lcd_send_1Cmd(0xb1);//Set Phase Length
+	lcd_send_1Cmd(0x31);
+	lcd_send_1Cmd(0xb3);//Set Front Clock Divider /Oscillator Frequency
+	lcd_send_1Cmd(0xb1);
+  lcd_send_1Cmd(0xb5);//
+  lcd_send_1Cmd(0x03);//0X03 enable
+	lcd_send_1Cmd(0xb6);//Set Second pre-charge Period
+	lcd_send_1Cmd(0x0d);
+	lcd_send_1Cmd(0xbc);//Set Pre-charge voltage
+	lcd_send_1Cmd(0x07);
+	lcd_send_1Cmd(0xbe);//Set VCOMH
+	lcd_send_1Cmd(0x07);
+	lcd_send_1Cmd(0xd5);//Function Selection B
+	lcd_send_1Cmd(0x02);//Enable second pre-charge
 	SSD1327_Clear();
-	LCD_Send_1Cmd(0xaf);//Display on
+	lcd_send_1Cmd(0xaf);//Display on
 }
 
 #endif
