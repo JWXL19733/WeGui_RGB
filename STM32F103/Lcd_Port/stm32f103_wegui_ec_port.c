@@ -17,7 +17,7 @@ limitations under the License.
 #include "lcd_driver_config.h"
 #include "lcd_wegui_config.h"
 
-#if (WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT)
+#if (WEGUI_PORT == _STM32F103X_EC_BZ_PORT)
 #include "stddef.h"
 #include "stm32f103_wegui_ec_port.h"
 #include "wegui_menu_demo.h"

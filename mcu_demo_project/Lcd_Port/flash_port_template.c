@@ -15,11 +15,12 @@ limitations under the License.
 */
 #include "flash_port_template.h"
 
+#if(FLASH_PORT == _FLASH_PORT_DEMO)
 /*--------------------------------------------------------------
   * 名称: flash_cs_clr(void)
   * 功能: FLASH片选使能 weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_cs_clr(void)
+void flash_cs_clr(void)
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -31,7 +32,7 @@ __attribute__((weak)) void flash_cs_clr(void)
   * 名称: flash_cs_set(void)
   * 功能: FLASH片选失能 weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_cs_set(void)
+void flash_cs_set(void)
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -44,7 +45,7 @@ __attribute__((weak)) void flash_cs_set(void)
   * 传入: dat
   * 功能: SPI发送1个字节数据 weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_send_1Byte(uint8_t dat)
+void flash_send_1Byte(uint8_t dat)
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -60,7 +61,7 @@ __attribute__((weak)) void flash_send_1Byte(uint8_t dat)
   * 功能: 向flash发送num个数据
   * 说明: weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_send_nByte(uint8_t *p,uint32_t num)
+void flash_send_nByte(uint8_t *p,uint32_t num)
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -72,7 +73,7 @@ __attribute__((weak)) void flash_send_nByte(uint8_t *p,uint32_t num)
   * 名称: flash_read_1Byte()
   * 功能: SPI发送1个字节数据 weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) uint8_t flash_read_1Byte()
+uint8_t flash_read_1Byte()
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -88,7 +89,7 @@ __attribute__((weak)) uint8_t flash_read_1Byte()
   * 功能: 向flash读取num个数据到p
   * 说明: 
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_read_nByte(uint8_t *p,uint32_t num)
+void flash_read_nByte(uint8_t *p,uint32_t num)
 {
 	while(1)//需要移植 参考stm32f103例程
 	{
@@ -100,12 +101,15 @@ __attribute__((weak)) void flash_read_nByte(uint8_t *p,uint32_t num)
   * 名称: flash_port_init()
   * 功能: flash接口初始化 weak类型 需要改写
 ----------------------------------------------------------------*/
-__attribute__((weak)) void flash_port_init()
+void flash_port_init()
 {
-	//while(1)//需要移植 参考stm32f103例程
-	//{
-	//	;
-	//}
-	//flash_ic_init();
+	while(1)//需要移植 参考stm32f103例程
+	{
+		;
+	}
+	#if(FLASH_IC != 0)
+	flash_ic_init();
+	#endif
 }
 
+#endif //#if(FLASH_PORT == _FLASH_PORT_DEMO)

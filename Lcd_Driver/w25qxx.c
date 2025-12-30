@@ -15,7 +15,7 @@ limitations under the License.
 */
 #include "lcd_driver_config.h"
 
-#if(FLASH_MODEL == _FLASH_W25Qxx)
+#if(FLASH_IC == _FLASH_W25Qxx)
 #include "w25qxx.h"
 
 uint16_t flash_id;

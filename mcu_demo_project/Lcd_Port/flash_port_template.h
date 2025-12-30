@@ -19,6 +19,9 @@ limitations under the License.
 #include "stdint.h"
 #include "lcd_driver_config.h"
 
+//此处可包含GPIO SPI DMA等头文件,按需包含
+//禁止使用包含main.h或其他容易造成循环包含的文件
+
 /*--------------------------------------------------------------
   * 名称: flash_cs_clr(void)
   * 功能: FLASH片选使能
@@ -60,9 +63,7 @@ uint8_t flash_read_1Byte(void);
   * 名称: flash_read_nByte(uint8_t *p,uint32_t num)
   * 传入1: *p数组指针
   * 传入2: num读取数量
-  * 返回: 无
   * 功能: 向flash读取num个数据到p
-  * 说明: 
 ----------------------------------------------------------------*/
 void flash_read_nByte(uint8_t *p,uint32_t num);
 	

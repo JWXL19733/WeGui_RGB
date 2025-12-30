@@ -14,8 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include "lcd_driver_config.h"
 #include "flash_driver.h"
-#include "flash_port_template.h"//flash驱动例程
+
 
 #if (FLASH_PORT != _F_NO_PORT)
 /*--------------------------------------------------------------

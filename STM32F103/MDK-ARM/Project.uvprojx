@@ -972,16 +972,6 @@
           <GroupName>Lcd_Driver</GroupName>
           <Files>
             <File>
-              <FileName>lcd_port_template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Lcd_Driver\lcd_port_template.c</FilePath>
-            </File>
-            <File>
-              <FileName>flash_port_template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Lcd_Driver\flash_port_template.c</FilePath>
-            </File>
-            <File>
               <FileName>lcd_driver.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\..\Lcd_Driver\lcd_driver.h</FilePath>

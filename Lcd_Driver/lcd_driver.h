@@ -20,7 +20,6 @@ limitations under the License.
 #include "stdint.h"
 #include "string.h"
 #include "lcd_driver_config.h"
-#include "lcd_wegui_config.h"
 #include "lcd_res.h"
 
 #ifdef __cplusplus
@@ -364,10 +363,10 @@ void lcd_clear_gram(void);
 void lcd_fill_gram(uint8_t n);
 
 /*--------------------------------------------------------------
-  * 名称: lcd_driver_Init()
+  * 名称: lcd_driver_init()
   * 功能: 驱动初始化
 ----------------------------------------------------------------*/
-void lcd_driver_Init(void);
+void lcd_driver_init(void);
 
 #if (FLASH_PORT != _F_NO_PORT)
 /*--------------------------------------------------------------

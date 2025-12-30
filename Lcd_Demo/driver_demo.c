@@ -859,7 +859,7 @@ void driver_demo_geme()
 void driver_demo()
 {
 	//设置笔刷颜色
-	#if (LCD_TYPE == RGB_565)
+	#if (LCD_TYPE == LCD_RGB565)
 		#if(LCD_COLOUR_BIT >= 1)
 		rgb_set_driver_colour(0,0xfd80);//设置write_0驱动的笔刷颜色
 		rgb_set_driver_colour(1,0x4a48);//设置write_1驱动的笔刷颜色
@@ -868,7 +868,7 @@ void driver_demo()
 		rgb_set_driver_colour(2,0xaa05);//设置write_2驱动的笔刷颜色
 		rgb_set_driver_colour(3,0x3186);//设置write_3驱动的笔刷颜色
 		#endif
-		#if(LCD_COLOUR_BIT >= 2)
+		#if(LCD_COLOUR_BIT >= 3)
 		rgb_set_driver_colour(4,0xef77);//设置write_4驱动的笔刷颜色
 		rgb_set_driver_colour(5,0x0000);//设置write_5驱动的笔刷颜色
 		rgb_set_driver_colour(6,0xffdb);//设置write_6驱动的笔刷颜色
@@ -882,13 +882,13 @@ void driver_demo()
 //		//----1.字体----
 //		driver_demo_text_fonts();//占用大
 //		//---2.全屏操作--
-//		driver_demo_fill_screen();
+		driver_demo_fill_screen();
 //		//--3.演示画线--
-//		driver_demo_line();
+		driver_demo_line();
 //		//--4.演示画线动画--
-//		driver_demo_line_anim();
+		driver_demo_line_anim();
 //		//--5.圆(弧)/半圆(弧)/四分圆(弧)--
-//		driver_demo_arc();
+		driver_demo_arc();
 //		//--6.矩形--
 		driver_demo_box();
 //		//--7.圆角矩形--
@@ -904,11 +904,11 @@ void driver_demo()
 //		//--11.框内绘图(高级笔刷)--
 		driver_demo_inBox();
 //		//--12.所有颜色显示--
-//		driver_demo_colour();
+		driver_demo_colour();
 //		//--13.更改笔刷颜色--
-//		#if (LCD_TYPE == LCD_RGB565)
-//		driver_demo_colour_change();
-//		#endif
+		#if (LCD_TYPE == LCD_RGB565)
+		driver_demo_colour_change();
+		#endif
 	}
 }
 

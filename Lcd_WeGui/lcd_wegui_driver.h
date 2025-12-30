@@ -264,16 +264,12 @@ typedef struct wegui_t
 	sysInfo_t sysInfo;
 	
 	uint16_t ms_stick;//运行时间基准
-	#if (LCD_TYPE == LCD_RGB565)
-	uint8_t bl_pwmd;//模拟PWM背光占空比计数值
-	#endif
 }wegui_t;
 
 #include "lcd_driver.h"
 #include "lcd_res.h"
 #include "lcd_wegui_menu_mlist.h"
 #include "lcd_wegui_tip.h"
-#include "wegui_menu_demo.h"
 
 /*--------------------------------------------------------------
   * 名称: *my_itoa(int16_t num,uint8_t *str,uint8_t radix)

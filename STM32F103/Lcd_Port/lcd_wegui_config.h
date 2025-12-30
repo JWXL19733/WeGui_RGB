@@ -20,8 +20,6 @@ limitations under the License.
 #include "lcd_driver_config.h"
 
 //字符串 在菜单中调用
-#define STR_MODEL "--"
-#define STR_MODEL_CLASS "---"
 #define STR_MCU_CLASS "STM32F1"
 #define STR_MCU_MODEL "STM32F103C8"
 #define STR_WEGUI_VERSION_CLASS "V0.5"
@@ -40,7 +38,25 @@ limitations under the License.
 #define _STM32F103X_4KEY_BZ_PORT    (1) //4按键蜂鸣器交互接口 "上","下","左","右" 对应文件stm32f103_wegui_4key_port.c
 #define _STM32F103X_EC_BZ_PORT 		  (2) //编码器蜂鸣器接口 对应文件stm32f103_wegui_ec_bz_port.c
 
-#define WEGUI_INTERFACE_PORT _STM32F103X_4KEY_BZ_PORT //选择一个交互接口
+#define WEGUI_PORT _STM32F103X_4KEY_BZ_PORT //选择一个交互接口
+
+	
+#if (WEGUI_PORT == _STM32F103X_4KEY_BZ_PORT)    //使用4键蜂鸣器交互接口
+	#define wegui_port_init()      do{wegui_4key_port_init();}while(0)
+	#define wegui_port_ms_irq()    do{wegui_4key_port_irq();}while(0)
+	#define wegui_port_task(ms)    do{wegui_4key_port_task(ms);}while(0)
+	#include "stm32f103_wegui_4key_port.h"
+#elif (WEGUI_PORT == _STM32F103X_EC_BZ_PORT)    //使用EC编码器蜂鸣器接口
+	#define wegui_port_init()        do{wegui_ec_buz_port_init();}while(0)
+	#define wegui_port_ms_irq()      do{wegui_ec_buz_port_irq();}while(0)
+	#define wegui_port_task(ms)      do{wegui_ec_buz_port_task(ms);}while(0)
+	#include "stm32f103_wegui_ec_port.h"
+#else
+	#define wegui_port_init()      do{}while(0)//初始化
+	#define wegui_port_ms_irq()    do{}while(0)//接口定时ms中断
+	#define wegui_port_task(ms)    do{}while(0)//及时运行即可(放到主循环)
+	//#waring("no interface")//没有接口
+#endif
 
 /*---------------------------
 	*  ---默认按键接口---
@@ -64,40 +80,74 @@ limitations under the License.
 //(0)//关闭
 #define WEGUI_UART_EN  (1)
 
+#if (WEGUI_UART_EN != 0)
+	#include "stm32f103_wegui_uart_port.h"
+#endif
 
-
-//"TFT彩屏"需要配置以下设置
-#if (LCD_TYPE == LCD_RGB565)
-//--------------------------4.1彩屏色背光亮度调节-----------------------------
-	#define BL_PWM_MAX (4) //背光PWM最大值 单位1ms
-	#define BL_PWM_MIN (1) //背光PWM最小值 单位1ms
-
-//--------------------------4.2彩屏色位设置-----------------------------
-	//设定色位
-	//支持1位(0~1,共2色) //同一界面允许同时显示1位色(2种颜色) 0B   1B
-	//支持2位(0~3,共4色) //同一界面允许同时显示2位色(4种颜色) 00B  01B  10B  11B
-	//支持3位(0~7,共8色) //同一界面允许同时显示3位色(8种颜色) 000B 001B 010B 011B 100B 101B 110B 111B
-	#define LCD_COLOUR_BIT (2)  //选择色位
+//--------------------------3.设置菜单主题-----------------------------
+#if ((LCD_TYPE == LCD_GRAY) || (LCD_TYPE == LCD_OLED))
+	#define COLOUR_MLIST_NORMAL_TEXT      (1)//菜单列表文字色
+	#define COLOUR_MLIST_WSLIDER_NUM      (1)//菜单列表wSlider数字颜色
+	#define COLOUR_MLIST_WMESSAGE_TEXT    (1)//菜单列表wMessage字符颜色
+	#define COLOUR_MLIST_WCHECKBOX_BORDER (1)//菜单列表wCheckbox外框颜色
+	#define COLOUR_MLIST_WCHECKBOX_INTER  (1)//菜单列表wCheckbox内填充颜色
+	#define COLOUR_MLIST_SCROOL_BAR       (1)//菜单列表滚动条颜色
+	#define COLOUR_MESS_TIP_BOX_BORDER    (1)//wMessage提示弹窗边缘颜色
+	#define COLOUR_MESS_TIP_TEXT          (1)//wMessage提示弹窗文字颜色
+	#define COLOUR_SLIDER_TIP_BOX_BORDER  (1)//wSlider滑条弹窗边缘颜色
+	#define COLOUR_SLIDER_TIP_TEXT        (1)//wSlider滑条弹窗文字颜色
+	#define COLOUR_SLIDER_TIP_NUM         (1)//wSlider滑条弹窗数字颜色
+	#define COLOUR_SLIDER_TIP_BAR_BORDER  (1)//wSlider滑条弹窗的滑条边框颜色
+	#define COLOUR_SLIDER_TIP_BAR_PROG    (1)//wSlider滑条弹窗的进度颜色
+	#define COLOUR_DEBUG_BAR_BG           (0)//调试窗的底色
+	#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
+	#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
 	
-//--------------------------4.3彩屏菜单主题-----------------------------
-	//demo菜单默认颜色 
-	//wegui_mList_Init()会里执行mList_par.theme_colour[n] = COLOUR_MLIST_DEFAULT_n进行初始化
-	//程序运行过程也中允许更改mList_par.theme_colour[n]的值从而改变主题颜色
-	
-	#if (LCD_COLOUR_BIT == 1)
-	
+#elif (LCD_TYPE == LCD_RGB565)
+	#if (LCD_COLOUR_BIT == 1)//1位色时的主题 只有2种颜色
 		//---配色1 白云晴空---
 		//#define COLOUR_MLIST_DEFAULT_0  0xffbe //默认菜单背景色0 00  //背景色默认为0
 		//#define COLOUR_MLIST_DEFAULT_1  0x4395 //默认菜单画笔色1 01  
+		//#define COLOUR_MLIST_NORMAL_TEXT      (1)//菜单列表文字色
+		//#define COLOUR_MLIST_WSLIDER_NUM      (1)//菜单列表wSlider数字颜色
+		//#define COLOUR_MLIST_WMESSAGE_TEXT    (1)//菜单列表wMessage字符颜色
+		//#define COLOUR_MLIST_WCHECKBOX_BORDER (1)//菜单列表wCheckbox外框颜色
+		//#define COLOUR_MLIST_WCHECKBOX_INTER  (1)//菜单列表wCheckbox内填充颜色
+		//#define COLOUR_MLIST_SCROOL_BAR       (1)//菜单列表滚动条颜色
+		//#define COLOUR_MESS_TIP_BOX_BORDER    (1)//wMessage提示弹窗边缘颜色
+		//#define COLOUR_MESS_TIP_TEXT          (1)//wMessage提示弹窗文字颜色
+		//#define COLOUR_SLIDER_TIP_BOX_BORDER  (1)//wSlider滑条弹窗边缘颜色
+		//#define COLOUR_SLIDER_TIP_TEXT        (1)//wSlider滑条弹窗文字颜色
+		//#define COLOUR_SLIDER_TIP_NUM         (1)//wSlider滑条弹窗数字颜色
+		//#define COLOUR_SLIDER_TIP_BAR_BORDER  (1)//wSlider滑条弹窗的滑条边框颜色
+		//#define COLOUR_SLIDER_TIP_BAR_PROG    (1)//wSlider滑条弹窗的进度颜色
+		//#define COLOUR_DEBUG_BAR_BG           (0)//调试窗的底色
+		//#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
+		//#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
 		
 		//---配色2 大橘为重---
 		//#define COLOUR_MLIST_DEFAULT_0  0xfd80 //背景色0 00  //背景色默认为0
 		//#define COLOUR_MLIST_DEFAULT_1  0x4a48 //画笔色1 01
+		//#define COLOUR_MLIST_NORMAL_TEXT      (1)//菜单列表文字色
+		//#define COLOUR_MLIST_WSLIDER_NUM      (1)//菜单列表wSlider数字颜色
+		//#define COLOUR_MLIST_WMESSAGE_TEXT    (1)//菜单列表wMessage字符颜色
+		//#define COLOUR_MLIST_WCHECKBOX_BORDER (1)//菜单列表wCheckbox外框颜色
+		//#define COLOUR_MLIST_WCHECKBOX_INTER  (1)//菜单列表wCheckbox内填充颜色
+		//#define COLOUR_MLIST_SCROOL_BAR       (1)//菜单列表滚动条颜色
+		//#define COLOUR_MESS_TIP_BOX_BORDER    (1)//wMessage提示弹窗边缘颜色
+		//#define COLOUR_MESS_TIP_TEXT          (1)//wMessage提示弹窗文字颜色
+		//#define COLOUR_SLIDER_TIP_BOX_BORDER  (1)//wSlider滑条弹窗边缘颜色
+		//#define COLOUR_SLIDER_TIP_TEXT        (1)//wSlider滑条弹窗文字颜色
+		//#define COLOUR_SLIDER_TIP_NUM         (1)//wSlider滑条弹窗数字颜色
+		//#define COLOUR_SLIDER_TIP_BAR_BORDER  (1)//wSlider滑条弹窗的滑条边框颜色
+		//#define COLOUR_SLIDER_TIP_BAR_PROG    (1)//wSlider滑条弹窗的进度颜色
+		//#define COLOUR_DEBUG_BAR_BG           (0)//调试窗的底色
+		//#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
+		//#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
 
 		//---配色3 深海蔚蓝---
 		#define COLOUR_MLIST_DEFAULT_0  0x530d //背景色0 00  //背景色默认为0
 		#define COLOUR_MLIST_DEFAULT_1  0xefbe //画笔色1 01
-		
 		#define COLOUR_MLIST_NORMAL_TEXT      (1)//菜单列表文字色
 		#define COLOUR_MLIST_WSLIDER_NUM      (1)//菜单列表wSlider数字颜色
 		#define COLOUR_MLIST_WMESSAGE_TEXT    (1)//菜单列表wMessage字符颜色
@@ -115,7 +165,7 @@ limitations under the License.
 		#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
 		#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
 
-	#elif (LCD_COLOUR_BIT == 2)//同一界面允许同时显示2位色(4种颜色)
+	#elif (LCD_COLOUR_BIT == 2)//2位色时的主题 只有4种颜色
 	
 		//---配色1 白云晴空---
 		//#define COLOUR_MLIST_DEFAULT_0  0xffbe //默认菜单背景色0 00  //背景色默认为0
@@ -205,7 +255,7 @@ limitations under the License.
 		//#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
 		//#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
 		
-	#elif (LCD_COLOUR_BIT == 3)//同一界面允许同时显示3位色(8种颜色)
+	#elif (LCD_COLOUR_BIT == 3)//3位色时的主题 支持8种颜色
 		//---配色2 大橘为重---
 		#define COLOUR_MLIST_DEFAULT_0  0xfd80 //背景色0 000  //背景色默认为0
 		#define COLOUR_MLIST_DEFAULT_1  0x4a48 //画笔色1 001
@@ -235,56 +285,7 @@ limitations under the License.
 		#error("not support LCD_COLOUR_BIT!")
 	#endif
 #endif
-
-//------------编译-----------
-
 	
 
-		
-//非彩屏,默认使用1位色
-#if(LCD_TYPE != LCD_RGB565)
-	#ifdef LCD_COLOUR_BIT
-		#undef LCD_COLOUR_BIT
-		#define LCD_COLOUR_BIT (1)
-	#endif
-	#define COLOUR_MLIST_NORMAL_TEXT      (1)//菜单列表文字色
-	#define COLOUR_MLIST_WSLIDER_NUM      (1)//菜单列表wSlider数字颜色
-	#define COLOUR_MLIST_WMESSAGE_TEXT    (1)//菜单列表wMessage字符颜色
-	#define COLOUR_MLIST_WCHECKBOX_BORDER (1)//菜单列表wCheckbox外框颜色
-	#define COLOUR_MLIST_WCHECKBOX_INTER  (1)//菜单列表wCheckbox内填充颜色
-	#define COLOUR_MLIST_SCROOL_BAR       (1)//菜单列表滚动条颜色
-	#define COLOUR_MESS_TIP_BOX_BORDER    (1)//wMessage提示弹窗边缘颜色
-	#define COLOUR_MESS_TIP_TEXT          (1)//wMessage提示弹窗文字颜色
-	#define COLOUR_SLIDER_TIP_BOX_BORDER  (1)//wSlider滑条弹窗边缘颜色
-	#define COLOUR_SLIDER_TIP_TEXT        (1)//wSlider滑条弹窗文字颜色
-	#define COLOUR_SLIDER_TIP_NUM         (1)//wSlider滑条弹窗数字颜色
-	#define COLOUR_SLIDER_TIP_BAR_BORDER  (1)//wSlider滑条弹窗的滑条边框颜色
-	#define COLOUR_SLIDER_TIP_BAR_PROG    (1)//wSlider滑条弹窗的进度颜色
-	#define COLOUR_DEBUG_BAR_BG           (0)//调试窗的底色
-	#define COLOUR_DEBUG_BAR_BORDER       (1)//调试窗的边框颜色
-	#define COLOUR_DEBUG_BAR_TEXT         (1)//调试窗的文字颜色
-#endif		
-	
-#if (WEGUI_INTERFACE_PORT == _STM32F103X_4KEY_BZ_PORT)    //使用4键蜂鸣器交互接口
-	#define wegui_itface_port_init()      do{wegui_4key_port_init();}while(0)
-	#define wegui_itface_port_ms_irq()    do{wegui_4key_port_irq();}while(0)
-	#define wegui_itface_port_task(ms)    do{wegui_4key_port_task(ms);}while(0)
-	#include "stm32f103_wegui_4key_port.h"
-#elif (WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT)    //使用EC编码器蜂鸣器接口
-	#define wegui_itface_port_init()        do{wegui_ec_buz_port_init();}while(0)
-	#define wegui_itface_port_ms_irq()      do{wegui_ec_buz_port_irq();}while(0)
-	#define wegui_itface_port_task(ms)      do{wegui_ec_buz_port_task(ms);}while(0)
-	#include "stm32f103_wegui_ec_port.h"
-#else
-	#define wegui_itface_port_init()      do{}while(0)//初始化
-	#define wegui_itface_port_ms_irq()    do{}while(0)//接口定时ms中断
-	#define wegui_itface_port_task(ms)    do{}while(0)//及时运行即可(放到主循环)
-	//#waring("no interface")//没有接口
-#endif
-	
 
-	
-#if (WEGUI_UART_EN != 0)
-	#include "stm32f103_wegui_uart_port.h"
-#endif
 #endif

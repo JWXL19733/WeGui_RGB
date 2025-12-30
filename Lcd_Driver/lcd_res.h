@@ -7,7 +7,6 @@
 
 #include "stdint.h"
 #include "lcd_driver_config.h"
-#include "lcd_wegui_config.h"
 
 /*
 	最新字库取模,可使用最新v0.4.4以上的上位机一键导出字库!!

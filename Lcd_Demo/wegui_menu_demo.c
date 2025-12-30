@@ -58,7 +58,7 @@ uint8_t MusicPlayer_APP_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷新�
 	//(void)time_count;//防止警告
 
 	//--------播放计时-------
-	#if ((WEGUI_INTERFACE_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT))
+	#if ((WEGUI_PORT != 0)&&((WEGUI_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_PORT == _STM32F103X_EC_BZ_PORT)))
 	if(buzz_music_player_is_busy())//使用了蜂鸣器相关接口
 	#else
 	if(0)
@@ -112,7 +112,7 @@ uint8_t MusicPlayer_APP_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷新�
 		lcd_draw_utf8_string(0,0,"Music Player");
 		lcd_draw_utf8_string(0,lcd_driver.newline_high,string);
 
-		#if ((WEGUI_INTERFACE_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT))
+		#if ((WEGUI_PORT != 0)&&((WEGUI_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_PORT == _STM32F103X_EC_BZ_PORT)))
 		if(buzz_music_player_is_busy())//使用了蜂鸣器相关接口
 		#else
 		if(0)
@@ -146,7 +146,7 @@ void Game_App_Quit()//退出菜单执行一次
 	wegui.setting.debug_windows_en = en_save;
 }
 
-#if ((WEGUI_INTERFACE_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT))
+#if ((WEGUI_PORT != 0)&&((WEGUI_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_PORT == _STM32F103X_EC_BZ_PORT)))
 extern const bz_Music_t game_ctrl[];//碰撞音效
 #endif
 
@@ -182,9 +182,8 @@ uint8_t Game_APP_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷新屏幕时
 		t--;
 		if(xdir){x++;}else{x--;}
 		if(ydir){y++;}else{y--;}
-		#if ((WEGUI_INTERFACE_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_INTERFACE_PORT == _STM32F103X_EC_BZ_PORT))
+		#if ((WEGUI_PORT != 0)&&((WEGUI_PORT == _STM32F103X_4KEY_BZ_PORT)||(WEGUI_PORT == _STM32F103X_EC_BZ_PORT)))
 		//碰撞音效
-		
 		if(x>=SCREEN_WIDTH-GMAE_BOX_WIDTH-1){xdir=0;i++;colour++;buzz_play_music(game_ctrl);}else if(x<0){xdir=1;i++;colour++;buzz_play_music(game_ctrl);}
 		if(y>=SCREEN_HIGH-GAME_BOX_HIGHT-1){ydir=0;i++;colour++;buzz_play_music(game_ctrl);}else if(y<0){ydir=1;i++;colour++;buzz_play_music(game_ctrl);}
 		#else
@@ -262,6 +261,7 @@ uint8_t m_App_VideoPleayer_Refresh(uint8_t ui_farmes,uint16_t time_count)//刷�
 	(void)ui_farmes;//防止警告
 	(void)time_count;//防止警告
 	static uint16_t id=0;
+	(void)id;//防止警告
 	/*
 		取模格式:[点阵]往下8位对齐,逐行扫描
 		增加信息头√
@@ -371,7 +371,7 @@ void set_theme(void)
 #if (LCD_TYPE == LCD_RGB565)
 void update_Wegui_screen_brightness()
 {
-	wegui.bl_pwmd = wegui.setting.brightness;
+	
 }
 #else
 void update_Wegui_screen_brightness()
@@ -1121,14 +1121,8 @@ menu_t m_Setting_Display_Brightness =
 			.str_en_US="Bright",//英文标题 弹窗里显示的文字
 		},
 		.pvalue = &wegui.setting.brightness,
-		#if (LCD_TYPE == LCD_RGB565)
-		.min = BL_PWM_MIN,
-		.max = BL_PWM_MAX,
-		#else
 		.min = 0,
 		.max = 255,
-		#endif
-
 	},
 };
 

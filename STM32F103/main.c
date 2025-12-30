@@ -70,64 +70,6 @@ void wegui_hello_word()
 }
 
 
-///*--------------------------------------------------------------
-//  * 名称: flash_draw_IMG_RGB565_ZIP_ORLE2(uint16_t x, uint16_t y, uint32_t flash_addr) 
-//  * 传入1:x输出坐标
-//  * 传入2:y输出坐标
-//  * 传入3:flash_addr图片数据的flash地址
-//  * 功能: 从FLASH读取RGB565_ZIP_ORLE2格式图片投放到屏幕坐标(x,y)上
-//  * 说明: 该源函数是weak类型, 兼容性好但效率不高, 改写自flash_driver.c
-//----------------------------------------------------------------*/
-//#if ((LCD_PORT == _HARD_4SPI) && (LCD_TYPE == LCD_RGB565))
-//void flash_draw_IMG_RGB565_ZIP_ORLE2(uint16_t x, uint16_t y, uint16_t sizex, uint16_t sizey, uint32_t flash_addr)
-//{
-//		#define IMG_FLASH_SIZE 512 //设置读取缓冲大小
-
-//		//#if (FLASH_PORT != _F_DMA_STDSPI)//FLASH和LCD使用串行快速读写
-//		#if (1)
-//		{
-//			uint8_t flash_dat_buff[IMG_FLASH_SIZE];
-//			uint16_t i = 0;
-//			uint8_t *p;
-//			uint8_t dat[3];
-//			lcd_set_addr(x, y, x + sizex - 1, y + sizey - 1);
-//			while (1) 
-//			{
-//					if (i <= 0) 
-//					{
-//							flash_read_addr_ndat(flash_addr, flash_dat_buff, (IMG_FLASH_SIZE / 3 * 3));
-//							flash_addr += (IMG_FLASH_SIZE / 3 * 3);
-//							p = & flash_dat_buff[0];
-//							i = (IMG_FLASH_SIZE / 3);
-//					}
-//					i--;
-//					dat[0] = * p++;
-//					if (dat[0] == 0x00) {break;} 
-//					dat[1] = * p++;
-//					dat[2] = * p++;
-//					LCD_DC_Set();
-//					LCD_CS_Clr();
-//					while (dat[0]--) 
-//					{
-//						wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-//						send_lcd_spi_dat(dat[1]);//向SPI发送缓冲器发送一个数据
-//						wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-//						send_lcd_spi_dat(dat[2]);//向SPI发送缓冲器发送一个数据
-//					}
-//					wait_lcd_spi_txtemp_free();//等待SPI发送缓冲器为空
-//					send_lcd_spi_done();//等待SPI发送器空闲(发完)
-//					LCD_CS_Set();
-//			}
-//		}
-//		#else //DMA FLASH和LCD并行快速读写
-//		{
-//			
-//		}
-//		#endif
-//		#undef IMG_FLASH_SIZE
-//}
-//#endif
-
 /*--------------------------------------------------------------
   * 修改lcd_driver_config.h和lcd_wegui_config.h即可快速上手点屏
 ----------------------------------------------------------------*/
@@ -136,20 +78,21 @@ int main(void)
 	startup_init();
 	
 	//本框架"driver"部分为高效率点阵OLED/RGB驱动,可单独移植使用移植
-	lcd_driver_Init();//demo程序driver_demo();
+	lcd_driver_init();//demo程序driver_demo();
 	
 	//本框架wegui部分为多级菜单图形动画ui,处理多级菜单,过度动画等,
-	//lcd_wegui_init();//demo程序wegui_loop_func();
+	lcd_wegui_init();//demo程序wegui_loop_func();
+	wegui.menu = &m_main;//开机初始菜单menu
 	
 	//wegui_hello_word();//开机欢迎弹窗(菜单demo)
 	sys1ms_stick = 0;
 	while (1)
 	{
 		//------------1.直驱刷图DEMO-------------
-		driver_demo();
+		//driver_demo();
 		
 		//------------2.多级菜单DEMO-------------
-		//wegui_loop_func();//wegui主循环
+		wegui_loop_func();//wegui主循环
 
 		//-----------3.自定义测试----------
 		//if(sys1ms_stick>=100)//1ms动作

@@ -17,15 +17,7 @@ limitations under the License.
 #include "lcd_wegui_config.h"
 #include "lcd_wegui_driver.h"
 
-wegui_t wegui=
-{
-	#if (LCD_TYPE == LCD_RGB565)
-		.setting.brightness=BL_PWM_MAX,//默认彩屏亮度
-		.bl_pwmd = BL_PWM_MAX,
-	#else
-		.setting.brightness=127,//默认点阵屏彩屏亮度
-	#endif
-};
+wegui_t wegui;
 
 /*--------------------------------------------------------------
   * 名称: *my_itoa(int16_t num,uint8_t *str,uint8_t radix)
@@ -519,7 +511,9 @@ void wegui_loop_func()
 
 	if(stick>0)//stick含义: 自上次运行到此, 过了stick毫秒
 	{
-		wegui_itface_port_task(stick);//按键/编码器/蜂鸣器/自定义
+		#if(WEGUI_PORT != 0)
+		wegui_port_task(stick);//按键/编码器/蜂鸣器/自定义
+		#endif
 	}
 
 	#if (WEGUI_UART_EN)
@@ -541,31 +535,26 @@ void wegui_1ms_stick()
 	{
 		wegui.ms_stick++;
 	}
-	//--背光模拟pwm中断--
-	#if (LCD_TYPE == LCD_RGB565)
-	{
-		static uint8_t count=0;
-		if(count<wegui.bl_pwmd){lcd_bl_on();}
-		else{lcd_bl_off();}
-		if(++count>=BL_PWM_MAX){count=0;}
-	}
-	#endif
 
 	//-------交互接口定时中断----------
-	wegui_itface_port_ms_irq();//按键/编码器/蜂鸣器/自定义
+	#if(WEGUI_PORT != 0)
+	wegui_port_ms_irq();//按键/编码器/蜂鸣器/自定义中断
+	#endif
 }
 
 void lcd_wegui_init()
 {
 	//-------交互接口初始化----------
-	wegui_itface_port_init();//按键/编码器/蜂鸣器/自定义
-
+	#if(WEGUI_PORT != 0)
+	wegui_port_init();//按键/编码器/蜂鸣器/自定义
+	#endif
+	
 	//-------//UART通讯接口----------
 	#if (WEGUI_UART_EN)
 	wegui_uart_port_init();//uart接口初始化,缓冲区初始化
 	#endif
 
-	wegui.menu = &m_main;//开机初始菜单menu
+	wegui.menu = 0x00;//开机初始菜单menu
 	wegui.setting.language = zh_CN; //默认语言设置 en_US  zh_CN
 
 	wegui.setting.screen_fps_ms = fps_2_ms(1000);//屏幕帧率设置(建议两者一致) 建议60~100
@@ -578,12 +567,7 @@ void lcd_wegui_init()
 	wegui.sysInfo.cpu_time = 0;//刷屏资源占用时间
 	wegui.sysInfo.fps_time = 0;//刷屏间隔时间
 
-	#if (LCD_TYPE == LCD_RGB565)
-	wegui.setting.brightness = BL_PWM_MAX;//亮度
-	wegui.bl_pwmd = BL_PWM_MAX;//占空比变量
-	#else
-	wegui.setting.brightness=127;//亮度
-	#endif
+	wegui.setting.brightness = 127;//亮度
 
 	wegui_mList_Init();
 

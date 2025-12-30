@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 #include "lcd_driver.h"
-#include "lcd_port_template.h"//lcd驱动例程
 
 //---------驱动结构体---------
 lcd_driver_t lcd_driver;
@@ -2300,14 +2299,19 @@ void lcd_fill_gram(uint8_t n)
 }
 
 /*--------------------------------------------------------------
-  * 名称: lcd_driver_Init()
+  * 名称: lcd_driver_init()
   * 功能: 驱动初始化
 ----------------------------------------------------------------*/
-void lcd_driver_Init(void)
+void lcd_driver_init(void)
 {
 	//-------------初始化-------------
+	#if(LCD_PORT!=0)
 	lcd_port_init();//屏幕
+	#endif
+	
+	#if(FLASH_PORT!=0)
 	flash_port_init();//外挂flash
+	#endif
 
 	//------driver配置默认字体---------
 	//---中英文字体high高度建议一致----
@@ -2370,8 +2374,8 @@ void lcd_driver_Init(void)
 
 	//-----------刷新屏幕------------
 	while(LCD_Refresh()!=0){}
-
-	lcd_bl_on();
+	lcd_bl_on();//开背光灯
+		
 }
 
 
