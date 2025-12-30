@@ -16,7 +16,7 @@
 #define STR_MCU_CLASS            "Intel"
 #define STR_MCU_MODEL            "Core(TM) i9-11900KB"
 #define STR_WEGUI_VERSION_CLASS  "V0.5"
-#define STR_WEGUI_VERSION        "WeGui RGB\n V0.5.6"
+#define STR_WEGUI_VERSION        "WeGui RGB\n V0.5.7"
 
 
 //--------------------------1.菜单设置--------------------
@@ -30,33 +30,13 @@
 //--------------------------2.选择一个GUI菜单交互方式-----------------------------
 #define _DEMO_NONE_PORT     (0) //无交互按键
 #define _DEMO_4KEY_PORT     (1) //4按键交互接口 "上","下","左","右"
-#define WEGUI_INTERFACE_PORT  _DEMO_4KEY_PORT //选择一个交互接口
+#define WEGUI_PORT  _DEMO_4KEY_PORT //选择一个交互接口
 
 
 
 //仅"TFT彩屏"需要设置
 #ifdef LCD_USE_RGB565
-//--------------------------3.1彩屏色背光亮度调节-----------------------------
-	#define BL_PWM_MAX (4) //背光PWM最大值 单位1ms
-	#define BL_PWM_MIN (1) //背光PWM最小值 单位1ms
-
-
-//--------------------------3.2彩屏色位设置-----------------------------
-
-	//设定色位数量
-	//支持1位(0~1,共2色) //同一界面允许同时显示1位色(2种颜色) 0B   1B
-	//支持2位(0~3,共4色) //同一界面允许同时显示2位色(4种颜色) 00B  01B  10B  11B
-	//支持3位(0~7,共8色) //同一界面允许同时显示3位色(8种颜色) 000B 001B 010B 011B 100B 101B 110B 111B
-	#define LCD_COLOUR_BIT (2)  //选择色位
-
-
-
 //--------------------------3.3彩屏菜单主题-----------------------------
-	//demo菜单默认颜色
-	//Wegui_mList_Init()会里执行mList_par.theme_colour[n] = COLOUR_MLIST_DEFAULT_n进行初始化
-	//程序运行过程也中允许更改mList_par.theme_colour[n]的值从而改变主题颜色
-
-
 	#if (LCD_COLOUR_BIT == 1)
 
 		//---配色1 白云晴空---
@@ -211,25 +191,6 @@
 	#endif
 #endif
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //------------编译-----------
 
 //非彩屏,默认使用1位色
@@ -259,10 +220,10 @@
 
 
 
-#if (WEGUI_INTERFACE_PORT ==_DEMO_4KEY_PORT)    //4键交互模式
-	#define wegui_itface_port_init()    do{}while(0)
-	#define wegui_itface_port_ms_irq()  do{}while(0)
-	#define wegui_itface_port_task(x)   do{pc_4key_interface();}while(0)
+#if (WEGUI_PORT ==_DEMO_4KEY_PORT)    //4键交互模式
+	#define wegui_port_init()    do{}while(0)
+	#define wegui_port_ms_irq()  do{}while(0)
+	#define wegui_port_task(x)   do{pc_4key_interface();}while(0)
 #else
 	#warning("no interface.c")
 	#define wegui_itface_port_init() do{}while(0)

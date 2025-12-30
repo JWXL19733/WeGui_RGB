@@ -21,11 +21,11 @@
 
 //-------------------------1.选择一个屏幕通讯接口-----------------------------
 
-#define _PC  (0)//PC仿真接口 对应pc_lcd_port.c
+#define _PC  (1)//PC仿真接口 对应pc_lcd_port.c
 #define LCD_PORT    _PC//选择一个接口
 
 //-----------------------------2.选择仿真器---------------------------------
-#define _SDL2    (0)//SDL2仿真器
+#define _SDL2    (1)//SDL2仿真器
 #define LCD_IC _SDL2 //选择一个屏幕仿真器
 
 
@@ -59,14 +59,25 @@
 //&mcu_fonts_utf8_songti_24X24;
 #define STARTUP_FONTS_UTF8  (&mcu_fonts_utf8_songti_24X24)//开机utf8字体 建议两者高度一致
 
+//-----------------------1.5.12设置色彩深度---------------------------
+#if ((LCD_TYPE == LCD_GRAY) || (LCD_TYPE == LCD_OLED))
+	#define LCD_COLOUR_BIT (1) //不是彩屏 固定1位色 不可修改
+#elif(LCD_TYPE == LCD_RGB565)
+	//彩屏
+	//支持1位(0~1,共2色) //同一界面允许同时显示1位色(2种颜色) 0B   1B
+	//支持2位(0~3,共4色) //同一界面允许同时显示2位色(4种颜色) 00B  01B  10B  11B
+	//支持3位(0~7,共8色) //同一界面允许同时显示3位色(8种颜色) 000B 001B 010B 011B 100B 101B 110B 111B
+	#define LCD_COLOUR_BIT (1) //自定义设置1~3色位
+#endif
 
-//-------------------------6.1.选择一个外挂FLASH接口--------------------------------
-#define _F_NO_PORT      (0)//没有外挂FLASH接口
-#define FLASH_PORT      _F_NO_PORT//选择一个外挂FLASH接口
+//-------------------------1.5.8选择一个外挂FLASH接口--------------------------------
+//请勿与LCD接口冲突
+#define _FLASH_NO_PORT    (0)//关闭FLASH接口
+#define FLASH_PORT        _FLASH_NO_PORT//选择一个外挂FLASH接口
 
 //-------------------------6.2.选择一个外挂FLASH型号--------------------------------
-#define _FLASH_NONE    (0)//没有FLASH
-#define FLASH_MODEL     _FLASH_NONE//选择一个外挂FLASH型号
+#define _FLASH_NO_IC   (0)//无
+#define FLASH_IC     _FLASH_NO_IC//选择一个外挂FLASH型号
 
 
 

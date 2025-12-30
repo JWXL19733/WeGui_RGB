@@ -39,10 +39,12 @@ int main( int argc, char * argv[])
 	startup_init();
 
 	//本框架"Driver"部分为高效率点阵OLED/RGB驱动,可单独移植使用移植
-	lcd_driver_Init();//例程driver_demo();
+	lcd_driver_init();//例程driver_demo();
 
 	//本框架Wegui部分为多级菜单图形动画ui,处理多级菜单,过度动画等
 	lcd_wegui_init();//例程wegui_loop_func();
+	wegui.menu = &m_main;//开机初始菜单menu
+
 
 	sys1ms_stick = 0;
 	while (1)
