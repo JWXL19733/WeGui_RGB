@@ -1999,7 +1999,7 @@ void lcd_draw_unicode(int16_t x,int16_t y,unicode_t unicode_id)
 		{
 			i = 0;
 			p = lcd_driver.fonts_UTF8->store_par.IN_MCU_INDEX_par.unicode_index;
-			while((p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
+			while((*p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
 			{
 				//-----------------A方式大小端读取方式根据MCU储存方式选择-------------------
 				//if((*p == unicode_id.u8[1]) && (*(p+1) == unicode_id.u8[0]))
@@ -2017,7 +2017,7 @@ void lcd_draw_unicode(int16_t x,int16_t y,unicode_t unicode_id)
 				i++;
 			}
 
-			if((p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
+			if((*p!=0x00)/*&&(lcd_driver.fonts_UTF8->unicode_index[i+1]!=0x00)*/)
 			{
 				lcd_draw_bitmap(
 				x,
