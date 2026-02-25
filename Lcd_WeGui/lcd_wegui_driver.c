@@ -258,6 +258,27 @@ void wegui_enter_menu(menu_t* p)
 		}
 }
 
+//刷新屏幕帧率
+static void reflash_fps(uint16_t stick)
+{
+	static uint16_t display_count = 0;//更新数据计时
+	static uint8_t  sum_count=0;//次数
+	static uint16_t sum=1;//总数
+	display_count += stick;
+	sum += wegui.sysInfo.fps_time;
+	sum_count++;
+
+	if(display_count > 100)//更新时间ms
+	{
+		//帧率 = 1000/(总时间/次数)
+		wegui.sysInfo.info_fps = (uint32_t)1000 * sum_count / sum;
+		//wegui.sysInfo.info_fps = 1000 / (sum / sum_count);
+		//if(wegui.sysInfo.info_fps > 99){wegui.sysInfo.info_fps = 99;}
+		display_count = 0;
+		sum_count = 0;
+		sum = 1;
+	}
+}
 
 //刷新CPU负载百分比
 static void reflash_cpuLoad(uint16_t stick)
