@@ -1,14 +1,17 @@
 * 企鹅交流群787475855
 * [演示视频](https://www.bilibili.com/video/BV1YW8dzuEwL)
 # 下载链接
-* [最新上位机及其工具下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/v0.5.7.2)
-* [STM32F103C8最新V0.5.7.2下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/v0.5.7.2) 
+* [最新上位机及其工具下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.8)
+* [STM32F103C8最新V0.5.8下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.8) 
 * [GD32E230C8最新V0.5.4下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.4)  
 * [CW32L012C8最新V0.5.4下载](https://github.com/KOUFU-DIY/WeGui_RGB/releases/tag/V0.5.4)
 * [教程文档](https://github.com/KOUFU-DIY/WeGui_RGB/tree/main/%E6%96%87%E6%A1%A3)
 
 
 # 版本更新
+## WeGui RGB V0.5.8
+* 1.修复mlist在进入时无法执行菜单中的begin回调函数的问题
+* 2.修复其他begin回调函数问题
 ## WeGui RGB V0.5.7
 * 1.修改移植接口,现接口更简易更简单,性能降低但可移植性提高
 * 2.新增RLE压缩bitmap刷图驱动,gui支持使用RLE压缩图形,用法参考driver_demo();暂时使用LCD_mcuTool取模,后续集成到上位机上
