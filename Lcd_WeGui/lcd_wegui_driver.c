@@ -185,30 +185,28 @@ void wegui_enter_menu(menu_t* p)
 				                         VALUE_CHANGE_AND_UPDATE,//实时更新值
 				                         p->menuPar.wSliderTip_Par.Change_Value_func,//改变数值执行的函数的指针
 				                         p->menuPar.wSliderTip_Par.End_tip_func);//确定数值执行的函数的指针
+				if(p->menuPar.wSliderTip_Par.Push_tip_func !=0x00)
+					p->menuPar.wSliderTip_Par.Push_tip_func();//执行函数
 			}break;
 			case mList:
 			{
 				if(p==0x00){mList_par.cursor_id=0;mList_par.list_y_offset_target=0;return;}//没有菜单
 
-
-				//保存当前菜单位置
 				switch(wegui.menu->menuType)
 				{
 					case mList:
 					{
-						//HISTORY
-						//HISTORY
-//						menu_history_t i;
-//						i.cursor_id = mList_par.cursor_id;
-//						i.posi      = mList_par.list_y_offset_target;
-//						Push_menu_historyPar(i);
+						if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
+							wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
+					}break;
+					case mPorgram:
+					{
+						if(wegui.menu->menuPar.mPorgram_Par.quit_fun!=0x00)
+							wegui.menu->menuPar.mPorgram_Par.quit_fun();//执行函数
 					}break;
 					default:break;
 				}
-
-				if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
-					wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
-
+				
 				wegui.menu = p;//切进新的菜单
 				wegui_mList_Init();
 
@@ -223,23 +221,19 @@ void wegui_enter_menu(menu_t* p)
 				{
 					case mList:
 					{
-						//HISTORY
-//						menu_history_t i;
-//						i.cursor_id = mList_par.cursor_id;
-//						i.posi      = mList_par.list_y_offset_target;
-//						Push_menu_historyPar(i);
-						//wegui.menu->parHistory->cursor_id = mList_par.cursor_id ;//光标历史记录
-						//wegui.menu->parHistory->posi = mList_par.list_y_offset_target;//位置历史记录
+						if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
+							wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
+					}break;
+					case mPorgram:
+					{
+						if(wegui.menu->menuPar.mPorgram_Par.quit_fun!=0x00)
+							wegui.menu->menuPar.mPorgram_Par.quit_fun();//执行函数
 					}break;
 					default:break;
 				}
-				if(wegui.menu->menuPar.mList_Par.quit_fun!=0x00)
-					wegui.menu->menuPar.mList_Par.quit_fun();//执行函数
-
 				wegui.menu = p;//切进新的菜单
-
-				if(wegui.menu->menuPar.mList_Par.begin_fun!=0x00)
-					wegui.menu->menuPar.mList_Par.begin_fun();//执行函数
+				if(wegui.menu->menuPar.mPorgram_Par.begin_fun!=0x00)
+					wegui.menu->menuPar.mPorgram_Par.begin_fun();//执行函数
 
 				if(wegui.menu->menuPar.mPorgram_Par.refresh_fun == 0x00)
 				{
@@ -262,28 +256,6 @@ void wegui_enter_menu(menu_t* p)
 			}break;
 			default:break;
 		}
-}
-
-//刷新屏幕帧率
-static void reflash_fps(uint16_t stick)
-{
-	static uint16_t display_count = 0;//更新数据计时
-	static uint8_t  sum_count=0;//次数
-	static uint16_t sum=1;//总数
-	display_count += stick;
-	sum += wegui.sysInfo.fps_time;
-	sum_count++;
-
-	if(display_count > 100)//更新时间ms
-	{
-		//帧率 = 1000/(总时间/次数)
-		wegui.sysInfo.info_fps = (uint32_t)1000 * sum_count / sum;
-		//wegui.sysInfo.info_fps = 1000 / (sum / sum_count);
-		//if(wegui.sysInfo.info_fps > 99){wegui.sysInfo.info_fps = 99;}
-		display_count = 0;
-		sum_count = 0;
-		sum = 1;
-	}
 }
 
 
